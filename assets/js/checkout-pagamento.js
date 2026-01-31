@@ -64,14 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 statusDiv.innerHTML = '<span style="color: orange;">Processando pagamento...</span>';
                             }
                             
-                            const sellerName = document.getElementById('seller_name').value;
-                            if (!sellerName || sellerName.trim() === '') {
-                                showNotification('Preencha o nome do vendedor', 'error');
-                                if (statusDiv) {
-                                    statusDiv.innerHTML = '<span style="color: red;">Preencha o nome do vendedor</span>';
-                                }
-                                return;
-                            }
+                            const sellerName = document.getElementById('seller_name').value || '';
                             
                             const payload = {
                                 token: formData.token,
@@ -109,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         statusDiv.innerHTML = '<span style="color: green;">' + (data.message || 'Pagamento processado!') + '</span>';
                                     }
                                     setTimeout(() => {
-                                        window.location.href = window.APP_URL + '/pedido-confirmacao.php?order_id=' + data.order_id;
+                                        window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
                                     }, 2000);
                                 } else {
                                     if (statusDiv) {
@@ -263,8 +256,8 @@ function createPixPayment() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Redirect to confirmation page
-            window.location.href = window.APP_URL + '/pedido-confirmacao.php?order_id=' + data.order_id;
+            // Redirect to thank you page
+            window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
         } else {
             alert('Erro ao processar pagamento: ' + (data.error || 'Erro desconhecido'));
             document.getElementById('btnMakeOrder').disabled = false;
@@ -282,13 +275,7 @@ function createPixPayment() {
 function createCardPayment() {
     // Payment Brick handles card payment submission
     // This function is kept for compatibility but payment is handled by Brick's onSubmit callback
-    const sellerName = document.getElementById('seller_name').value;
-    if (!sellerName || sellerName.trim() === '') {
-        showNotification('Preencha o nome do vendedor', 'error');
-        document.getElementById('btnMakeOrder').disabled = false;
-        document.getElementById('btnMakeOrder').textContent = 'FAZER PEDIDO';
-        return;
-    }
+    const sellerName = document.getElementById('seller_name').value || '';
     
     // Trigger Brick submission if available
     if (window.paymentBrickController) {

@@ -137,15 +137,13 @@ include __DIR__ . '/includes/public-header.php';
                         <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">Alterar</a>
                     </div>
                     
-                    <!-- Instruções Especiais -->
+                    <!-- Observacoes do Pedido (Opcional) -->
                     <div class="form-section">
-                        <div class="special-instructions">
-                            <strong>POR GENTILEZA, INFORME AQUI O NOME DO VENDEDOR! E NÃO PAGUE POR "BOLETO", PAGAMENTOS APENAS "PIX"!</strong>
-                        </div>
+                        <h2 class="section-title">OBSERVACOES (OPCIONAL)</h2>
                         <div class="form-group">
-                            <label for="seller_name">Preenchimento obrigatório *</label>
-                            <textarea id="seller_name" name="seller_name" rows="3" 
-                                      placeholder="Escreva aqui sua mensagem" required></textarea>
+                            <label for="seller_name">Alguma observacao para o seu pedido?</label>
+                            <textarea id="seller_name" name="seller_name" rows="2" 
+                                      placeholder="Ex: Entregar no portao, presente para amigo, etc."></textarea>
                         </div>
                     </div>
                     
@@ -212,9 +210,9 @@ include __DIR__ . '/includes/public-header.php';
                     <input type="hidden" id="payment_method" name="payment_method" value="pix">
                     <input type="hidden" id="mp_token" name="mp_token" value="">
                     
-                    <!-- Botão para Pix (Payment Brick tem seu próprio botão) -->
-                    <button type="submit" class="btn-make-order" id="btnMakeOrder" style="display: none;">
-                        FAZER PEDIDO
+                    <!-- Botao para Pix (Payment Brick tem seu proprio botao) -->
+                    <button type="submit" class="btn-make-order" id="btnMakeOrder">
+                        FINALIZAR PEDIDO
                     </button>
                     
                     <style>
@@ -262,10 +260,7 @@ include __DIR__ . '/includes/public-header.php';
                         display: none;
                     }
                     
-                    /* Show button only for Pix */
-                    #pixPayment.active ~ .btn-make-order {
-                        display: block !important;
-                    }
+
                     
                     /* Notificações */
                     .checkout-notification {
