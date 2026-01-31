@@ -103,41 +103,42 @@ include __DIR__ . '/includes/public-header.php';
                     </div>
                     
                     <!-- Endereco de Entrega -->
-                    <div class="form-section">
+                    <div class="form-section address-section">
                         <h2 class="section-title">ENDERECO DE ENTREGA</h2>
-                        <p class="address-text">
-                            <strong><?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>, <?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?></strong>
-                            <?php if (!empty($checkout_data['complement'] ?? '')): ?>
-                                - <?php echo htmlspecialchars($checkout_data['complement']); ?>
-                            <?php endif; ?>
-                            <br>
-                            <?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?><br>
-                            <?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?> - <?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?><br>
-                            <strong>CEP:</strong> <?php echo htmlspecialchars($checkout_data['cep'] ?? ''); ?>
-                        </p>
-                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">
-                            <i class="fas fa-edit"></i> Alterar Endereco
-                        </a>
+                        <div class="address-card">
+                            <div class="address-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="address-details">
+                                <p class="address-street"><?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>, <?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?><?php if (!empty($checkout_data['complement'] ?? '')): ?> - <?php echo htmlspecialchars($checkout_data['complement']); ?><?php endif; ?></p>
+                                <p class="address-neighborhood"><?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?></p>
+                                <p class="address-city"><?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?> - <?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?></p>
+                                <p class="address-cep">CEP: <?php echo htmlspecialchars($checkout_data['cep'] ?? ''); ?></p>
+                            </div>
+                            <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="btn-change-address">
+                                Alterar
+                            </a>
+                        </div>
                     </div>
                     
                     <!-- Metodo de Entrega -->
-                    <div class="form-section">
+                    <div class="form-section shipping-section">
                         <h2 class="section-title">FORMA DE ENTREGA</h2>
-                        <div class="shipping-selected">
-                            <strong><i class="fas fa-truck"></i> <?php echo htmlspecialchars($checkout_data['shipping_method']); ?></strong>
-                            <span><?php echo formatPrice($shipping_cost); ?></span>
+                        <div class="shipping-card">
+                            <div class="shipping-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="shipping-details">
+                                <p class="shipping-method-name"><?php echo htmlspecialchars($checkout_data['shipping_method'] ?? 'Frete Padrao'); ?></p>
+                                <p class="shipping-estimate-text">
+                                    <?php
+                                    $estimated_date = date('d/m/Y', strtotime('+5 weekdays'));
+                                    echo "Previsao: " . $estimated_date;
+                                    ?>
+                                </p>
+                            </div>
+                            <div class="shipping-price-tag"><?php echo formatPrice($shipping_cost); ?></div>
                         </div>
-                        <p class="shipping-estimate">
-                            <i class="fas fa-calendar-alt"></i>
-                            <?php
-                            // Calcular data estimada (aproximadamente 5-7 dias uteis)
-                            $estimated_date = date('d/m/Y', strtotime('+5 weekdays'));
-                            echo "Previsao de entrega: " . $estimated_date;
-                            ?>
-                        </p>
-                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">
-                            <i class="fas fa-edit"></i> Alterar Frete
-                        </a>
                     </div>
                     
                     <!-- Observacoes do Pedido (Opcional) -->
@@ -151,69 +152,60 @@ include __DIR__ . '/includes/public-header.php';
                     </div>
                     
                     <!-- Forma de Pagamento -->
-                    <div class="form-section">
-                        <h2 class="section-title">FORMA DE PAGAMENTO</h2>
+                    <div class="form-section payment-section">
+                        <h2 class="section-title">Forma de pagamento</h2>
                         
-                        <div class="payment-methods">
-                            <div class="payment-method-tabs">
-                                <button type="button" class="payment-tab active" data-method="pix">
-                                    <i class="fas fa-qrcode"></i> Pix
-                                </button>
-                                <button type="button" class="payment-tab" data-method="credit_card">
-                                    <i class="fas fa-credit-card"></i> Cartão de Crédito
-                                </button>
-                            </div>
-                            
-                            <!-- Pix Payment -->
-                            <div id="pixPayment" class="payment-content active">
-                                <p class="payment-info">
-                                    Ao gerar o Código Pix do pedido você pode pagar escaneando o QR Code ou Copiar e Colar.
-                                </p>
-                                <div class="pix-recipient">
-                                    <div class="pix-info-row">
-                                        <span>Nome:</span>
-                                        <span>Gustavo Felix</span>
-                                    </div>
-                                    <div class="pix-info-row">
-                                        <span>CPF/CNPJ:</span>
-                                        <span>363.923.068-03</span>
-                                    </div>
+                        <div class="payment-methods-new">
+                            <div class="payment-option selected" data-method="credit_card">
+                                <div class="payment-option-icon">
+                                    <i class="far fa-credit-card"></i>
                                 </div>
+                                <span class="payment-option-label">Cartao de credito</span>
                             </div>
-                            
-                            <!-- Credit Card Payment -->
-                            <div id="creditCardPayment" class="payment-content">
-                                <?php if (!empty($mp_public_key)): ?>
-                                    <div id="paymentBrick_container" style="max-width: 100%; margin: 20px 0; min-height: 400px;"></div>
-                                    <div id="payment-status" style="margin-top: 20px; text-align: center; font-weight: bold; display: none; padding: 1rem; border-radius: 8px; background: var(--admin-bg-secondary);"></div>
-                                <?php else: ?>
-                                    <div class="alert alert-error" style="padding: 1rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;">
-                                        <i class="fas fa-exclamation-circle"></i> Mercado Pago não configurado. Configure as chaves no painel administrativo.
-                                    </div>
-                                <?php endif; ?>
+                            <div class="payment-option" data-method="pix">
+                                <div class="payment-option-icon">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <span class="payment-option-label">Pix</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Credit Card Payment -->
+                        <div id="creditCardPayment" class="payment-content-new active">
+                            <?php if (!empty($mp_public_key)): ?>
+                                <div id="paymentBrick_container"></div>
+                                <div id="payment-status"></div>
+                            <?php else: ?>
+                                <div class="alert-payment-error">
+                                    <i class="fas fa-exclamation-circle"></i> Mercado Pago nao configurado.
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <!-- Pix Payment -->
+                        <div id="pixPayment" class="payment-content-new">
+                            <div class="pix-info-box">
+                                <p class="pix-description">Ao gerar o Codigo Pix voce pode pagar escaneando o QR Code ou copiando o codigo.</p>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Salvar Dados -->
-                    <div class="form-section">
-                        <div class="form-checkbox">
+                    <div class="form-section save-data-section">
+                        <label class="custom-checkbox">
                             <input type="checkbox" id="save_data" name="save_data" checked>
-                            <label for="save_data">Salvar dados para comprar mais rapido</label>
-                        </div>
-                        <p class="save-data-info">
-                            Nas proximas compras enviaremos um codigo para: <strong><?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?></strong>
-                        </p>
-                        <p class="terms-text">
-                            Ao salvar, voce aceita os <a href="#">Termos de uso</a> e <a href="#">Politica de Privacidade</a>
+                            <span class="checkmark"></span>
+                            <span class="checkbox-label">Salvar dados para compras futuras</span>
+                        </label>
+                        <p class="terms-text-new">
+                            Ao continuar, voce concorda com nossos <a href="#">Termos de Uso</a> e <a href="#">Politica de Privacidade</a>
                         </p>
                     </div>
                     
-                    <input type="hidden" id="payment_method" name="payment_method" value="pix">
+                    <input type="hidden" id="payment_method" name="payment_method" value="credit_card">
                     <input type="hidden" id="mp_token" name="mp_token" value="">
                     
-                    <!-- Botao para Pix (Payment Brick tem seu proprio botao) -->
-                    <button type="submit" class="btn-make-order" id="btnMakeOrder">
+                    <button type="submit" class="btn-finalizar-pedido" id="btnMakeOrder">
                         FINALIZAR PEDIDO
                     </button>
                     
@@ -222,45 +214,52 @@ include __DIR__ . '/includes/public-header.php';
             </div>
             
             <!-- Resumo do Pedido -->
-            <div class="checkout-summary">
-                <h3 class="summary-title">RESUMO DO PEDIDO</h3>
-                <div class="summary-products">
-                    <?php foreach ($cart_items as $item): ?>
-                        <div class="summary-product-item">
-                            <div class="summary-product-image">
-                                <?php if (!empty($item['image_path'])): ?>
-                                    <img src="<?php echo APP_URL . '/' . ltrim($item['image_path'], '/'); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+            <div class="checkout-summary-new">
+                <h3 class="summary-title-new">RESUMO DO PEDIDO</h3>
+                <div class="summary-products-new">
+                    <?php foreach ($cart_items as $item): 
+                        $img_path = $item['image_path'] ?? '';
+                        $img_url = '';
+                        if (!empty($img_path)) {
+                            if (strpos($img_path, 'http') === 0) {
+                                $img_url = $img_path;
+                            } else {
+                                $img_url = APP_URL . '/' . ltrim($img_path, '/');
+                            }
+                        }
+                    ?>
+                        <div class="summary-product-row">
+                            <div class="summary-product-img">
+                                <?php if (!empty($img_url)): ?>
+                                    <img src="<?php echo htmlspecialchars($img_url); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                    <div class="img-placeholder" style="display:none;"><i class="fas fa-box"></i></div>
                                 <?php else: ?>
-                                    <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                    <div class="img-placeholder"><i class="fas fa-box"></i></div>
                                 <?php endif; ?>
                             </div>
-                            <div class="summary-product-info">
-                                <div class="summary-product-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                                <div class="summary-product-price"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
+                            <div class="summary-product-details">
+                                <span class="product-name-text"><?php echo htmlspecialchars($item['name']); ?></span>
+                                <span class="product-price-text"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></span>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="summary-totals">
-                    <div class="summary-row">
+                <div class="summary-totals-new">
+                    <div class="total-row">
                         <span>Subtotal</span>
                         <span><?php echo formatPrice($subtotal); ?></span>
                     </div>
-                    <div class="summary-row">
-                        <span>Custo de frete</span>
+                    <div class="total-row">
+                        <span>Frete</span>
                         <span><?php echo formatPrice($shipping_cost); ?></span>
                     </div>
-                    <div class="summary-row" style="color: #1a1a1a !important; font-weight: 700 !important;">
-                        <span>- Descontos</span>
-                        <span>- <?php echo formatPrice(0); ?></span>
-                    </div>
-                    <div class="summary-row summary-total">
+                    <div class="total-row total-final">
                         <span>Total</span>
-                        <span><?php echo formatPrice($total); ?></span>
+                        <span class="total-value"><?php echo formatPrice($total); ?></span>
                     </div>
                 </div>
-                <a href="#" class="link-add-coupon">
-                    <i class="fas fa-tag"></i> Adicionar cupom de desconto
+                <a href="#" class="btn-add-coupon">
+                    <i class="fas fa-tag"></i> Adicionar cupom
                 </a>
             </div>
         </div>

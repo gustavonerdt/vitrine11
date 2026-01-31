@@ -132,22 +132,40 @@ include __DIR__ . '/includes/public-header.php';
                 </form>
             </div>
            
-            <div class="checkout-summary">
-                <h3 class="summary-title">RESUMO DO PEDIDO</h3>
-                <div class="summary-products">
-                    <?php foreach ($cart_items as $item): ?>
-                        <div class="summary-product-item">
-                            <div class="summary-product-info">
-                                <div><?php echo htmlspecialchars($item['name']); ?></div>
-                                <small><?php echo $item['quantity']; ?>x <?php echo number_format($item['price'], 2, ',', '.'); ?></small>
+            <div class="checkout-summary-new">
+                <h3 class="summary-title-new">RESUMO DO PEDIDO</h3>
+                <div class="summary-products-new">
+                    <?php foreach ($cart_items as $item): 
+                        $img_path = $item['image_url'] ?? '';
+                        $img_url = '';
+                        if (!empty($img_path)) {
+                            if (strpos($img_path, 'http') === 0) {
+                                $img_url = $img_path;
+                            } else {
+                                $img_url = APP_URL . '/' . ltrim($img_path, '/');
+                            }
+                        }
+                    ?>
+                        <div class="summary-product-row">
+                            <div class="summary-product-img">
+                                <?php if (!empty($img_url)): ?>
+                                    <img src="<?php echo htmlspecialchars($img_url); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                    <div class="img-placeholder" style="display:none;"><i class="fas fa-box"></i></div>
+                                <?php else: ?>
+                                    <div class="img-placeholder"><i class="fas fa-box"></i></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="summary-product-details">
+                                <span class="product-name-text"><?php echo htmlspecialchars($item['name']); ?></span>
+                                <span class="product-price-text">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?> x <?php echo $item['quantity']; ?></span>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="summary-totals">
-                    <div class="summary-row"><span>Subtotal</span><span>R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
-                    <div class="summary-row" id="shippingRow" style="display: none;"><span>Frete</span><span id="shippingCost">R$ 0,00</span></div>
-                    <div class="summary-row summary-total"><span>Total</span><span id="totalAmount">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
+                <div class="summary-totals-new">
+                    <div class="total-row"><span>Subtotal</span><span>R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
+                    <div class="total-row" id="shippingRow" style="display: none;"><span>Frete</span><span id="shippingCost">R$ 0,00</span></div>
+                    <div class="total-row total-final"><span>Total</span><span id="totalAmount" class="total-value">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
                 </div>
             </div>
         </div>

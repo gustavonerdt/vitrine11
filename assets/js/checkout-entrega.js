@@ -196,8 +196,130 @@ function initMasks() {
 }
 
 function showNotification(msg, type) {
-    alert(msg); // Simplificado para garantir funcionamento
+    const existing = document.querySelector('.checkout-notification');
+    if (existing) existing.remove();
+    
+    const notification = document.createElement('div');
+    notification.className = 'checkout-notification checkout-notification-' + type;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${msg}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
 }
+
+function scrollToElement(element) {
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+        element.style.outline = '2px solid #C7A333';
+        setTimeout(() => { element.style.outline = ''; }, 2000);
+    }
+}
+
+function validateForm() {
+    const email = document.getElementById('email');
+    const cep = document.getElementById('cep');
+    const street = document.getElementById('street');
+    const number = document.getElementById('number');
+    const neighborhood = document.getElementById('neighborhood');
+    const city = document.getElementById('city');
+    const state = document.getElementById('state');
+    const recipientName = document.getElementById('recipient_name');
+    const phone = document.getElementById('phone');
+    const cpfCnpj = document.getElementById('cpf_cnpj');
+    const shippingMethod = document.getElementById('shipping_method');
+    
+    if (!email || !email.value.trim()) {
+        showNotification('Preencha seu e-mail', 'error');
+        scrollToElement(email);
+        return false;
+    }
+    
+    if (!cep || cep.value.replace(/\D/g, '').length !== 8) {
+        showNotification('Preencha o CEP corretamente', 'error');
+        scrollToElement(cep);
+        return false;
+    }
+    
+    if (!shippingMethod || !shippingMethod.value) {
+        showNotification('Selecione uma opcao de frete', 'error');
+        const shippingOptions = document.getElementById('shippingOptions');
+        if (shippingOptions) scrollToElement(shippingOptions);
+        return false;
+    }
+    
+    if (!street || !street.value.trim()) {
+        showNotification('Preencha a rua', 'error');
+        scrollToElement(street);
+        return false;
+    }
+    
+    if (!number || !number.value.trim()) {
+        showNotification('Preencha o numero', 'error');
+        scrollToElement(number);
+        return false;
+    }
+    
+    if (!neighborhood || !neighborhood.value.trim()) {
+        showNotification('Preencha o bairro', 'error');
+        scrollToElement(neighborhood);
+        return false;
+    }
+    
+    if (!city || !city.value.trim()) {
+        showNotification('Preencha a cidade', 'error');
+        scrollToElement(city);
+        return false;
+    }
+    
+    if (!state || !state.value.trim()) {
+        showNotification('Preencha o estado', 'error');
+        scrollToElement(state);
+        return false;
+    }
+    
+    if (!recipientName || !recipientName.value.trim()) {
+        showNotification('Preencha o nome do destinatario', 'error');
+        scrollToElement(recipientName);
+        return false;
+    }
+    
+    if (!phone || phone.value.replace(/\D/g, '').length < 10) {
+        showNotification('Preencha o telefone corretamente', 'error');
+        scrollToElement(phone);
+        return false;
+    }
+    
+    if (!cpfCnpj || cpfCnpj.value.replace(/\D/g, '').length < 11) {
+        showNotification('Preencha o CPF ou CNPJ', 'error');
+        scrollToElement(cpfCnpj);
+        return false;
+    }
+    
+    return true;
+}
+
+// Form submission validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('checkoutForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+});
 
 // Iniciar
 if (document.readyState === 'loading') {
