@@ -98,10 +98,9 @@ if (json_last_error() !== JSON_ERROR_NONE && !$input) {
     $seller_name = trim($input['seller_name'] ?? '');
 }
 
+// seller_name agora é opcional - usa nome da loja como padrão
 if (empty($seller_name)) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Nome do vendedor é obrigatório']);
-    exit;
+    $seller_name = getSetting($pdo, 'app_name', APP_NAME);
 }
 
 // Calcular totais

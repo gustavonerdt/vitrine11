@@ -70,7 +70,7 @@
 
 .cart-page-container {
     min-height: 100vh;
-    background: #f5f5f5;
+    background: #fef9e0;
     padding: 2rem 0;
 }
 
@@ -556,10 +556,10 @@
 
 /* Checkout Page Styles */
 .checkout-page-container {
-    min-height: 100vh;
-    background: #f5f5f5;
-    padding: 2rem 0;
-}
+  min-height: 100vh;
+  background: #fef9e0;
+  padding: 2rem 0;
+  }
 
 .checkout-progress {
     display: flex;
