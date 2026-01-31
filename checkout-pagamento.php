@@ -101,40 +101,42 @@ include __DIR__ . '/includes/public-header.php';
                         </div>
                     </div>
                     
-                    <!-- Endereço de Entrega -->
+                    <!-- Endereco de Entrega -->
                     <div class="form-section">
-                        <h2 class="section-title">Destino: <?php echo htmlspecialchars($checkout_data['street']); ?></h2>
+                        <h2 class="section-title">ENDERECO DE ENTREGA</h2>
                         <p class="address-text">
-                            <?php 
-                            $address_parts = array_filter([
-                                $checkout_data['street'],
-                                $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
-                                $checkout_data['complement'],
-                                'CEP ' . $checkout_data['cep'],
-                                $checkout_data['neighborhood'],
-                                $checkout_data['city'] . ' - ' . $checkout_data['state']
-                            ]);
-                            echo htmlspecialchars(implode(', ', $address_parts));
-                            ?>
+                            <strong><?php echo htmlspecialchars($checkout_data['street']); ?>, <?php echo htmlspecialchars($checkout_data['number']); ?></strong>
+                            <?php if (!empty($checkout_data['complement'])): ?>
+                                - <?php echo htmlspecialchars($checkout_data['complement']); ?>
+                            <?php endif; ?>
+                            <br>
+                            <?php echo htmlspecialchars($checkout_data['neighborhood']); ?><br>
+                            <?php echo htmlspecialchars($checkout_data['city']); ?> - <?php echo htmlspecialchars($checkout_data['state']); ?><br>
+                            <strong>CEP:</strong> <?php echo htmlspecialchars($checkout_data['cep']); ?>
                         </p>
-                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">Alterar</a>
+                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">
+                            <i class="fas fa-edit"></i> Alterar Endereco
+                        </a>
                     </div>
                     
-                    <!-- Método de Entrega -->
+                    <!-- Metodo de Entrega -->
                     <div class="form-section">
                         <h2 class="section-title">FORMA DE ENTREGA</h2>
                         <div class="shipping-selected">
-                            <strong><?php echo htmlspecialchars($checkout_data['shipping_method']); ?></strong>
+                            <strong><i class="fas fa-truck"></i> <?php echo htmlspecialchars($checkout_data['shipping_method']); ?></strong>
                             <span><?php echo formatPrice($shipping_cost); ?></span>
                         </div>
                         <p class="shipping-estimate">
+                            <i class="fas fa-calendar-alt"></i>
                             <?php
-                            // Calcular data estimada (aproximadamente 5-7 dias úteis)
+                            // Calcular data estimada (aproximadamente 5-7 dias uteis)
                             $estimated_date = date('d/m/Y', strtotime('+5 weekdays'));
-                            echo "Chega " . $estimated_date;
+                            echo "Previsao de entrega: " . $estimated_date;
                             ?>
                         </p>
-                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">Alterar</a>
+                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">
+                            <i class="fas fa-edit"></i> Alterar Frete
+                        </a>
                     </div>
                     
                     <!-- Observacoes do Pedido (Opcional) -->
@@ -196,14 +198,13 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section">
                         <div class="form-checkbox">
                             <input type="checkbox" id="save_data" name="save_data" checked>
-                            <label for="save_data">Salvar dados para comprar mais rápido</label>
+                            <label for="save_data">Salvar dados para comprar mais rapido</label>
                         </div>
                         <p class="save-data-info">
-                            Nas próximas compras enviaremos um código para: <?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>
-                            <a href="#" class="link-change">Alterar</a>
+                            Nas proximas compras enviaremos um codigo para: <strong><?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?></strong>
                         </p>
                         <p class="terms-text">
-                            Ao salvar, você aceita os <a href="#">Termos de uso</a> e <a href="#">Política de Privacidade</a>
+                            Ao salvar, voce aceita os <a href="#">Termos de uso</a> e <a href="#">Politica de Privacidade</a>
                         </p>
                     </div>
                     
@@ -215,92 +216,7 @@ include __DIR__ . '/includes/public-header.php';
                         FINALIZAR PEDIDO
                     </button>
                     
-                    <style>
-                    .btn-make-order {
-                        background: #C7A333;
-                        color: #000;
-                        border: none;
-                        padding: 1rem;
-                        border-radius: 8px;
-                        font-weight: 700;
-                        font-size: 1.125rem;
-                        text-transform: uppercase;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        width: 100%;
-                        position: relative;
-                        overflow: hidden;
-                        z-index: 1;
-                        margin-top: 1.5rem;
-                    }
-                    
-                    .btn-make-order::before {
-                        content: "";
-                        position: absolute;
-                        inset: 0;
-                        background: linear-gradient(120deg, #4C3F01 0%, #8A6623 20%, #D4AF37 40%, #F7EF8A 50%, #D4AF37 60%, #8A6623 80%, #4C3F01 100%);
-                        background-size: 300% 300%;
-                        animation: goldFlow 4s ease-in-out infinite;
-                        z-index: -1;
-                    }
-                    
-                    .btn-make-order:hover:not(:disabled) {
-                        background: transparent;
-                        color: #000;
-                        transform: scale(1.02);
-                    }
-                    
-                    .btn-make-order:disabled {
-                        background: #ccc !important;
-                        cursor: not-allowed;
-                        opacity: 0.6;
-                    }
-                    
-                    .btn-make-order:disabled::before {
-                        display: none;
-                    }
-                    
 
-                    
-                    /* Notificações */
-                    .checkout-notification {
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        padding: 1rem 1.5rem;
-                        border-radius: 8px;
-                        color: white;
-                        font-weight: 600;
-                        z-index: 10000;
-                        transform: translateX(400px);
-                        transition: transform 0.3s ease, opacity 0.3s ease;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                        opacity: 0;
-                    }
-                    
-                    .checkout-notification.show {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    
-                    .checkout-notification-success {
-                        background: #22c55e;
-                    }
-                    
-                    .checkout-notification-error {
-                        background: #ef4444;
-                    }
-                    
-                    .checkout-notification-info {
-                        background: #3b82f6;
-                    }
-                    
-                    .notification-content {
-                        display: flex;
-                        align-items: center;
-                        gap: 0.75rem;
-                    }
-                    </style>
                 </form>
             </div>
             
@@ -338,7 +254,7 @@ include __DIR__ . '/includes/public-header.php';
                         <span><?php echo formatPrice($total); ?></span>
                     </div>
                 </div>
-                <a href="#" class="link-add-coupon" style="display: block; visibility: visible; opacity: 1; color: #C7A333; text-decoration: none; text-align: center; margin-top: 1rem; padding: 0.5rem; border-radius: 6px; transition: all 0.3s; font-weight: 600;">
+                <a href="#" class="link-add-coupon">
                     <i class="fas fa-tag"></i> Adicionar cupom de desconto
                 </a>
             </div>

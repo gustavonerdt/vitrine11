@@ -1682,3 +1682,387 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+/* ==========================================================================
+   CHECKOUT PAGAMENTO - ESTILOS MELHORADOS
+   ========================================================================== */
+
+/* Link Alterar - Sempre visivel */
+.link-change {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #C7A333;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    background: rgba(199, 163, 51, 0.1);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    margin-top: 0.75rem;
+}
+
+.link-change:hover {
+    background: rgba(199, 163, 51, 0.2);
+    color: #a8872a;
+}
+
+/* Form Section com borda e espacamento */
+.checkout-form .form-section {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.checkout-form .form-section:first-child {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+/* Section Title melhorado */
+.checkout-form .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #C7A333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkout-form .section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: #C7A333;
+    border-radius: 2px;
+}
+
+/* Endereco texto */
+.address-text {
+    font-size: 0.9375rem;
+    color: #333;
+    line-height: 1.6;
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #C7A333;
+}
+
+/* Shipping selected */
+.shipping-selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #22c55e;
+}
+
+.shipping-selected strong {
+    color: #1a1a1a;
+    font-size: 1rem;
+}
+
+.shipping-selected span {
+    color: #22c55e;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.shipping-estimate {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+}
+
+/* Payment Methods Tabs */
+.payment-method-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-tab {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: #f5f5f5;
+    border: 2px solid #e5e5e5;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #666;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.payment-tab:hover {
+    border-color: #C7A333;
+    background: #fef9e0;
+}
+
+.payment-tab.active {
+    background: #C7A333;
+    border-color: #C7A333;
+    color: #000;
+}
+
+.payment-tab i {
+    font-size: 1.25rem;
+}
+
+/* Payment Content */
+.payment-content {
+    display: none;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+.payment-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.payment-info {
+    font-size: 0.9375rem;
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* PIX Recipient Info */
+.pix-recipient {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.pix-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9375rem;
+}
+
+.pix-info-row:last-child {
+    border-bottom: none;
+}
+
+.pix-info-row span:first-child {
+    color: #666;
+}
+
+.pix-info-row span:last-child {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Form Group no checkout-pagamento */
+.checkout-form .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1a1a1a;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.checkout-form .form-group textarea:focus {
+    border-color: #C7A333;
+    outline: none;
+}
+
+.checkout-form .form-group textarea::placeholder {
+    color: #999;
+}
+
+/* Checkbox salvar dados */
+.save-data-info {
+    font-size: 0.8125rem;
+    color: #666;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+.save-data-info .link-change {
+    display: inline !important;
+    padding: 0;
+    background: none;
+    margin: 0;
+}
+
+.terms-text {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 0.75rem;
+}
+
+.terms-text a {
+    color: #C7A333;
+    text-decoration: none;
+}
+
+.terms-text a:hover {
+    text-decoration: underline;
+}
+
+/* Special Instructions removido */
+.special-instructions {
+    display: none;
+}
+
+/* Botao Finalizar Pedido */
+.btn-make-order {
+    width: 100%;
+    padding: 1.25rem;
+    background: #C7A333;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-make-order::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, #4C3F01 0%, #8A6623 20%, #D4AF37 40%, #F7EF8A 50%, #D4AF37 60%, #8A6623 80%, #4C3F01 100%);
+    background-size: 300% 300%;
+    animation: goldFlow 4s ease-in-out infinite;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn-make-order:hover::before {
+    opacity: 1;
+}
+
+.btn-make-order span,
+.btn-make-order {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-make-order:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(199, 163, 51, 0.4);
+}
+
+.btn-make-order:disabled {
+    background: #ccc !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-make-order:disabled::before {
+    display: none;
+}
+
+/* Summary totals melhorado */
+.checkout-summary .summary-totals {
+    background: #1a1a1a;
+    padding: 1.25rem;
+    border-radius: 12px;
+}
+
+.checkout-summary .summary-totals .summary-row {
+    color: #ccc;
+    border-bottom: 1px solid #333;
+    padding: 0.75rem 0;
+}
+
+.checkout-summary .summary-totals .summary-row:last-child {
+    border-bottom: none;
+}
+
+.checkout-summary .summary-totals .summary-total {
+    color: #C7A333 !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    padding-top: 1rem;
+    border-top: 1px solid #C7A333;
+    margin-top: 0.5rem;
+}
+
+/* Coupon link */
+.link-add-coupon {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #C7A333;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-weight: 600;
+    background: rgba(199, 163, 51, 0.1);
+}
+
+.link-add-coupon:hover {
+    background: rgba(199, 163, 51, 0.2);
+}
+
+/* Responsive para checkout-pagamento */
+@media (max-width: 768px) {
+    .payment-method-tabs {
+        flex-direction: column;
+    }
+    
+    .payment-tab {
+        padding: 0.875rem 1rem;
+    }
+    
+    .checkout-form .form-section {
+        padding: 1rem;
+    }
+    
+    .shipping-selected {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .btn-make-order {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
