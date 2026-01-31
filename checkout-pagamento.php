@@ -27,7 +27,7 @@ $subtotal = 0;
 foreach ($_SESSION['cart'] as $product_id => $quantity) {
     try {
         $stmt = $pdo->prepare("
-            SELECT p.id, p.name, p.price, b.name as brand_name
+            SELECT p.id, p.name, p.price, p.image_path, b.name as brand_name
             FROM products p
             LEFT JOIN brands b ON p.brand_id = b.id
             WHERE p.id = ? AND p.is_active = 1
@@ -44,7 +44,8 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
                 'name' => $product['name'],
                 'price' => floatval($product['price']),
                 'quantity' => $quantity,
-                'item_total' => $item_total
+                'item_total' => $item_total,
+                'image_path' => $product['image_path'] ?? null
             ];
         }
     } catch (PDOException $e) {
@@ -105,14 +106,14 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section">
                         <h2 class="section-title">ENDERECO DE ENTREGA</h2>
                         <p class="address-text">
-                            <strong><?php echo htmlspecialchars($checkout_data['street']); ?>, <?php echo htmlspecialchars($checkout_data['number']); ?></strong>
-                            <?php if (!empty($checkout_data['complement'])): ?>
+                            <strong><?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>, <?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?></strong>
+                            <?php if (!empty($checkout_data['complement'] ?? '')): ?>
                                 - <?php echo htmlspecialchars($checkout_data['complement']); ?>
                             <?php endif; ?>
                             <br>
-                            <?php echo htmlspecialchars($checkout_data['neighborhood']); ?><br>
-                            <?php echo htmlspecialchars($checkout_data['city']); ?> - <?php echo htmlspecialchars($checkout_data['state']); ?><br>
-                            <strong>CEP:</strong> <?php echo htmlspecialchars($checkout_data['cep']); ?>
+                            <?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?><br>
+                            <?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?> - <?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?><br>
+                            <strong>CEP:</strong> <?php echo htmlspecialchars($checkout_data['cep'] ?? ''); ?>
                         </p>
                         <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">
                             <i class="fas fa-edit"></i> Alterar Endereco
@@ -227,7 +228,11 @@ include __DIR__ . '/includes/public-header.php';
                     <?php foreach ($cart_items as $item): ?>
                         <div class="summary-product-item">
                             <div class="summary-product-image">
-                                <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                <?php if (!empty($item['image_path'])): ?>
+                                    <img src="<?php echo APP_URL . '/' . ltrim($item['image_path'], '/'); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                                <?php else: ?>
+                                    <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                <?php endif; ?>
                             </div>
                             <div class="summary-product-info">
                                 <div class="summary-product-name"><?php echo htmlspecialchars($item['name']); ?></div>

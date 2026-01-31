@@ -247,43 +247,51 @@ function processPayment() {
 function createPixPayment() {
     const formData = new FormData();
     formData.append('payment_method', 'pix');
-    formData.append('seller_name', document.getElementById('seller_name').value);
+    formData.append('seller_name', document.getElementById('seller_name').value || '');
     
     fetch(window.APP_URL + '/api/create-payment.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || data.error || 'Erro na comunicacao');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
-        if (data.success) {
-            // Redirect to thank you page
-            window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
+        if (data.success || data.status === 'approved' || data.status === 'pending' || data.status === 'in_process') {
+            showNotification('Pedido criado com sucesso! Redirecionando...', 'success');
+            setTimeout(() => {
+                window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
+            }, 1500);
         } else {
-            alert('Erro ao processar pagamento: ' + (data.error || 'Erro desconhecido'));
+            showNotification('Erro ao processar pagamento: ' + (data.message || data.error || 'Erro desconhecido'), 'error');
             document.getElementById('btnMakeOrder').disabled = false;
-            document.getElementById('btnMakeOrder').textContent = 'FAZER PEDIDO';
+            document.getElementById('btnMakeOrder').textContent = 'FINALIZAR PEDIDO';
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Erro ao processar pagamento');
+        console.error('[v0] PIX Payment Error:', error);
+        showNotification('Erro ao processar pagamento: ' + error.message, 'error');
         document.getElementById('btnMakeOrder').disabled = false;
-        document.getElementById('btnMakeOrder').textContent = 'FAZER PEDIDO';
+        document.getElementById('btnMakeOrder').textContent = 'FINALIZAR PEDIDO';
     });
 }
 
 function createCardPayment() {
     // Payment Brick handles card payment submission
     // This function is kept for compatibility but payment is handled by Brick's onSubmit callback
-    const sellerName = document.getElementById('seller_name').value || '';
     
     // Trigger Brick submission if available
     if (window.paymentBrickController) {
         // The Brick will handle submission via its onSubmit callback
-        showNotification('Preencha os dados do cartão no formulário acima', 'info');
+        showNotification('Preencha os dados do cartao no formulario acima', 'info');
     } else {
-        showNotification('Formulário de pagamento não carregado. Recarregue a página.', 'error');
+        showNotification('Formulario de pagamento nao carregado. Recarregue a pagina.', 'error');
         document.getElementById('btnMakeOrder').disabled = false;
-        document.getElementById('btnMakeOrder').textContent = 'FAZER PEDIDO';
+        document.getElementById('btnMakeOrder').textContent = 'FINALIZAR PEDIDO';
     }
 }
