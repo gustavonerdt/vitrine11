@@ -43,7 +43,7 @@ function initCheckout() {
             clearTimeout(cepTimeout);
             cepTimeout = setTimeout(() => {
                 buscarCep();
-            }, 500);
+            }, 200);
         }
     });
 
@@ -170,6 +170,17 @@ function selecionarFrete(price, name) {
     if (shippingCost) shippingCost.textContent = 'R$ ' + p.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     if (totalAmount) totalAmount.textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     if (shippingRow) shippingRow.style.display = 'flex';
+    
+    // Mostrar card de frete selecionado
+    const selectedSection = document.getElementById('selectedShippingSection');
+    const selectedName = document.getElementById('selectedShippingName');
+    const selectedPrice = document.getElementById('selectedShippingPrice');
+    
+    if (selectedSection && selectedName && selectedPrice) {
+        selectedSection.style.display = 'block';
+        selectedName.textContent = name;
+        selectedPrice.textContent = 'R$ ' + p.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    }
 }
 
 function initMasks() {

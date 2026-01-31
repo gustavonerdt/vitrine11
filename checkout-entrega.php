@@ -122,19 +122,29 @@ include __DIR__ . '/includes/public-header.php';
                             <input type="text" id="cpf_cnpj" name="cpf_cnpj" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" required>
                         </div>
                     </div>
+                    
+                    <div class="form-section" id="selectedShippingSection" style="display: none;">
+                        <h2 class="section-title">ENTREGA SELECIONADA</h2>
+                        <div class="selected-shipping-card">
+                            <div class="shipping-info">
+                                <span id="selectedShippingName"></span>
+                                <span id="selectedShippingPrice"></span>
+                            </div>
+                        </div>
+                    </div>
                    
                     <input type="hidden" id="shipping_method" name="shipping_method" value="">
                     <input type="hidden" id="shipping_price" name="shipping_price" value="0">
                    
-                    <button type="submit" class="btn-continue-payment" id="btnContinue" style="background: #C7A333; color: #000; border: none; padding: 1rem; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer;">
+                    <button type="submit" class="btn-continuar" id="btnContinue">
                         CONTINUAR PARA PAGAMENTO
                     </button>
                 </form>
             </div>
            
-            <div class="checkout-summary-new">
-                <h3 class="summary-title-new">RESUMO DO PEDIDO</h3>
-                <div class="summary-products-new">
+            <div class="checkout-summary-side">
+                <h3 class="summary-title">RESUMO DO PEDIDO</h3>
+                <div class="summary-products">
                     <?php foreach ($cart_items as $item): 
                         $img_path = $item['image_url'] ?? '';
                         $img_url = '';
@@ -146,26 +156,25 @@ include __DIR__ . '/includes/public-header.php';
                             }
                         }
                     ?>
-                        <div class="summary-product-row">
-                            <div class="summary-product-img">
+                        <div class="summary-product-item">
+                            <div class="summary-product-image">
                                 <?php if (!empty($img_url)): ?>
-                                    <img src="<?php echo htmlspecialchars($img_url); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                    <div class="img-placeholder" style="display:none;"><i class="fas fa-box"></i></div>
+                                    <img src="<?php echo htmlspecialchars($img_url); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
                                 <?php else: ?>
-                                    <div class="img-placeholder"><i class="fas fa-box"></i></div>
+                                    <div class="summary-placeholder"><i class="fas fa-box"></i></div>
                                 <?php endif; ?>
                             </div>
-                            <div class="summary-product-details">
-                                <span class="product-name-text"><?php echo htmlspecialchars($item['name']); ?></span>
-                                <span class="product-price-text">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?> x <?php echo $item['quantity']; ?></span>
+                            <div class="summary-product-info">
+                                <div class="summary-product-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <div class="summary-product-price">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?> x <?php echo $item['quantity']; ?></div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="summary-totals-new">
-                    <div class="total-row"><span>Subtotal</span><span>R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
-                    <div class="total-row" id="shippingRow" style="display: none;"><span>Frete</span><span id="shippingCost">R$ 0,00</span></div>
-                    <div class="total-row total-final"><span>Total</span><span id="totalAmount" class="total-value">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
+                <div class="summary-totals">
+                    <div class="summary-row"><span>Subtotal</span><span>R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
+                    <div class="summary-row" id="shippingRow" style="display: none;"><span>Frete</span><span id="shippingCost">R$ 0,00</span></div>
+                    <div class="summary-row summary-total"><span>Total</span><span id="totalAmount">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
                 </div>
             </div>
         </div>

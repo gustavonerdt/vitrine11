@@ -214,9 +214,9 @@ include __DIR__ . '/includes/public-header.php';
             </div>
             
             <!-- Resumo do Pedido -->
-            <div class="checkout-summary-new">
-                <h3 class="summary-title-new">RESUMO DO PEDIDO</h3>
-                <div class="summary-products-new">
+            <div class="checkout-summary-side">
+                <h3 class="summary-title">RESUMO DO PEDIDO</h3>
+                <div class="summary-products">
                     <?php foreach ($cart_items as $item): 
                         $img_path = $item['image_path'] ?? '';
                         $img_url = '';
@@ -228,37 +228,36 @@ include __DIR__ . '/includes/public-header.php';
                             }
                         }
                     ?>
-                        <div class="summary-product-row">
-                            <div class="summary-product-img">
+                        <div class="summary-product-item">
+                            <div class="summary-product-image">
                                 <?php if (!empty($img_url)): ?>
-                                    <img src="<?php echo htmlspecialchars($img_url); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                    <div class="img-placeholder" style="display:none;"><i class="fas fa-box"></i></div>
+                                    <img src="<?php echo htmlspecialchars($img_url); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
                                 <?php else: ?>
-                                    <div class="img-placeholder"><i class="fas fa-box"></i></div>
+                                    <div class="summary-placeholder"><i class="fas fa-box"></i></div>
                                 <?php endif; ?>
                             </div>
-                            <div class="summary-product-details">
-                                <span class="product-name-text"><?php echo htmlspecialchars($item['name']); ?></span>
-                                <span class="product-price-text"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></span>
+                            <div class="summary-product-info">
+                                <div class="summary-product-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <div class="summary-product-price"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="summary-totals-new">
-                    <div class="total-row">
+                <div class="summary-totals">
+                    <div class="summary-row">
                         <span>Subtotal</span>
                         <span><?php echo formatPrice($subtotal); ?></span>
                     </div>
-                    <div class="total-row">
+                    <div class="summary-row">
                         <span>Frete</span>
                         <span><?php echo formatPrice($shipping_cost); ?></span>
                     </div>
-                    <div class="total-row total-final">
+                    <div class="summary-row summary-total">
                         <span>Total</span>
-                        <span class="total-value"><?php echo formatPrice($total); ?></span>
+                        <span><?php echo formatPrice($total); ?></span>
                     </div>
                 </div>
-                <a href="#" class="btn-add-coupon">
+                <a href="#" class="link-add-coupon">
                     <i class="fas fa-tag"></i> Adicionar cupom
                 </a>
             </div>
