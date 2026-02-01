@@ -654,6 +654,19 @@ CREATE TABLE `page_visits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
+-- TABELA: theme_versions (Historico de Versoes do Tema)
+-- ============================================
+DROP TABLE IF EXISTS `theme_versions`;
+CREATE TABLE `theme_versions` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `settings_data` LONGTEXT NOT NULL COMMENT 'JSON com todas as configuracoes do tema',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
 -- TABELA: click_tracking (Rastreamento de Cliques)
 -- ============================================
 DROP TABLE IF EXISTS `click_tracking`;

@@ -192,6 +192,13 @@ if ($musicEnabled == 1) {
                 </li>
                 <?php endif; ?>
                 <li>
+                    <a href="theme-editor.php" class="<?php echo $current_page == 'theme-editor.php' ? 'active' : ''; ?>" data-title="Editor Visual">
+                        <i class="fas fa-palette"></i>
+                        <span>Editor Visual</span>
+                        <span class="badge" style="margin-left: auto; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; padding: 2px 6px; border-radius: 8px; font-size: 0.65rem; font-weight: 700;">PRO</span>
+                    </a>
+                </li>
+                <li>
                     <a href="settings.php" class="<?php echo $current_page == 'settings.php' ? 'active' : ''; ?>" data-title="Configurações">
                         <i class="fas fa-cog"></i>
                         <span>Configurações</span>
