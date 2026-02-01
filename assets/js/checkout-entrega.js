@@ -1,14 +1,13 @@
-// Checkout Entrega JavaScript - Versão Corrigida
-console.log('✅ checkout-entrega.js carregado');
+// Checkout Entrega JavaScript - Simplificado (frete é selecionado no pagamento)
+console.log('checkout-entrega.js carregado');
 
 // Variáveis globais
 let cepTimeout;
-let addressForm, deliveryDataSection, invoiceDataSection, shippingOptionsDiv, shippingOptionsList;
-let btnContinue, shippingMethodInput, shippingPriceInput, shippingRow, shippingCost, totalAmount;
+let addressForm, deliveryDataSection, invoiceDataSection;
 
 // Inicialização
 function initCheckout() {
-    console.log('🔧 initCheckout() inicializando...');
+    console.log('initCheckout() inicializando...');
     
     const cepInput = document.getElementById('cep');
     if (!cepInput) {
@@ -21,14 +20,6 @@ function initCheckout() {
     addressForm = document.getElementById('addressForm');
     deliveryDataSection = document.getElementById('deliveryDataSection');
     invoiceDataSection = document.getElementById('invoiceDataSection');
-    shippingOptionsDiv = document.getElementById('shippingOptions');
-    shippingOptionsList = document.getElementById('shippingOptionsList');
-    btnContinue = document.getElementById('btnContinue');
-    shippingMethodInput = document.getElementById('shipping_method');
-    shippingPriceInput = document.getElementById('shipping_price');
-    shippingRow = document.getElementById('shippingRow');
-    shippingCost = document.getElementById('shippingCost');
-    totalAmount = document.getElementById('totalAmount');
     
     // Máscara de CEP e busca automática
     cepInput.addEventListener('input', function(e) {
@@ -92,84 +83,18 @@ function buscarCep() {
                 if (el) el.value = fields[id] || '';
             }
             
-            // Mostrar seções
+            // Mostrar seções de endereço e dados
             if (addressForm) addressForm.style.display = 'block';
             if (deliveryDataSection) deliveryDataSection.style.display = 'block';
             if (invoiceDataSection) invoiceDataSection.style.display = 'block';
             
-            // Calcular frete
-            calcularFrete(cep);
+            // Frete será calculado na página de pagamento
+            // Não exibir opções de frete aqui
         })
         .catch(error => {
             console.error('Erro ViaCEP:', error);
             if (cepLoading) cepLoading.style.display = 'none';
         });
-}
-
-function calcularFrete(cep) {
-    const url = (window.APP_URL || '') + '/api/calculate-shipping.php';
-    const formData = new FormData();
-    formData.append('cep', cep);
-    
-    if (shippingOptionsList) shippingOptionsList.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculando frete...</p>';
-    if (shippingOptionsDiv) shippingOptionsDiv.style.display = 'block';
-
-    fetch(url, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.options) {
-            mostrarOpcoesFrete(data.options);
-        } else {
-            if (shippingOptionsList) shippingOptionsList.innerHTML = `<p class="error">${data.error || 'Erro ao calcular frete'}</p>`;
-        }
-    })
-    .catch(error => {
-        console.error('Erro frete:', error);
-        if (shippingOptionsList) shippingOptionsList.innerHTML = '<p class="error">Erro de conexão ao calcular frete.</p>';
-    });
-}
-
-function mostrarOpcoesFrete(options) {
-    if (!shippingOptionsList) return;
-    shippingOptionsList.innerHTML = '';
-    
-    options.forEach(option => {
-        const div = document.createElement('div');
-        div.className = 'shipping-option';
-        div.innerHTML = `
-            <input type="radio" name="shipping_option_radio" id="ship_${option.code}" 
-                   value="${option.code}" data-price="${option.price}" data-name="${option.name}">
-            <label for="ship_${option.code}">
-                <div class="shipping-option-header">
-                    <span class="shipping-name">${option.name}</span>
-                    <span class="shipping-price">R$ ${parseFloat(option.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
-                </div>
-                <div class="shipping-delivery">${option.delivery_text}</div>
-            </label>
-        `;
-        
-        div.querySelector('input').addEventListener('change', function() {
-            selecionarFrete(this.dataset.price, this.dataset.name);
-        });
-        
-        shippingOptionsList.appendChild(div);
-    });
-}
-
-function selecionarFrete(price, name) {
-    if (shippingMethodInput) shippingMethodInput.value = name;
-    if (shippingPriceInput) shippingPriceInput.value = price;
-    
-    const p = parseFloat(price);
-    const sub = window.cartSubtotal || 0;
-    const total = sub + p;
-    
-    if (shippingCost) shippingCost.textContent = 'R$ ' + p.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-    if (totalAmount) totalAmount.textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-    if (shippingRow) shippingRow.style.display = 'flex';
 }
 
 function initMasks() {
@@ -196,7 +121,7 @@ function initMasks() {
 }
 
 function showNotification(msg, type) {
-    alert(msg); // Simplificado para garantir funcionamento
+    alert(msg);
 }
 
 // Iniciar
