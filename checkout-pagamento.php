@@ -442,44 +442,44 @@ include __DIR__ . '/includes/public-header.php';
             </div>
             
             <!-- Resumo do Pedido -->
-            <div class="checkout-summary">
-                <h3 class="summary-title">RESUMO DO PEDIDO</h3>
-                <div class="summary-products">
+            <div class="checkout-summary" style="background: #1a1a1a; border-radius: 16px; padding: 1.5rem;">
+                <h3 class="summary-title" style="color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.05em;">RESUMO DO PEDIDO</h3>
+                <div class="summary-products" style="margin-bottom: 1.25rem;">
                     <?php foreach ($cart_items as $item): ?>
-                        <div class="summary-product-item">
-                            <div class="summary-product-image">
+                        <div class="summary-product-item" style="display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <div class="summary-product-image" style="flex-shrink: 0;">
                                 <?php if (!empty($item['image_url'])): ?>
-                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
                                 <?php else: ?>
-                                    <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                    <div class="summary-placeholder" style="width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-spray-can" style="color: #C7A333;"></i></div>
                                 <?php endif; ?>
                             </div>
-                            <div class="summary-product-info">
-                                <div class="summary-product-name" style="color: #1a1a1a; font-weight: 600;"><?php echo htmlspecialchars($item['name']); ?></div>
-                                <div class="summary-product-price" style="color: #333;"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
+                            <div class="summary-product-info" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                                <div class="summary-product-name" style="color: #fff; font-weight: 600; font-size: 0.95rem; line-height: 1.3;"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <div class="summary-product-price" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
                 <div class="summary-totals">
                     <div class="summary-row">
-                        <span style="color: #1a1a1a; font-weight: 500;">Subtotal</span>
-                        <span style="color: #1a1a1a; font-weight: 600;"><?php echo formatPrice($subtotal); ?></span>
+                        <span style="color: #fff; font-weight: 500; font-size: 1rem;">Subtotal</span>
+                        <span style="color: #fff; font-weight: 600; font-size: 1rem;"><?php echo formatPrice($subtotal); ?></span>
                     </div>
                     <div class="summary-row">
-                        <span style="color: #1a1a1a; font-weight: 500;">Frete</span>
-                        <span style="color: #1a1a1a; font-weight: 600;" id="shippingCostDisplay"><?php echo formatPrice($shipping_cost); ?></span>
+                        <span style="color: #fff; font-weight: 500; font-size: 1rem;">Frete</span>
+                        <span style="color: #fff; font-weight: 600; font-size: 1rem;" id="shippingCostDisplay"><?php echo formatPrice($shipping_cost); ?></span>
                     </div>
                     <div class="summary-row discount-row" id="discountRow" style="display: none;">
-                        <span style="color: #22c55e; font-weight: 500;">Desconto</span>
-                        <span style="color: #22c55e; font-weight: 600;" id="discountDisplay">- R$ 0,00</span>
+                        <span style="color: #22c55e; font-weight: 500; font-size: 1rem;">Desconto</span>
+                        <span style="color: #22c55e; font-weight: 600; font-size: 1rem;" id="discountDisplay">- R$ 0,00</span>
                     </div>
                     <div class="summary-row summary-total" style="border-top: 2px solid #C7A333; padding-top: 1rem; margin-top: 0.5rem;">
-                        <span style="color: #1a1a1a; font-size: 1.1rem; font-weight: 700;">Total</span>
-                        <span style="color: #C7A333; font-size: 1.25rem; font-weight: 700;" id="totalDisplay"><?php echo formatPrice($total); ?></span>
+                        <span style="color: #fff; font-size: 1.15rem; font-weight: 700;">Total</span>
+                        <span style="color: #C7A333; font-size: 1.35rem; font-weight: 700;" id="totalDisplay"><?php echo formatPrice($total); ?></span>
                     </div>
                 </div>
-                <a href="#" class="link-add-coupon" onclick="openCouponModal(); return false;" style="display: block; visibility: visible; opacity: 1; color: #C7A333; text-decoration: none; text-align: center; margin-top: 1rem; padding: 0.5rem; border-radius: 6px; transition: all 0.3s; font-weight: 600;">
+                <a href="#" class="link-add-coupon" onclick="openCouponModal(); return false;" style="display: block; visibility: visible; opacity: 1; color: #C7A333; text-decoration: none; text-align: center; margin-top: 1.25rem; padding: 0.75rem; border-radius: 8px; transition: all 0.3s; font-weight: 600; background: rgba(199, 163, 51, 0.1); border: 1px dashed rgba(199, 163, 51, 0.5);">
                     <i class="fas fa-tag"></i> Adicionar cupom de desconto
                 </a>
             </div>
@@ -559,7 +559,7 @@ include __DIR__ . '/includes/public-header.php';
 </div>
 
 <style>
-/* Modal Styles with Animations */
+/* Modal Styles with Smooth Animations */
 .checkout-modal {
     position: fixed;
     top: 0;
@@ -574,31 +574,42 @@ include __DIR__ . '/includes/public-header.php';
     padding: 1rem;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: opacity 0.35s ease, visibility 0.35s ease, background 0.35s ease;
 }
 
 .checkout-modal.show {
     opacity: 1;
     visibility: visible;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 .checkout-modal-content {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 20px;
     max-width: 500px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    transform: translateY(-30px) scale(0.95);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    transform: translateY(-40px) scale(0.9);
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
 }
 
 .checkout-modal.show .checkout-modal-content {
     transform: translateY(0) scale(1);
     opacity: 1;
+}
+
+/* Animation for closing */
+.checkout-modal.closing {
+    opacity: 0;
+    background: rgba(0, 0, 0, 0);
+}
+
+.checkout-modal.closing .checkout-modal-content {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
 }
 
 /* Card Security Message */
@@ -878,6 +889,8 @@ include __DIR__ . '/includes/public-header.php';
 <script>
     window.APP_URL = '<?php echo APP_URL; ?>';
     window.MP_PUBLIC_KEY = '<?php echo htmlspecialchars($mp_public_key); ?>';
+    window.orderSubtotal = <?php echo $subtotal; ?>;
+    window.orderShipping = <?php echo $shipping_cost; ?>;
     window.orderTotal = <?php echo $total; ?>;
     window.checkoutEmail = '<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>';
     window.checkoutCpf = '<?php echo preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? ''); ?>';
@@ -895,10 +908,14 @@ include __DIR__ . '/includes/public-header.php';
     
     function closeAddressModal() {
         const modal = document.getElementById('addressModal');
+        modal.classList.add('closing');
         modal.classList.remove('show');
         document.body.style.overflow = '';
         // Wait for animation to complete
-        setTimeout(() => modal.style.display = 'none', 300);
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('closing');
+        }, 400);
     }
     
     function saveAddressChanges() {
@@ -945,10 +962,14 @@ include __DIR__ . '/includes/public-header.php';
     
     function closeCouponModal() {
         const modal = document.getElementById('couponModal');
+        modal.classList.add('closing');
         modal.classList.remove('show');
         document.body.style.overflow = '';
         // Wait for animation to complete
-        setTimeout(() => modal.style.display = 'none', 300);
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('closing');
+        }, 400);
     }
     
     function applyCoupon() {
@@ -1016,8 +1037,12 @@ include __DIR__ . '/includes/public-header.php';
             }
         }
         
+        // Update coupon discount
+        window.couponDiscount = discount;
+        
+        // Calculate new total: subtotal + shipping - discount
         if (totalElement) {
-            const newTotal = window.orderTotal - discount;
+            const newTotal = window.orderSubtotal + window.orderShipping - discount;
             totalElement.textContent = 'R$ ' + newTotal.toFixed(2).replace('.', ',');
             window.orderTotal = newTotal;
         }
@@ -1039,6 +1064,29 @@ include __DIR__ . '/includes/public-header.php';
         const price = parseFloat(element.dataset.price);
         const method = element.dataset.method;
         
+        // Update display immediately without page reload
+        const shippingDisplay = document.getElementById('shippingCostDisplay');
+        const totalDisplay = document.getElementById('totalDisplay');
+        
+        // Use global subtotal for accurate calculation
+        const subtotal = window.orderSubtotal;
+        
+        // Update displays
+        if (shippingDisplay) {
+            shippingDisplay.textContent = 'R$ ' + price.toFixed(2).replace('.', ',');
+        }
+        
+        // Calculate new total: subtotal + shipping - discount
+        const newTotal = subtotal + price - (window.couponDiscount || 0);
+        if (totalDisplay) {
+            totalDisplay.textContent = 'R$ ' + newTotal.toFixed(2).replace('.', ',');
+        }
+        
+        // Update global variables
+        window.orderShipping = price;
+        window.orderTotal = newTotal;
+        
+        // Update session via API
         fetch(window.APP_URL + '/api/update-shipping.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1046,9 +1094,8 @@ include __DIR__ . '/includes/public-header.php';
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                // Update display
-                location.reload();
+            if (!data.success) {
+                showNotification('Erro ao atualizar frete', 'error');
             }
         });
     }

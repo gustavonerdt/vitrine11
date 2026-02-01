@@ -1103,29 +1103,31 @@
 }
 
 .checkout-summary {
-    background: #fff;
-    border-radius: 12px;
+    background: #1a1a1a;
+    border-radius: 16px;
     padding: 1.5rem;
     height: fit-content;
     position: sticky;
     top: 100px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .summary-title {
-    font-size: 1.125rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: #000;
-    margin-bottom: 1.5rem;
+    color: #fff;
+    margin-bottom: 1.25rem;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .summary-products {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e5e5;
+    gap: 0;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .summary-product-item {
@@ -1180,20 +1182,28 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    margin-bottom: 1rem;
-    background: #f5f5f5;
+    margin-bottom: 0.75rem;
+    background: rgba(255,255,255,0.05);
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 .summary-totals .summary-row {
-    color: #E0E0E0 !important;
+    color: #fff !important;
+}
+
+.summary-totals .summary-row span {
+    color: #fff !important;
 }
 
 .summary-totals .summary-total {
     color: #C7A333 !important;
-    font-size: 1.5rem !important;
+    font-size: 1.35rem !important;
     font-weight: 700 !important;
+}
+
+.summary-totals .summary-total span:last-child {
+    color: #C7A333 !important;
 }
 
 .summary-row {
@@ -1214,17 +1224,20 @@
     text-align: center;
     color: #C7A333;
     text-decoration: none;
-    font-size: 0.875rem;
-    margin-top: 1rem;
+    font-size: 0.9rem;
+    margin-top: 1.25rem;
     font-weight: 600;
-    padding: 0.5rem;
-    border-radius: 6px;
+    padding: 0.75rem;
+    border-radius: 8px;
     transition: all 0.3s;
+    background: rgba(199, 163, 51, 0.1);
+    border: 1px dashed rgba(199, 163, 51, 0.5);
 }
 
 .link-add-coupon:hover {
-    text-decoration: underline;
-    background: rgba(199, 163, 51, 0.1);
+    text-decoration: none;
+    background: rgba(199, 163, 51, 0.2);
+    border-color: #C7A333;
 }
 
 /* Notificações */
@@ -1455,11 +1468,15 @@
     
     .checkout-content {
         grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
     }
     
     .checkout-summary {
         position: static;
-        margin-top: 2rem;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        order: -1;
     }
     
     .form-row {
