@@ -107,12 +107,12 @@ include __DIR__ . '/includes/public-header.php';
                         <p class="address-text">
                             <?php 
                             $address_parts = array_filter([
-                                $checkout_data['street'],
-                                $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
-                                $checkout_data['complement'],
-                                'CEP ' . $checkout_data['cep'],
-                                $checkout_data['neighborhood'],
-                                $checkout_data['city'] . ' - ' . $checkout_data['state']
+                                $checkout_data['street'] ?? '',
+                                isset($checkout_data['number']) && $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
+                                $checkout_data['complement'] ?? '',
+                                'CEP ' . ($checkout_data['cep'] ?? ''),
+                                $checkout_data['neighborhood'] ?? '',
+                                ($checkout_data['city'] ?? '') . ' - ' . ($checkout_data['state'] ?? '')
                             ]);
                             echo htmlspecialchars(implode(', ', $address_parts));
                             ?>
