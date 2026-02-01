@@ -41,14 +41,16 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $cep = preg_replace('/[^0-9]/', '', $_POST['cep'] ?? '');
-    $shipping_method = trim($_POST['shipping_method'] ?? '');
     
-    if (!empty($email) && !empty($cep) && !empty($shipping_method)) {
+    if (!empty($email) && !empty($cep)) {
         $_SESSION['checkout_data'] = $_POST;
+        // Frete será selecionado na página de pagamento
+        $_SESSION['checkout_data']['shipping_method'] = '';
+        $_SESSION['checkout_data']['shipping_price'] = 0;
         header('Location: ' . APP_URL . '/checkout-pagamento.php');
         exit;
     }
-    $error = "Por favor, preencha todos os campos e selecione o frete.";
+    $error = "Por favor, preencha todos os campos obrigatórios.";
 }
 
 $checkout_data = $_SESSION['checkout_data'] ?? [];
@@ -86,10 +88,7 @@ include __DIR__ . '/includes/public-header.php';
                             <div id="cepLoading" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Buscando...</div>
                         </div>
                        
-                        <div id="shippingOptions" style="display: none;">
-                            <h3 class="shipping-options-title">Opções de Entrega</h3>
-                            <div id="shippingOptionsList"></div>
-                        </div>
+                        <!-- Opções de frete serão selecionadas na tela de pagamento -->
                        
                         <div id="addressForm" style="display: none;">
                             <div class="form-group">
@@ -146,7 +145,7 @@ include __DIR__ . '/includes/public-header.php';
                 </div>
                 <div class="summary-totals">
                     <div class="summary-row"><span>Subtotal</span><span>R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
-                    <div class="summary-row" id="shippingRow" style="display: none;"><span>Frete</span><span id="shippingCost">R$ 0,00</span></div>
+                    <div class="summary-row"><span>Frete</span><span>Calculado no pagamento</span></div>
                     <div class="summary-row summary-total"><span>Total</span><span id="totalAmount">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
                 </div>
             </div>

@@ -317,7 +317,7 @@ if (!$is_ajax) {
                 <div class="shipping-calculator-section">
                     <h4 class="shipping-calculator-title">
                         <i class="fas fa-truck"></i>
-                        Calcular Frete
+                        Calcular Frete e Prazo
                     </h4>
                     <div class="shipping-calculator-form">
                         <input type="text" id="shipping-cep" placeholder="Digite seu CEP" maxlength="9">
@@ -328,7 +328,103 @@ if (!$is_ajax) {
                     <div id="shipping-results" class="shipping-results">
                         <!-- Resultados aparecem aqui -->
                     </div>
+                    
+                    <!-- Opções de Frete (aparecem após calcular) -->
+                    <div id="shipping-options-container" class="shipping-options-product" style="display: none;">
+                        <h5 class="shipping-options-title">Escolha uma Opcao</h5>
+                        <div class="shipping-option-card" data-code="04510" data-price="37.50" data-days="10">
+                            <div class="shipping-option-radio">
+                                <input type="radio" name="shipping_option_product" id="ship_pac" value="04510">
+                            </div>
+                            <div class="shipping-option-info">
+                                <strong class="shipping-option-name">PAC (Correios)</strong>
+                                <span class="shipping-option-days">Chega em ate 10 dias uteis</span>
+                            </div>
+                            <span class="shipping-option-price">R$ 37,50</span>
+                        </div>
+                        <div class="shipping-option-card" data-code="04014" data-price="56.25" data-days="5">
+                            <div class="shipping-option-radio">
+                                <input type="radio" name="shipping_option_product" id="ship_sedex" value="04014">
+                            </div>
+                            <div class="shipping-option-info">
+                                <strong class="shipping-option-name">SEDEX (Correios)</strong>
+                                <span class="shipping-option-days">Chega em ate 5 dias uteis</span>
+                            </div>
+                            <span class="shipping-option-price">R$ 56,25</span>
+                        </div>
+                    </div>
                 </div>
+                
+                <style>
+                .shipping-options-product {
+                    margin-top: 1rem;
+                }
+                
+                .shipping-options-product .shipping-options-title {
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    color: #1a1a1a;
+                    margin: 0 0 0.75rem 0;
+                    text-transform: uppercase;
+                }
+                
+                .shipping-options-product .shipping-option-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 1rem;
+                    background: #f8f8f8;
+                    border: 2px solid #e5e5e5;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    margin-bottom: 0.5rem;
+                }
+                
+                .shipping-options-product .shipping-option-card:hover {
+                    border-color: #C7A333;
+                    background: #fef9e0;
+                }
+                
+                .shipping-options-product .shipping-option-card.selected {
+                    border-color: #C7A333;
+                    background: #fef9e0;
+                }
+                
+                .shipping-options-product .shipping-option-radio {
+                    flex-shrink: 0;
+                }
+                
+                .shipping-options-product .shipping-option-radio input[type="radio"] {
+                    width: 20px;
+                    height: 20px;
+                    accent-color: #C7A333;
+                    cursor: pointer;
+                }
+                
+                .shipping-options-product .shipping-option-info {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                }
+                
+                .shipping-options-product .shipping-option-name {
+                    font-size: 0.95rem;
+                    color: #1a1a1a;
+                }
+                
+                .shipping-options-product .shipping-option-days {
+                    font-size: 0.8rem;
+                    color: #666;
+                }
+                
+                .shipping-options-product .shipping-option-price {
+                    font-weight: 700;
+                    font-size: 1rem;
+                    color: #C7A333;
+                }
+                </style>
 
 <style> @keyframes pulse {
     0% {
@@ -2102,12 +2198,14 @@ function calculateShipping() {
     const cepInput = document.getElementById('shipping-cep');
     const resultsDiv = document.getElementById('shipping-results');
     const btn = document.getElementById('calc-shipping-btn');
+    const optionsContainer = document.getElementById('shipping-options-container');
     
     let cep = cepInput.value.replace(/\D/g, '');
     
     if (cep.length !== 8) {
         resultsDiv.innerHTML = '<div class="shipping-error">Por favor, digite um CEP valido com 8 digitos.</div>';
         resultsDiv.classList.add('show');
+        if (optionsContainer) optionsContainer.style.display = 'none';
         return;
     }
     
@@ -2130,21 +2228,47 @@ function calculateShipping() {
         btn.innerHTML = 'Calcular';
         
         if (data.success && data.options && data.options.length > 0) {
-            let html = '';
-            data.options.forEach(option => {
-                html += `
-                    <div class="shipping-option">
-                        <div class="shipping-option-info">
-                            <span class="shipping-option-name">${option.name}</span>
-                            <span class="shipping-option-days">Entrega em ate ${option.days} dias uteis</span>
-                        </div>
-                        <span class="shipping-option-price">R$ ${option.price.toFixed(2).replace('.', ',')}</span>
-                    </div>
-                `;
-            });
-            resultsDiv.innerHTML = html;
+            // Esconder o resultado de texto e mostrar as opções de seleção
+            resultsDiv.innerHTML = '<div class="shipping-success"><i class="fas fa-check-circle"></i> Frete calculado! Escolha uma opcao abaixo:</div>';
+            
+            // Mostrar opções de frete
+            if (optionsContainer) {
+                optionsContainer.style.display = 'block';
+                
+                // Atualizar preços das opções com os valores reais
+                const pacCard = optionsContainer.querySelector('[data-code="04510"]');
+                const sedexCard = optionsContainer.querySelector('[data-code="04014"]');
+                
+                data.options.forEach(option => {
+                    if (option.code === '04510' && pacCard) {
+                        pacCard.dataset.price = option.price;
+                        pacCard.dataset.days = option.days;
+                        pacCard.querySelector('.shipping-option-price').textContent = 'R$ ' + parseFloat(option.price).toFixed(2).replace('.', ',');
+                        pacCard.querySelector('.shipping-option-days').textContent = 'Chega em ate ' + option.days + ' dias uteis';
+                    } else if (option.code === '04014' && sedexCard) {
+                        sedexCard.dataset.price = option.price;
+                        sedexCard.dataset.days = option.days;
+                        sedexCard.querySelector('.shipping-option-price').textContent = 'R$ ' + parseFloat(option.price).toFixed(2).replace('.', ',');
+                        sedexCard.querySelector('.shipping-option-days').textContent = 'Chega em ate ' + option.days + ' dias uteis';
+                    }
+                });
+                
+                // Adicionar event listeners para seleção
+                optionsContainer.querySelectorAll('.shipping-option-card').forEach(card => {
+                    card.onclick = function() {
+                        // Remover seleção de todos
+                        optionsContainer.querySelectorAll('.shipping-option-card').forEach(c => c.classList.remove('selected'));
+                        optionsContainer.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+                        
+                        // Selecionar este
+                        this.classList.add('selected');
+                        this.querySelector('input[type="radio"]').checked = true;
+                    };
+                });
+            }
         } else {
             resultsDiv.innerHTML = '<div class="shipping-error">' + (data.error || 'Nao foi possivel calcular o frete para este CEP.') + '</div>';
+            if (optionsContainer) optionsContainer.style.display = 'none';
         }
     })
     .catch(error => {
@@ -2152,8 +2276,23 @@ function calculateShipping() {
         btn.innerHTML = 'Calcular';
         console.error('Error:', error);
         resultsDiv.innerHTML = '<div class="shipping-error">Erro ao calcular frete. Tente novamente.</div>';
+        if (optionsContainer) optionsContainer.style.display = 'none';
     });
 }
+
+// Estilo para mensagem de sucesso
+document.head.insertAdjacentHTML('beforeend', `
+<style>
+.shipping-success {
+    color: #22c55e;
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+}
+.shipping-success i {
+    margin-right: 0.5rem;
+}
+</style>
+`);
 
 // Mascara CEP
 document.getElementById('shipping-cep')?.addEventListener('input', function(e) {
