@@ -110,22 +110,24 @@ include __DIR__ . '/includes/public-header.php';
                     </div>
                     
                     <!-- Endereço de Entrega -->
-                    <div class="form-section">
-                        <h2 class="section-title">Destino: <?php echo htmlspecialchars($checkout_data['street']); ?></h2>
-                        <p class="address-text">
-                            <?php 
-                            $address_parts = array_filter([
-                                $checkout_data['street'] ?? '',
-                                isset($checkout_data['number']) && $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
-                                $checkout_data['complement'] ?? '',
-                                'CEP ' . ($checkout_data['cep'] ?? ''),
-                                $checkout_data['neighborhood'] ?? '',
-                                ($checkout_data['city'] ?? '') . ' - ' . ($checkout_data['state'] ?? '')
-                            ]);
-                            echo htmlspecialchars(implode(', ', $address_parts));
-                            ?>
-                        </p>
-                        <a href="#" class="link-change" onclick="openAddressModal(); return false;">Alterar</a>
+                    <div class="form-section address-section">
+                        <h2 class="section-title"><i class="fas fa-map-marker-alt" style="color: #C7A333; margin-right: 8px;"></i>Endereco de Entrega</h2>
+                        <div class="address-display">
+                            <p class="address-text" style="color: #1a1a1a; font-size: 1.05rem; font-weight: 500; line-height: 1.6; margin: 0;">
+                                <?php 
+                                $address_parts = array_filter([
+                                    $checkout_data['street'] ?? '',
+                                    isset($checkout_data['number']) && $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
+                                    $checkout_data['complement'] ?? '',
+                                    'CEP ' . ($checkout_data['cep'] ?? ''),
+                                    $checkout_data['neighborhood'] ?? '',
+                                    ($checkout_data['city'] ?? '') . ' - ' . ($checkout_data['state'] ?? '')
+                                ]);
+                                echo htmlspecialchars(implode(', ', $address_parts));
+                                ?>
+                            </p>
+                        </div>
+                        <a href="#" class="link-change" onclick="openAddressModal(); return false;" style="color: #C7A333; font-weight: 600; font-size: 0.95rem; margin-top: 0.75rem; display: inline-block;"><i class="fas fa-edit"></i> Alterar endereco</a>
                     </div>
                     
                     <!-- Método de Entrega -->
@@ -138,32 +140,40 @@ include __DIR__ . '/includes/public-header.php';
                             $cep_origem = getSetting($pdo, 'correios_cep_origem', '01310100');
                             $cep_origem = preg_replace('/[^0-9]/', '', $cep_origem);
                             
+                            // Valores fixos de frete (como solicitado pelo usuario)
+                            $pac_price = 37.50;
+                            $sedex_price = 56.25;
+                            
+                            // Usar o valor da sessao se ja foi selecionado
+                            if ($shipping_cost > 0) {
+                                // Manter o valor da sessao
+                            } else {
+                                // Definir PAC como padrao
+                                $shipping_cost = $pac_price;
+                                $_SESSION['checkout_data']['shipping_price'] = $pac_price;
+                                $_SESSION['checkout_data']['shipping_method'] = 'PAC (Correios)';
+                            }
+                            
                             // Opcoes de frete padrão
                             $shipping_options = [
                                 [
                                     'code' => '04510',
                                     'name' => 'PAC (Correios)',
-                                    'price' => $shipping_cost,
+                                    'price' => $pac_price,
                                     'days' => 10,
-                                    'selected' => ($checkout_data['shipping_method'] ?? '') === 'PAC (Correios)'
+                                    'selected' => ($checkout_data['shipping_method'] ?? 'PAC (Correios)') === 'PAC (Correios)'
                                 ],
                                 [
                                     'code' => '04014',
                                     'name' => 'SEDEX (Correios)',
-                                    'price' => $shipping_cost * 1.5,
+                                    'price' => $sedex_price,
                                     'days' => 5,
                                     'selected' => ($checkout_data['shipping_method'] ?? '') === 'SEDEX (Correios)'
                                 ]
                             ];
                             
-                            // Se nenhum selecionado, selecionar o primeiro
-                            $has_selected = false;
-                            foreach ($shipping_options as $opt) {
-                                if ($opt['selected']) $has_selected = true;
-                            }
-                            if (!$has_selected && !empty($shipping_options)) {
-                                $shipping_options[0]['selected'] = true;
-                            }
+                            // Recalcular total com o frete
+                            $total = $subtotal + $shipping_cost;
                             ?>
                             
                             <?php foreach ($shipping_options as $index => $option): ?>
@@ -200,7 +210,7 @@ include __DIR__ . '/includes/public-header.php';
                     
                     <!-- Forma de Pagamento -->
                     <div class="form-section">
-                        <h2 class="section-title">FORMA DE PAGAMENTO</h2>
+                        <h2 class="section-title">Forma de pagamento</h2>
                         
                         <div class="payment-methods">
                             <div class="payment-method-tabs">
@@ -208,23 +218,23 @@ include __DIR__ . '/includes/public-header.php';
                                     <i class="fas fa-qrcode"></i> Pix
                                 </button>
                                 <button type="button" class="payment-tab" data-method="credit_card">
-                                    <i class="fas fa-credit-card"></i> Cartão de Crédito
+                                    <i class="fas fa-credit-card"></i> Cartao de credito
                                 </button>
                             </div>
                             
                             <!-- Pix Payment -->
                             <div id="pixPayment" class="payment-content active">
-                                <p class="payment-info">
-                                    Ao gerar o Código Pix do pedido você pode pagar escaneando o QR Code ou Copiar e Colar.
+                                <p class="pix-description" style="color: #1a1a1a; font-size: 1rem; font-weight: 500; margin-bottom: 1rem; line-height: 1.5;">
+                                    Ao gerar o Codigo Pix do pedido voce pode pagar escaneando o QR Code ou Copiar e Colar.
                                 </p>
                                 <div class="pix-recipient">
                                     <div class="pix-info-row">
-                                        <span>Nome:</span>
-                                        <span>Gustavo Felix</span>
+                                        <span style="color: #666; font-weight: 500;">Nome:</span>
+                                        <span style="color: #1a1a1a; font-weight: 700; font-size: 1.05rem;">Gustavo Felix</span>
                                     </div>
                                     <div class="pix-info-row">
-                                        <span>CPF/CNPJ:</span>
-                                        <span>363.923.068-03</span>
+                                        <span style="color: #666; font-weight: 500;">CPF/CNPJ:</span>
+                                        <span style="color: #1a1a1a; font-weight: 700; font-size: 1.05rem;">363.923.068-03</span>
                                     </div>
                                 </div>
                             </div>
@@ -232,11 +242,14 @@ include __DIR__ . '/includes/public-header.php';
                             <!-- Credit Card Payment -->
                             <div id="creditCardPayment" class="payment-content">
                                 <?php if (!empty($mp_public_key)): ?>
-                                    <div id="paymentBrick_container" style="max-width: 100%; margin: 20px 0; min-height: 400px;"></div>
-                                    <div id="payment-status" style="margin-top: 20px; text-align: center; font-weight: bold; display: none; padding: 1rem; border-radius: 8px; background: var(--admin-bg-secondary);"></div>
+                                    <p class="card-description" style="color: #1a1a1a; font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">
+                                        Preencha os dados do seu cartao de credito abaixo:
+                                    </p>
+                                    <div id="paymentBrick_container" style="max-width: 100%; margin: 10px 0; min-height: 350px;"></div>
+                                    <div id="payment-status" style="margin-top: 20px; text-align: center; font-weight: bold; display: none; padding: 1rem; border-radius: 8px; background: #f5f5f5;"></div>
                                 <?php else: ?>
                                     <div class="alert alert-error" style="padding: 1rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;">
-                                        <i class="fas fa-exclamation-circle"></i> Mercado Pago não configurado. Configure as chaves no painel administrativo.
+                                        <i class="fas fa-exclamation-circle"></i> Mercado Pago nao configurado. Configure as chaves no painel administrativo.
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -369,20 +382,20 @@ include __DIR__ . '/includes/public-header.php';
                 </div>
                 <div class="summary-totals">
                     <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span><?php echo formatPrice($subtotal); ?></span>
+                        <span style="color: #1a1a1a; font-weight: 500;">Subtotal</span>
+                        <span style="color: #1a1a1a; font-weight: 600;"><?php echo formatPrice($subtotal); ?></span>
                     </div>
                     <div class="summary-row">
-                        <span>Custo de frete</span>
-                        <span><?php echo formatPrice($shipping_cost); ?></span>
+                        <span style="color: #1a1a1a; font-weight: 500;">Frete</span>
+                        <span style="color: #1a1a1a; font-weight: 600;" id="shippingCostDisplay"><?php echo formatPrice($shipping_cost); ?></span>
                     </div>
-                    <div class="summary-row" style="color: #1a1a1a !important; font-weight: 700 !important;">
-                        <span>- Descontos</span>
-                        <span>- <?php echo formatPrice(0); ?></span>
+                    <div class="summary-row discount-row" id="discountRow" style="display: none;">
+                        <span style="color: #22c55e; font-weight: 500;">Desconto</span>
+                        <span style="color: #22c55e; font-weight: 600;" id="discountDisplay">- R$ 0,00</span>
                     </div>
-                    <div class="summary-row summary-total">
-                        <span>Total</span>
-                        <span><?php echo formatPrice($total); ?></span>
+                    <div class="summary-row summary-total" style="border-top: 2px solid #C7A333; padding-top: 1rem; margin-top: 0.5rem;">
+                        <span style="color: #1a1a1a; font-size: 1.1rem; font-weight: 700;">Total</span>
+                        <span style="color: #C7A333; font-size: 1.25rem; font-weight: 700;" id="totalDisplay"><?php echo formatPrice($total); ?></span>
                     </div>
                 </div>
                 <a href="#" class="link-add-coupon" style="display: block; visibility: visible; opacity: 1; color: #C7A333; text-decoration: none; text-align: center; margin-top: 1rem; padding: 0.5rem; border-radius: 6px; transition: all 0.3s; font-weight: 600;">
@@ -571,57 +584,131 @@ include __DIR__ . '/includes/public-header.php';
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.25rem;
-    background: #1a1a1a;
-    border: 2px solid #333;
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+    border: 2px solid #e5e5e5;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s;
 }
 
 .shipping-option-card:hover {
-    border-color: #c7a333;
+    border-color: #C7A333;
+    background: #fef9e0;
 }
 
 .shipping-option-card.selected {
-    border-color: #c7a333;
-    background: #252525;
+    border-color: #C7A333;
+    background: #fef9e0;
+    box-shadow: 0 0 0 1px #C7A333;
 }
 
 .shipping-option-info {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.35rem;
 }
 
 .shipping-option-name {
-    color: #fff;
-    font-size: 1rem;
+    color: #1a1a1a;
+    font-size: 1.05rem;
+    font-weight: 700;
 }
 
 .shipping-option-days {
-    color: #999;
-    font-size: 0.875rem;
+    color: #666;
+    font-size: 0.9rem;
 }
 
 .shipping-option-price {
-    color: #c7a333;
+    color: #1a1a1a;
     font-weight: 700;
-    font-size: 1.125rem;
+    font-size: 1.15rem;
 }
 
-/* Payment method border color fix */
+.shipping-option-card.selected .shipping-option-price {
+    color: #C7A333;
+}
+
+/* Payment method tabs */
+.payment-method-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 .payment-tab {
-    border: 2px solid #e5e5e5 !important;
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #666;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
 }
 
-.payment-tab.active {
-    border-color: #c7a333 !important;
-    color: #c7a333 !important;
+.payment-tab i {
+    font-size: 1.25rem;
 }
 
 .payment-tab:hover {
-    border-color: #c7a333 !important;
+    border-color: #C7A333;
+    color: #1a1a1a;
+}
+
+.payment-tab.active {
+    border-color: #C7A333;
+    background: #fef9e0;
+    color: #1a1a1a;
+}
+
+.payment-tab.active i {
+    color: #C7A333;
+}
+
+.payment-content {
+    display: none;
+    padding: 1rem 0;
+}
+
+.payment-content.active {
+    display: block;
+}
+
+/* Pix recipient info */
+.pix-recipient {
+    background: #f8f8f8;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.pix-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.pix-info-row:last-child {
+    border-bottom: none;
+}
+
+/* Address section styling */
+.address-section .address-display {
+    background: #f8f8f8;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
 }
 </style>
 
@@ -738,11 +825,18 @@ include __DIR__ . '/includes/public-header.php';
     }
     
     function updateTotalWithDiscount(discount) {
-        const totalElement = document.querySelector('.summary-total span:last-child');
-        const discountRow = document.querySelector('.summary-row:nth-child(3) span:last-child');
+        const totalElement = document.getElementById('totalDisplay');
+        const discountRow = document.getElementById('discountRow');
+        const discountDisplay = document.getElementById('discountDisplay');
         
-        if (discountRow) {
-            discountRow.textContent = '- R$ ' + discount.toFixed(2).replace('.', ',');
+        if (discount > 0) {
+            // Mostrar linha de desconto
+            if (discountRow) {
+                discountRow.style.display = 'flex';
+            }
+            if (discountDisplay) {
+                discountDisplay.textContent = '- R$ ' + discount.toFixed(2).replace('.', ',');
+            }
         }
         
         if (totalElement) {

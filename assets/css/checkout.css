@@ -642,11 +642,12 @@
 }
 
 .section-title {
-    font-size: 1.125rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: #000;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
 }
 
 .form-group {
