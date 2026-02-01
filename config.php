@@ -47,7 +47,10 @@ if (!function_exists('env')) {
 // ============================================
 // ERROR HANDLING - Set first for debugging
 // ============================================
-define('SHOW_ERRORS', true); // Set to false in production
+// IMPORTANTE: Em producao, SHOW_ERRORS deve ser false
+// Configure via .env: SHOW_ERRORS=false
+$showErrors = filter_var(env('SHOW_ERRORS', 'false'), FILTER_VALIDATE_BOOLEAN);
+define('SHOW_ERRORS', $showErrors);
 
 if (SHOW_ERRORS) {
     ini_set('display_errors', 1);
