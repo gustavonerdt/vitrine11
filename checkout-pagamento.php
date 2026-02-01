@@ -97,22 +97,22 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section">
                         <div class="form-group">
                             <label>E-mail</label>
-                            <input type="email" value="<?php echo htmlspecialchars($checkout_data['email']); ?>" disabled>
+                            <input type="email" value="<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>" disabled>
                         </div>
                     </div>
                     
                     <!-- Endereço de Entrega -->
                     <div class="form-section">
-                        <h2 class="section-title">Destino: <?php echo htmlspecialchars($checkout_data['street']); ?></h2>
+                        <h2 class="section-title">Destino: <?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?></h2>
                         <p class="address-text">
                             <?php 
                             $address_parts = array_filter([
-                                $checkout_data['street'],
-                                $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
-                                $checkout_data['complement'],
-                                'CEP ' . $checkout_data['cep'],
-                                $checkout_data['neighborhood'],
-                                $checkout_data['city'] . ' - ' . $checkout_data['state']
+                                $checkout_data['street'] ?? '',
+                                isset($checkout_data['number']) && $checkout_data['number'] ? 'Nº ' . $checkout_data['number'] : '',
+                                isset($checkout_data['complement']) ? $checkout_data['complement'] : '',
+                                'CEP ' . ($checkout_data['cep'] ?? ''),
+                                $checkout_data['neighborhood'] ?? '',
+                                ($checkout_data['city'] ?? '') . ' - ' . ($checkout_data['state'] ?? '')
                             ]);
                             echo htmlspecialchars(implode(', ', $address_parts));
                             ?>
@@ -124,7 +124,7 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section">
                         <h2 class="section-title">FORMA DE ENTREGA</h2>
                         <div class="shipping-selected">
-                            <strong><?php echo htmlspecialchars($checkout_data['shipping_method']); ?></strong>
+                            <strong><?php echo htmlspecialchars($checkout_data['shipping_method'] ?? 'Entrega padrão'); ?></strong>
                             <span><?php echo formatPrice($shipping_cost); ?></span>
                         </div>
                         <p class="shipping-estimate">
@@ -198,10 +198,6 @@ include __DIR__ . '/includes/public-header.php';
                             <input type="checkbox" id="save_data" name="save_data" checked>
                             <label for="save_data">Salvar dados para comprar mais rápido</label>
                         </div>
-                        <p class="save-data-info">
-                            Nas próximas compras enviaremos um código para: <?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>
-                            <a href="#" class="link-change">Alterar</a>
-                        </p>
                         <p class="terms-text">
                             Ao salvar, você aceita os <a href="#">Termos de uso</a> e <a href="#">Política de Privacidade</a>
                         </p>

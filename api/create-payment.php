@@ -3,25 +3,6 @@ session_start();
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// #region agent log
-$logFile = __DIR__ . '/../.cursor/debug.log';
-$logDir = dirname($logFile);
-if (!is_dir($logDir)) {
-    @mkdir($logDir, 0755, true);
-}
-$logData = json_encode([
-    'id' => 'log_' . time() . '_payment',
-    'timestamp' => time() * 1000,
-    'location' => 'create-payment.php:8',
-    'message' => 'Create payment API called',
-    'data' => ['method' => $_SERVER['REQUEST_METHOD'], 'has_checkout_data' => isset($_SESSION['checkout_data']), 'has_cart' => isset($_SESSION['cart']), 'cart_count' => isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0],
-    'sessionId' => 'debug-session',
-    'runId' => 'run1',
-    'hypothesisId' => 'C'
-]) . "\n";
-@file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
-// #endregion
-
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -186,17 +167,17 @@ try {
     $stmt->execute([
         $session_id,
         $order_id,
-        $checkout_data['cep'],
-        $checkout_data['street'],
+        $checkout_data['cep'] ?? '',
+        $checkout_data['street'] ?? '',
         $checkout_data['number'] ?? '',
-        $checkout_data['complement'] ?? '',
-        $checkout_data['neighborhood'],
-        $checkout_data['city'],
-        $checkout_data['state'],
-        $checkout_data['recipient_name'],
-        $checkout_data['phone'] ?? '',
-        $checkout_data['email'],
-        $checkout_data['cpf_cnpj'] ?? ''
+        isset($checkout_data['complement']) ? $checkout_data['complement'] : '',
+        $checkout_data['neighborhood'] ?? '',
+        $checkout_data['city'] ?? '',
+        $checkout_data['state'] ?? '',
+        $checkout_data['recipient_name'] ?? '',
+        isset($checkout_data['phone']) ? $checkout_data['phone'] : '',
+        $checkout_data['email'] ?? '',
+        isset($checkout_data['cpf_cnpj']) ? $checkout_data['cpf_cnpj'] : ''
     ]);
     
     // Processar pagamento via Mercado Pago
@@ -206,13 +187,6 @@ try {
         : getSetting($pdo, 'mercado_pago_access_token_test', '');
     
     $payment_result = null;
-    
-    // Log de erro
-    $logFile = __DIR__ . '/../.logs/error.log';
-    $logDir = dirname($logFile);
-    if (!is_dir($logDir)) {
-        @mkdir($logDir, 0755, true);
-    }
     
     if (empty($mp_access_token)) {
         $errorMsg = 'Mercado Pago Access Token não configurado';
@@ -304,38 +278,10 @@ try {
         ]);
     }
     
-} catch (\MercadoPago\Exception\ApiException $e) {
-    $pdo->rollBack();
-    $errorBody = $e->getApiResponse()->getContent();
-    $message = $errorBody['message'] ?? 'Erro na API do Mercado Pago';
-    
-    // Log erro
-    $logFile = __DIR__ . '/../.logs/error.log';
-    $logDir = dirname($logFile);
-    if (!is_dir($logDir)) {
-        @mkdir($logDir, 0755, true);
-    }
-    @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago API Exception: {$message}\n", FILE_APPEND | LOCK_EX);
-    
-    error_log("Mercado Pago API Exception: " . $message);
-    
-    http_response_code(400);
-    echo json_encode([
-        'status' => 'error',
-        'message' => $message,
-        'cause' => $errorBody['cause'] ?? null
-    ]);
 } catch (Exception $e) {
     $pdo->rollBack();
     
-    // Log erro
-    $logFile = __DIR__ . '/../.logs/error.log';
-    $logDir = dirname($logFile);
-    if (!is_dir($logDir)) {
-        @mkdir($logDir, 0755, true);
-    }
     @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Create payment error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
-    
     error_log("Create payment error: " . $e->getMessage());
     
     http_response_code(500);
@@ -354,9 +300,9 @@ function createMercadoPagoPixPayment($access_token, $order_id, $amount, $checkou
         'description' => 'Pedido #' . $order_id,
         'payment_method_id' => 'pix',
         'payer' => [
-            'email' => $checkout_data['email'],
-            'first_name' => explode(' ', $checkout_data['recipient_name'])[0] ?? '',
-            'last_name' => implode(' ', array_slice(explode(' ', $checkout_data['recipient_name']), 1)) ?? '',
+            'email' => $checkout_data['email'] ?? '',
+            'first_name' => explode(' ', $checkout_data['recipient_name'] ?? '')[0] ?? '',
+            'last_name' => implode(' ', array_slice(explode(' ', $checkout_data['recipient_name'] ?? ''), 1)) ?? '',
             'identification' => [
                 'type' => 'CPF',
                 'number' => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
@@ -365,155 +311,6 @@ function createMercadoPagoPixPayment($access_token, $order_id, $amount, $checkou
         'notification_url' => $webhook_url,
         'external_reference' => (string)$order_id
     ];
-    
-            $ch = curl_init('https://api.mercadopago.com/v1/payments');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $access_token
-            ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payment_data));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-            
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curlError = curl_error($ch);
-            curl_close($ch);
-            
-            if ($curlError) {
-                $logFile = __DIR__ . '/../.logs/error.log';
-                $logDir = dirname($logFile);
-                if (!is_dir($logDir)) {
-                    @mkdir($logDir, 0755, true);
-                }
-                @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago cURL error: {$curlError}\n", FILE_APPEND | LOCK_EX);
-                error_log("Mercado Pago cURL error: " . $curlError);
-                return null;
-            }
-            
-            if ($httpCode === 201) {
-                return json_decode($response, true);
-            } else {
-                $logFile = __DIR__ . '/../.logs/error.log';
-                $logDir = dirname($logFile);
-                if (!is_dir($logDir)) {
-                    @mkdir($logDir, 0755, true);
-                }
-                @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago API error (HTTP {$httpCode}): " . substr($response, 0, 500) . "\n", FILE_APPEND | LOCK_EX);
-                error_log("Mercado Pago API error (HTTP $httpCode): " . $response);
-                return null;
-            }
-        }
-    } catch (Exception $e) {
-        $logFile = __DIR__ . '/../.logs/error.log';
-        $logDir = dirname($logFile);
-        if (!is_dir($logDir)) {
-            @mkdir($logDir, 0755, true);
-        }
-        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago Error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
-        error_log("Mercado Pago Error: " . $e->getMessage());
-        return null;
-    }
-}
-
-function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checkout_data, $token, $installments, $payment_method_id = '', $issuer_id = null) {
-    // Log de erro
-    $logFile = __DIR__ . '/../.logs/error.log';
-    $logDir = dirname($logFile);
-    if (!is_dir($logDir)) {
-        @mkdir($logDir, 0755, true);
-    }
-    
-    try {
-        // Usar SDK do Mercado Pago se disponível
-        if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-            require_once __DIR__ . '/../vendor/autoload.php';
-            
-            MercadoPago\SDK::setAccessToken($access_token);
-            
-            $paymentClient = new MercadoPago\Client\Payment\PaymentClient();
-            
-            $payment = $paymentClient->create([
-                "transaction_amount" => floatval($amount),
-                "token" => $token,
-                "description" => 'Pedido #' . $order_id,
-                "installments" => intval($installments),
-                "payment_method_id" => $payment_method_id,
-                "issuer_id" => $issuer_id ? (string)$issuer_id : null,
-                "payer" => [
-                    "email" => $checkout_data['email'],
-                    "identification" => [
-                        "type" => "CPF",
-                        "number" => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
-                    ]
-                ],
-                "notification_url" => APP_URL . '/api/mercado-pago-webhook.php',
-                "external_reference" => (string)$order_id
-            ]);
-            
-            return [
-                'id' => $payment->id,
-                'status' => $payment->status,
-                'status_detail' => $payment->status_detail ?? ''
-            ];
-        } catch (\MercadoPago\Exception\ApiException $e) {
-            $errorBody = $e->getApiResponse()->getContent();
-            $message = $errorBody['message'] ?? 'Erro na API do Mercado Pago';
-            
-            // Log erro
-            $logFile = __DIR__ . '/../.logs/error.log';
-            $logDir = dirname($logFile);
-            if (!is_dir($logDir)) {
-                @mkdir($logDir, 0755, true);
-            }
-            @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago API Exception: {$message}\n", FILE_APPEND | LOCK_EX);
-            
-            error_log("Mercado Pago API Exception: " . $message);
-            throw new Exception($message);
-        } catch (Exception $e) {
-            $logFile = __DIR__ . '/../.logs/error.log';
-            $logDir = dirname($logFile);
-            if (!is_dir($logDir)) {
-                @mkdir($logDir, 0755, true);
-            }
-            @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago Error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
-            
-            error_log("Mercado Pago Error: " . $e->getMessage());
-            throw $e;
-        }
-    } else {
-        // Fallback para cURL se SDK não estiver disponível
-            // Fallback para cURL se SDK não estiver disponível
-            $webhook_url = APP_URL . '/api/mercado-pago-webhook.php';
-            
-            $payment_data = [
-                'transaction_amount' => floatval($amount),
-                'token' => $token,
-                'description' => 'Pedido #' . $order_id,
-                'installments' => $installments,
-                'payment_method_id' => $payment_method_id ?: 'visa',
-                'issuer_id' => $issuer_id,
-                'payer' => [
-                    'email' => $checkout_data['email'],
-                    'identification' => [
-                        'type' => 'CPF',
-                        'number' => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
-                    ]
-                ],
-                'notification_url' => $webhook_url,
-                'external_reference' => (string)$order_id
-            ];
-    
-    $logData = json_encode([
-        'timestamp' => date('Y-m-d H:i:s'),
-        'action' => 'create_card_payment',
-        'order_id' => $order_id,
-        'amount' => $amount,
-        'payment_method_id' => $payment_method_id
-    ]) . "\n";
-    @file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
     
     $ch = curl_init('https://api.mercadopago.com/v1/payments');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -532,47 +329,89 @@ function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checko
     curl_close($ch);
     
     if ($curlError) {
-        $errorLog = json_encode([
-            'timestamp' => date('Y-m-d H:i:s'),
-            'error' => 'Curl error: ' . $curlError,
-            'order_id' => $order_id
-        ]) . "\n";
-        @file_put_contents($logFile, $errorLog, FILE_APPEND | LOCK_EX);
+        $logFile = __DIR__ . '/../.logs/error.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago cURL error: {$curlError}\n", FILE_APPEND | LOCK_EX);
+        error_log("Mercado Pago cURL error: " . $curlError);
+        return null;
+    }
+    
+    if ($httpCode === 201) {
+        return json_decode($response, true);
+    } else {
+        $logFile = __DIR__ . '/../.logs/error.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago API error (HTTP {$httpCode}): " . substr($response, 0, 500) . "\n", FILE_APPEND | LOCK_EX);
+        error_log("Mercado Pago API error (HTTP $httpCode): " . $response);
+        return null;
+    }
+}
+
+function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checkout_data, $token, $installments, $payment_method_id = '', $issuer_id = null) {
+    $logFile = __DIR__ . '/../.logs/error.log';
+    $logDir = dirname($logFile);
+    if (!is_dir($logDir)) {
+        @mkdir($logDir, 0755, true);
+    }
+    
+    $webhook_url = APP_URL . '/api/mercado-pago-webhook.php';
+    
+    $payment_data = [
+        'transaction_amount' => floatval($amount),
+        'token' => $token,
+        'description' => 'Pedido #' . $order_id,
+        'installments' => $installments,
+        'payment_method_id' => $payment_method_id ?: 'visa',
+        'issuer_id' => $issuer_id,
+        'payer' => [
+            'email' => $checkout_data['email'] ?? '',
+            'identification' => [
+                'type' => 'CPF',
+                'number' => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
+            ]
+        ],
+        'notification_url' => $webhook_url,
+        'external_reference' => (string)$order_id
+    ];
+    
+    $ch = curl_init('https://api.mercadopago.com/v1/payments');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $access_token
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payment_data));
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+    
+    if ($curlError) {
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago cURL error: {$curlError}\n", FILE_APPEND | LOCK_EX);
         error_log("Mercado Pago cURL error: " . $curlError);
         return null;
     }
     
     if ($httpCode === 201) {
         $result = json_decode($response, true);
-        $successLog = json_encode([
-            'timestamp' => date('Y-m-d H:i:s'),
-            'action' => 'payment_created',
-            'order_id' => $order_id,
-            'payment_id' => $result['id'] ?? null,
-            'status' => $result['status'] ?? null
-        ]) . "\n";
-        @file_put_contents($logFile, $successLog, FILE_APPEND | LOCK_EX);
-        return $result;
+        return [
+            'id' => $result['id'] ?? null,
+            'status' => $result['status'] ?? null,
+            'status_detail' => $result['status_detail'] ?? ''
+        ];
     } else {
-        $errorData = json_decode($response, true);
-        $errorLog = json_encode([
-            'timestamp' => date('Y-m-d H:i:s'),
-            'error' => 'API error',
-            'http_code' => $httpCode,
-            'response' => $errorData,
-            'order_id' => $order_id
-        ]) . "\n";
-        @file_put_contents($logFile, $errorLog, FILE_APPEND | LOCK_EX);
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - Mercado Pago API error (HTTP $httpCode): " . substr($response, 0, 500) . "\n", FILE_APPEND | LOCK_EX);
         error_log("Mercado Pago API error (HTTP $httpCode): " . $response);
-        
-        // Log também no sistema de logs padrão
-        $systemLogFile = __DIR__ . '/../.logs/error.log';
-        $systemLogDir = dirname($systemLogFile);
-        if (!is_dir($systemLogDir)) {
-            @mkdir($systemLogDir, 0755, true);
-        }
-        @file_put_contents($systemLogFile, date('Y-m-d H:i:s') . " - Mercado Pago API error (HTTP $httpCode): " . substr($response, 0, 500) . "\n", FILE_APPEND | LOCK_EX);
-        
         return null;
     }
 }
