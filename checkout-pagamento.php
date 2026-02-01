@@ -321,17 +321,18 @@ include __DIR__ . '/includes/public-header.php';
                             
                             <!-- Credit Card Payment -->
                             <div id="creditCardPayment" class="payment-content">
-                                <?php if (!empty($mp_public_key)): ?>
-                                    <p class="card-description" style="color: #1a1a1a; font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">
-                                        Preencha os dados do seu cartao de credito abaixo:
-                                    </p>
-                                    <div id="paymentBrick_container" style="max-width: 100%; margin: 10px 0; min-height: 350px;"></div>
-                                    <div id="payment-status" style="margin-top: 20px; text-align: center; font-weight: bold; display: none; padding: 1rem; border-radius: 8px; background: #f5f5f5;"></div>
-                                <?php else: ?>
-                                    <div class="alert alert-error" style="padding: 1rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;">
-                                        <i class="fas fa-exclamation-circle"></i> Mercado Pago nao configurado. Configure as chaves no painel administrativo.
+                                <div class="card-security-message">
+                                    <div class="security-icon">
+                                        <i class="fas fa-shield-alt"></i>
                                     </div>
-                                <?php endif; ?>
+                                    <h4>Pagamento 100% Seguro</h4>
+                                    <p>Seus dados de cartao serao processados de forma segura pelo <strong>Mercado Pago</strong>, uma das maiores plataformas de pagamento da America Latina.</p>
+                                    <div class="security-badges">
+                                        <span class="badge"><i class="fas fa-lock"></i> SSL Criptografado</span>
+                                        <span class="badge"><i class="fas fa-check-circle"></i> Mercado Pago</span>
+                                    </div>
+                                    <p class="card-info-note">Ao clicar em "Finalizar Pedido", voce sera redirecionado para o checkout seguro do Mercado Pago para inserir os dados do seu cartao.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -478,7 +479,7 @@ include __DIR__ . '/includes/public-header.php';
                         <span style="color: #C7A333; font-size: 1.25rem; font-weight: 700;" id="totalDisplay"><?php echo formatPrice($total); ?></span>
                     </div>
                 </div>
-                <a href="#" class="link-add-coupon" style="display: block; visibility: visible; opacity: 1; color: #C7A333; text-decoration: none; text-align: center; margin-top: 1rem; padding: 0.5rem; border-radius: 6px; transition: all 0.3s; font-weight: 600;">
+                <a href="#" class="link-add-coupon" onclick="openCouponModal(); return false;" style="display: block; visibility: visible; opacity: 1; color: #C7A333; text-decoration: none; text-align: center; margin-top: 1rem; padding: 0.5rem; border-radius: 6px; transition: all 0.3s; font-weight: 600;">
                     <i class="fas fa-tag"></i> Adicionar cupom de desconto
                 </a>
             </div>
@@ -558,19 +559,28 @@ include __DIR__ . '/includes/public-header.php';
 </div>
 
 <style>
-/* Modal Styles */
+/* Modal Styles with Animations */
 .checkout-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0);
     z-index: 10001;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.checkout-modal.show {
+    opacity: 1;
+    visibility: visible;
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .checkout-modal-content {
@@ -581,6 +591,79 @@ include __DIR__ . '/includes/public-header.php';
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checkout-modal.show .checkout-modal-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* Card Security Message */
+.card-security-message {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.card-security-message .security-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.card-security-message .security-icon i {
+    font-size: 2.5rem;
+    color: #fff;
+}
+
+.card-security-message h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 1rem 0;
+}
+
+.card-security-message p {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+
+.card-security-message .security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.card-security-message .badge {
+    background: #f0f9f0;
+    color: #16a34a;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-security-message .card-info-note {
+    background: #fef9e0;
+    border: 1px solid #C7A333;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #8B6914;
+    font-size: 0.9rem;
+    margin-top: 1rem;
 }
 
 .checkout-modal-header {
@@ -801,15 +884,21 @@ include __DIR__ . '/includes/public-header.php';
     window.appliedCoupon = null;
     window.couponDiscount = 0;
     
-    // Address Modal Functions
+    // Address Modal Functions with Animations
     function openAddressModal() {
-        document.getElementById('addressModal').style.display = 'flex';
+        const modal = document.getElementById('addressModal');
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        // Trigger animation
+        setTimeout(() => modal.classList.add('show'), 10);
     }
     
     function closeAddressModal() {
-        document.getElementById('addressModal').style.display = 'none';
+        const modal = document.getElementById('addressModal');
+        modal.classList.remove('show');
         document.body.style.overflow = '';
+        // Wait for animation to complete
+        setTimeout(() => modal.style.display = 'none', 300);
     }
     
     function saveAddressChanges() {
@@ -842,16 +931,24 @@ include __DIR__ . '/includes/public-header.php';
         });
     }
     
-    // Coupon Modal Functions
+    // Coupon Modal Functions with Animations
     function openCouponModal() {
-        document.getElementById('couponModal').style.display = 'flex';
+        const modal = document.getElementById('couponModal');
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        document.getElementById('coupon_code').focus();
+        // Trigger animation
+        setTimeout(() => {
+            modal.classList.add('show');
+            document.getElementById('coupon_code').focus();
+        }, 10);
     }
     
     function closeCouponModal() {
-        document.getElementById('couponModal').style.display = 'none';
+        const modal = document.getElementById('couponModal');
+        modal.classList.remove('show');
         document.body.style.overflow = '';
+        // Wait for animation to complete
+        setTimeout(() => modal.style.display = 'none', 300);
     }
     
     function applyCoupon() {
