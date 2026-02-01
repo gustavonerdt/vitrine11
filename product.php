@@ -313,6 +313,23 @@ if (!$is_ajax) {
                     </a>
                 </div>
 
+                <!-- Calculadora de Frete -->
+                <div class="shipping-calculator-section">
+                    <h4 class="shipping-calculator-title">
+                        <i class="fas fa-truck"></i>
+                        Calcular Frete
+                    </h4>
+                    <div class="shipping-calculator-form">
+                        <input type="text" id="shipping-cep" placeholder="Digite seu CEP" maxlength="9">
+                        <button type="button" id="calc-shipping-btn" onclick="calculateShipping()">
+                            Calcular
+                        </button>
+                    </div>
+                    <div id="shipping-results" class="shipping-results">
+                        <!-- Resultados aparecem aqui -->
+                    </div>
+                </div>
+
 <style> @keyframes pulse {
     0% {
         transform: scale(1);
@@ -595,6 +612,217 @@ html {
     opacity: 1;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(199, 163, 51, 0.3);
+}
+
+/* Galeria com Miniaturas na Lateral */
+.product-image-gallery-lateral {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.product-thumbnails-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 80px;
+    flex-shrink: 0;
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) transparent;
+}
+
+.product-thumbnails-lateral::-webkit-scrollbar {
+    width: 4px;
+}
+
+.product-thumbnails-lateral::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.product-thumbnails-lateral::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+.product-image-gallery-lateral .product-main-image-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-thumbnails-lateral .thumbnail-item {
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+@media (max-width: 768px) {
+    .product-image-gallery-lateral {
+        flex-direction: column-reverse;
+    }
+    
+    .product-thumbnails-lateral {
+        flex-direction: row;
+        width: 100%;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 0.5rem;
+    }
+    
+    .product-thumbnails-lateral .thumbnail-item {
+        width: 60px;
+        flex-shrink: 0;
+    }
+}
+
+/* Calculadora de Frete */
+.shipping-calculator-section {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(248, 245, 235, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
+    border-radius: 14px;
+    border: 1.5px solid var(--color-border);
+}
+
+.shipping-calculator-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2C2C2C;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.shipping-calculator-title i {
+    color: var(--color-primary);
+}
+
+.shipping-calculator-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+}
+
+.shipping-calculator-form input[type="text"] {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--color-beige-dark);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s;
+    background: #fff;
+}
+
+.shipping-calculator-form input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(199, 163, 51, 0.15);
+}
+
+.shipping-calculator-form button {
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+.shipping-calculator-form button:hover {
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(199, 163, 51, 0.3);
+}
+
+.shipping-calculator-form button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.shipping-results {
+    margin-top: 1rem;
+    display: none;
+}
+
+.shipping-results.show {
+    display: block;
+}
+
+.shipping-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid var(--color-beige-dark);
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s;
+}
+
+.shipping-option:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(199, 163, 51, 0.15);
+}
+
+.shipping-option-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.shipping-option-name {
+    font-weight: 600;
+    color: #2C2C2C;
+    font-size: 0.95rem;
+}
+
+.shipping-option-days {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.shipping-option-price {
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+.shipping-error {
+    padding: 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    color: #dc2626;
+    font-size: 0.9rem;
+}
+
+.shipping-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    color: #666;
+}
+
+.shipping-loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .thumbnail-item img {
@@ -1868,6 +2096,81 @@ function handleBuyNow(e) {
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
+
+// Calculadora de Frete
+function calculateShipping() {
+    const cepInput = document.getElementById('shipping-cep');
+    const resultsDiv = document.getElementById('shipping-results');
+    const btn = document.getElementById('calc-shipping-btn');
+    
+    let cep = cepInput.value.replace(/\D/g, '');
+    
+    if (cep.length !== 8) {
+        resultsDiv.innerHTML = '<div class="shipping-error">Por favor, digite um CEP valido com 8 digitos.</div>';
+        resultsDiv.classList.add('show');
+        return;
+    }
+    
+    // Mostrar loading
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    resultsDiv.innerHTML = '<div class="shipping-loading"><i class="fas fa-spinner"></i> Calculando frete...</div>';
+    resultsDiv.classList.add('show');
+    
+    fetch('<?php echo APP_URL; ?>/api/calculate-shipping.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'cep=' + encodeURIComponent(cep)
+    })
+    .then(response => response.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = 'Calcular';
+        
+        if (data.success && data.options && data.options.length > 0) {
+            let html = '';
+            data.options.forEach(option => {
+                html += `
+                    <div class="shipping-option">
+                        <div class="shipping-option-info">
+                            <span class="shipping-option-name">${option.name}</span>
+                            <span class="shipping-option-days">Entrega em ate ${option.days} dias uteis</span>
+                        </div>
+                        <span class="shipping-option-price">R$ ${option.price.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `;
+            });
+            resultsDiv.innerHTML = html;
+        } else {
+            resultsDiv.innerHTML = '<div class="shipping-error">' + (data.error || 'Nao foi possivel calcular o frete para este CEP.') + '</div>';
+        }
+    })
+    .catch(error => {
+        btn.disabled = false;
+        btn.innerHTML = 'Calcular';
+        console.error('Error:', error);
+        resultsDiv.innerHTML = '<div class="shipping-error">Erro ao calcular frete. Tente novamente.</div>';
+    });
+}
+
+// Mascara CEP
+document.getElementById('shipping-cep')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 5) {
+        value = value.substring(0, 5) + '-' + value.substring(5, 8);
+    }
+    e.target.value = value;
+});
+
+// Calcular ao pressionar Enter
+document.getElementById('shipping-cep')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        calculateShipping();
+    }
+});
 
 // Carousel Navigation
 document.addEventListener('DOMContentLoaded', function() {

@@ -470,6 +470,62 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/admin.css">
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/image-upload.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <style>
+        /* Quill Editor Custom Styles */
+        .quill-editor-container {
+            background: var(--admin-bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .quill-editor-container .ql-toolbar {
+            background: var(--admin-bg-darker);
+            border: 1px solid var(--admin-border);
+            border-radius: 10px 10px 0 0;
+        }
+        .quill-editor-container .ql-container {
+            border: 1px solid var(--admin-border);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            min-height: 150px;
+            font-size: 14px;
+        }
+        .quill-editor-container .ql-editor {
+            min-height: 150px;
+            background: var(--admin-bg-card);
+            color: var(--admin-text);
+        }
+        .quill-editor-container .ql-editor.ql-blank::before {
+            color: var(--admin-text-muted);
+            font-style: normal;
+        }
+        .ql-toolbar .ql-stroke {
+            stroke: var(--admin-text);
+        }
+        .ql-toolbar .ql-fill {
+            fill: var(--admin-text);
+        }
+        .ql-toolbar .ql-picker {
+            color: var(--admin-text);
+        }
+        .ql-toolbar button:hover .ql-stroke,
+        .ql-toolbar button.ql-active .ql-stroke {
+            stroke: var(--admin-accent);
+        }
+        .ql-toolbar button:hover .ql-fill,
+        .ql-toolbar button.ql-active .ql-fill {
+            fill: var(--admin-accent);
+        }
+        .ql-snow .ql-picker-options {
+            background: var(--admin-bg-card);
+            border-color: var(--admin-border);
+        }
+        .ql-snow .ql-picker-item:hover {
+            color: var(--admin-accent);
+        }
+    </style>
 </head>
 <body>
     <div class="admin-layout">
@@ -533,9 +589,12 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
 
                                 <div class="form-group">
                                     <label class="label">
-                                        <i class="fas fa-align-left"></i> Descrição
+                                        <i class="fas fa-align-left"></i> Descricao
                                     </label>
-                                    <textarea name="description" class="form-control form-control-modern" rows="4" placeholder="Descreva o produto..."></textarea>
+                                    <div class="quill-editor-container">
+                                        <div id="productDescriptionEditor"></div>
+                                    </div>
+                                    <textarea name="description" id="productDescription" class="form-control form-control-modern" rows="4" placeholder="Descreva o produto..." style="display: none;"></textarea>
                                 </div>
 
                                 <div class="form-group">
@@ -1721,6 +1780,55 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
                 cb.addEventListener('change', updateBulkActions);
             });
         });
+        
+        // Initialize Quill Editor for Product Description
+        let quillEditor = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            const editorContainer = document.getElementById('productDescriptionEditor');
+            if (editorContainer) {
+                quillEditor = new Quill('#productDescriptionEditor', {
+                    theme: 'snow',
+                    placeholder: 'Descreva o produto...',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'align': [] }],
+                            ['link'],
+                            ['clean']
+                        ]
+                    }
+                });
+                
+                // Sync content to hidden textarea on change
+                quillEditor.on('text-change', function() {
+                    const descriptionField = document.getElementById('productDescription');
+                    if (descriptionField) {
+                        descriptionField.value = quillEditor.root.innerHTML;
+                    }
+                });
+                
+                // Sync on form submit
+                const form = document.getElementById('addProductForm');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const descriptionField = document.getElementById('productDescription');
+                        if (descriptionField && quillEditor) {
+                            descriptionField.value = quillEditor.root.innerHTML;
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Function to set editor content (for editing existing products)
+        function setEditorContent(html) {
+            if (quillEditor) {
+                quillEditor.root.innerHTML = html || '';
+            }
+        }
         
         async function bulkAction(action) {
             const checkboxes = document.querySelectorAll('.product-checkbox:checked');
