@@ -1407,6 +1407,8 @@ include __DIR__ . '/includes/public-header.php';
     window.checkoutCpf = '<?php echo preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? ''); ?>';
     window.appliedCoupon = null;
     window.couponDiscount = 0;
+    window.storeName = '<?php echo addslashes(getSetting($pdo, 'app_name', 'nossa loja')); ?>';
+    window.whatsappNumber = '<?php echo preg_replace('/[^0-9]/', '', getSetting($pdo, 'whatsapp_float_number', '')); ?>';
     
     // Address Modal Functions with Animations
     function openAddressModal() {

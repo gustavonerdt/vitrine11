@@ -522,55 +522,84 @@ function createBoletoPayment(btn, originalText) {
     });
 }
 
-// Mostrar modal do Boleto
+// Mostrar modal do Boleto com tela de agradecimento
 function showBoletoModal(data) {
     const existingModal = document.getElementById('boletoResultModal');
     if (existingModal) existingModal.remove();
+    
+    const storeName = window.storeName || 'nossa loja';
+    const whatsappNumber = window.whatsappNumber || '';
+    const whatsappLink = whatsappNumber ? `https://wa.me/55${whatsappNumber.replace(/\D/g, '')}?text=Ol%C3%A1!%20Acabei%20de%20gerar%20o%20boleto%20do%20pedido%20%23${data.order_id}%20e%20tenho%20uma%20d%C3%BAvida.` : '';
     
     const modal = document.createElement('div');
     modal.id = 'boletoResultModal';
     modal.className = 'checkout-modal';
     modal.innerHTML = `
-        <div class="checkout-modal-content" style="max-width: 500px; text-align: center;">
-            <div class="checkout-modal-header" style="border: none; padding-bottom: 0;">
-                <h3 style="width: 100%; text-align: center;">
-                    <i class="fas fa-barcode" style="color: #C7A333; margin-right: 8px;"></i>
-                    Boleto Gerado
-                </h3>
-                <button type="button" class="checkout-modal-close" onclick="closeBoletoModal()">&times;</button>
+        <div class="checkout-modal-content" style="max-width: 520px; text-align: center;">
+            <div class="checkout-modal-header" style="border: none; padding: 1.5rem 1.5rem 0;">
+                <div style="width: 100%;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-check" style="font-size: 2.5rem; color: #fff;"></i>
+                    </div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800; color: #1a1a1a; margin: 0 0 0.5rem;">Obrigado por escolher a ${storeName}!</h2>
+                    <p style="color: #666; font-size: 1rem; margin: 0;">Pedido <strong>#${data.order_id}</strong> criado com sucesso</p>
+                </div>
             </div>
             <div class="checkout-modal-body" style="padding: 1.5rem;">
-                <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
-                    <i class="fas fa-check-circle" style="font-size: 2.5rem; color: #22c55e; margin-bottom: 0.75rem;"></i>
-                    <p style="color: #166534; font-weight: 600; margin: 0;">Pedido #${data.order_id} criado com sucesso!</p>
+                <!-- Alerta de prazo -->
+                <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08)); border: 2px solid #f59e0b; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; text-align: left;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <i class="fas fa-clock" style="color: #f59e0b; font-size: 1.25rem; margin-top: 2px;"></i>
+                        <div>
+                            <p style="margin: 0; color: #92400e; font-weight: 600; font-size: 0.95rem;">
+                                Pode levar ate 3 dias uteis para confirmar o pagamento.
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 
+                <!-- Codigo de barras -->
                 <div style="background: #f8f9fa; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
-                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.75rem;">Codigo de barras:</p>
-                    <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 0.75rem; font-family: monospace; font-size: 0.8rem; word-break: break-all;">
+                    <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.75rem; font-weight: 600;">Codigo de barras:</p>
+                    <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 0.75rem; font-family: monospace; font-size: 0.75rem; word-break: break-all; line-height: 1.5;">
                         ${data.barcode || 'Codigo nao disponivel'}
                     </div>
-                    <button type="button" onclick="copyBarcodeCode('${data.barcode}')" style="margin-top: 0.75rem; background: #e5e5e5; border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-weight: 600;">
+                    <button type="button" onclick="copyBarcodeCode('${data.barcode}')" style="margin-top: 0.75rem; background: linear-gradient(135deg, #C7A333, #d4b84a); border: none; border-radius: 8px; padding: 0.6rem 1.25rem; cursor: pointer; font-weight: 700; color: #000; transition: all 0.2s;">
                         <i class="fas fa-copy"></i> Copiar Codigo
                     </button>
                 </div>
                 
-                <div style="background: #fef9e0; border: 1px solid #C7A333; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-                    <p style="color: #8B6914; font-size: 0.9rem; margin: 0;">
-                        <i class="fas fa-clock"></i> Vencimento: <strong>${formatDate(data.due_date)}</strong>
-                    </p>
+                <!-- Vencimento e valor -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 1rem; text-align: center;">
+                        <p style="color: #888; font-size: 0.8rem; margin: 0 0 0.25rem;">Vencimento</p>
+                        <strong style="color: #1a1a1a; font-size: 1rem;">${formatDate(data.due_date)}</strong>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fef9e0, #fff); border: 1px solid #C7A333; border-radius: 10px; padding: 1rem; text-align: center;">
+                        <p style="color: #888; font-size: 0.8rem; margin: 0 0 0.25rem;">Total</p>
+                        <strong style="color: #C7A333; font-size: 1.15rem;">R$ ${data.total.toFixed(2).replace('.', ',')}</strong>
+                    </div>
                 </div>
                 
-                <div style="padding-top: 1rem; border-top: 1px solid #e5e5e5;">
-                    <strong style="font-size: 1.25rem; color: #1a1a1a;">Total: R$ ${data.total.toFixed(2).replace('.', ',')}</strong>
+                <!-- Duvidas - WhatsApp -->
+                ${whatsappNumber ? `
+                <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 12px; padding: 1rem; text-align: center;">
+                    <p style="color: #166534; font-size: 0.9rem; margin: 0 0 0.75rem;">
+                        Caso tenha duvidas, entre em contato com nossa equipe:
+                    </p>
+                    <a href="${whatsappLink}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #25d366; color: #fff; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: all 0.2s;">
+                        <i class="fab fa-whatsapp" style="font-size: 1.25rem;"></i>
+                        Chamar no WhatsApp
+                    </a>
                 </div>
+                ` : ''}
             </div>
-            <div class="checkout-modal-footer" style="justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                ${data.boleto_url ? `<a href="${data.boleto_url}" target="_blank" class="btn-modal-save" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-file-pdf"></i> Baixar PDF
+            <div class="checkout-modal-footer" style="justify-content: center; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.5rem 1.5rem; border-top: 1px solid #e5e5e5;">
+                ${data.boleto_url ? `<a href="${data.boleto_url}" target="_blank" class="btn-modal-save" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.5rem; font-size: 0.95rem;">
+                    <i class="fas fa-file-pdf"></i> Baixar Boleto em PDF
                 </a>` : ''}
-                <button type="button" onclick="window.location.href='${window.APP_URL}/obrigado.php?order_id=${data.order_id}&status=pending'" class="btn-modal-cancel" style="background: #22c55e; color: #fff; border: none;">
-                    <i class="fas fa-check"></i> Concluir
+                <button type="button" onclick="closeBoletoModal(); window.location.href='${window.APP_URL}';" class="btn-modal-cancel" style="background: #f0f0f0; color: #333; border: none; padding: 0.85rem 1.5rem;">
+                    <i class="fas fa-home"></i> Voltar para Loja
                 </button>
             </div>
         </div>
