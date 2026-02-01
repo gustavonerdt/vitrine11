@@ -36,7 +36,8 @@ if (strpos($api_type, 'mercado_pago') !== false) {
     }
     
     try {
-        $ch = curl_init('https://api.mercadopago.com/v1/payments/search?limit=1');
+        // Primeiro, buscar informacoes do usuario/conta
+        $ch = curl_init('https://api.mercadopago.com/users/me');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer ' . $token,
@@ -56,9 +57,23 @@ if (strpos($api_type, 'mercado_pago') !== false) {
         }
         
         if ($httpCode === 200) {
-            echo json_encode(['success' => true, 'message' => 'Credenciais válidas! API funcionando corretamente.']);
+            $userData = json_decode($response, true);
+            $userName = $userData['nickname'] ?? $userData['first_name'] ?? 'Usuario';
+            $userEmail = $userData['email'] ?? '';
+            $siteId = $userData['site_id'] ?? 'MLB';
+            $isTest = strpos($token, 'TEST-') === 0;
+            
+            $message = "Conexao OK! ";
+            $message .= "Conta: <strong>{$userName}</strong>";
+            if ($userEmail) $message .= " ({$userEmail})";
+            $message .= " | Ambiente: <strong>" . ($isTest ? 'TESTE' : 'PRODUCAO') . "</strong>";
+            $message .= " | Site: {$siteId}";
+            
+            echo json_encode(['success' => true, 'message' => $message]);
         } elseif ($httpCode === 401) {
-            echo json_encode(['success' => false, 'error' => 'Token inválido. Verifique suas credenciais.']);
+            echo json_encode(['success' => false, 'error' => 'Token inválido ou expirado. Verifique suas credenciais no painel do Mercado Pago.']);
+        } elseif ($httpCode === 403) {
+            echo json_encode(['success' => false, 'error' => 'Acesso negado. Verifique as permissoes do seu token.']);
         } else {
             $errorData = json_decode($response, true);
             $errorMsg = $errorData['message'] ?? "Erro HTTP {$httpCode}";

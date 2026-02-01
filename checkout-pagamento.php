@@ -328,49 +328,174 @@ include __DIR__ . '/includes/public-header.php';
                     </div>
                     
                     <!-- Forma de Pagamento -->
-                    <div class="form-section">
-                        <h2 class="section-title">Forma de pagamento</h2>
+                    <div class="form-section payment-section">
+                        <h2 class="section-title"><i class="fas fa-credit-card" style="color: #C7A333; margin-right: 8px;"></i>Forma de Pagamento</h2>
                         
-                        <div class="payment-methods">
-                            <div class="payment-method-tabs">
-                                <button type="button" class="payment-tab active" data-method="pix">
-                                    <i class="fas fa-qrcode"></i> Pix
+                        <div class="payment-methods-container">
+                            <!-- Tabs de Pagamento -->
+                            <div class="payment-tabs-wrapper">
+                                <button type="button" class="payment-tab-btn active" data-method="pix">
+                                    <div class="tab-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M9.172 15.172L12 12.343l2.828 2.829 1.414-1.414L12 9.515l-4.243 4.243 1.415 1.414z"/>
+                                            <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="tab-label">Pix</span>
+                                    <span class="tab-badge">Instantaneo</span>
                                 </button>
-                                <button type="button" class="payment-tab" data-method="credit_card">
-                                    <i class="fas fa-credit-card"></i> Cartao de credito
+                                <button type="button" class="payment-tab-btn" data-method="credit_card">
+                                    <div class="tab-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <span class="tab-label">Cartao</span>
+                                    <span class="tab-badge">Ate 12x</span>
+                                </button>
+                                <button type="button" class="payment-tab-btn" data-method="boleto">
+                                    <div class="tab-icon">
+                                        <i class="fas fa-barcode"></i>
+                                    </div>
+                                    <span class="tab-label">Boleto</span>
+                                    <span class="tab-badge">3 dias</span>
                                 </button>
                             </div>
                             
-                            <!-- Pix Payment -->
+                            <!-- Conteudo PIX -->
                             <div id="pixPayment" class="payment-content active">
-                                <p class="pix-description" style="color: #1a1a1a; font-size: 1rem; font-weight: 500; margin-bottom: 1rem; line-height: 1.5;">
-                                    Ao gerar o Codigo Pix do pedido voce pode pagar escaneando o QR Code ou Copiar e Colar.
-                                </p>
-                                <div class="pix-recipient">
-                                    <div class="pix-info-row">
-                                        <span style="color: #666; font-weight: 500;">Nome:</span>
-                                        <span style="color: #1a1a1a; font-weight: 700; font-size: 1.05rem;">Gustavo Felix</span>
+                                <div class="payment-info-card">
+                                    <div class="payment-info-header">
+                                        <div class="pix-logo">
+                                            <svg width="32" height="32" viewBox="0 0 512 512" fill="#00BCAA">
+                                                <path d="M242.4 292.5c-5.3 5.3-14 5.3-19.3 0L112.3 181.6c-23.1-23.1-60.5-23.1-83.6 0-23.1 23.1-23.1 60.5 0 83.6l110.8 110.8c46.2 46.2 121.1 46.2 167.3 0l110.8-110.8c23.1-23.1 23.1-60.5 0-83.6-23.1-23.1-60.5-23.1-83.6 0L223.1 292.5z"/>
+                                                <path d="M484.1 181.6L373.3 70.8c-46.2-46.2-121.1-46.2-167.3 0L95.2 181.6c-23.1 23.1-23.1 60.5 0 83.6 23.1 23.1 60.5 23.1 83.6 0l110.8-110.8c5.3-5.3 14-5.3 19.3 0l110.8 110.8c23.1 23.1 60.5 23.1 83.6 0 23.1-23.1 23.1-60.5 0-83.6z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4>Pagamento via Pix</h4>
+                                            <p>Escaneie o QR Code ou copie o codigo</p>
+                                        </div>
                                     </div>
-                                    <div class="pix-info-row">
-                                        <span style="color: #666; font-weight: 500;">CPF/CNPJ:</span>
-                                        <span style="color: #1a1a1a; font-weight: 700; font-size: 1.05rem;">363.923.068-03</span>
+                                    
+                                    <div class="pix-cpf-display">
+                                        <label>CPF do Pagador</label>
+                                        <input type="text" id="pix_cpf" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" disabled class="cpf-locked">
+                                        <small><i class="fas fa-lock"></i> CPF vinculado ao seu cadastro</small>
+                                    </div>
+                                    
+                                    <div class="pix-advantages">
+                                        <div class="advantage-item">
+                                            <i class="fas fa-bolt"></i>
+                                            <span>Aprovacao imediata</span>
+                                        </div>
+                                        <div class="advantage-item">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <span>100% Seguro</span>
+                                        </div>
+                                        <div class="advantage-item">
+                                            <i class="fas fa-percentage"></i>
+                                            <span>Sem taxas</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Credit Card Payment -->
+                            <!-- Conteudo Cartao de Credito -->
                             <div id="creditCardPayment" class="payment-content">
-                                <div class="card-security-message">
-                                    <div class="security-icon">
-                                        <i class="fas fa-shield-alt"></i>
+                                <div class="payment-info-card">
+                                    <div class="card-form-container">
+                                        <div class="card-preview">
+                                            <div class="card-preview-inner">
+                                                <div class="card-chip"></div>
+                                                <div class="card-number-preview">**** **** **** ****</div>
+                                                <div class="card-details-preview">
+                                                    <div class="card-holder-preview">NOME DO TITULAR</div>
+                                                    <div class="card-expiry-preview">MM/AA</div>
+                                                </div>
+                                                <div class="card-brand-preview">
+                                                    <i class="fab fa-cc-visa"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-form-fields">
+                                            <div class="form-group">
+                                                <label>Numero do Cartao</label>
+                                                <div class="input-with-icon">
+                                                    <input type="text" id="card_number" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+                                                    <div class="card-brand-icon" id="cardBrandIcon"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>Nome no Cartao</label>
+                                                <input type="text" id="card_holder" name="card_holder" placeholder="Como esta no cartao" autocomplete="cc-name" style="text-transform: uppercase;">
+                                            </div>
+                                            
+                                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                <div class="form-group">
+                                                    <label>Validade</label>
+                                                    <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/AA" maxlength="5" autocomplete="cc-exp">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>CVV</label>
+                                                    <div class="input-with-icon">
+                                                        <input type="text" id="card_cvv" name="card_cvv" placeholder="***" maxlength="4" autocomplete="cc-csc">
+                                                        <i class="fas fa-question-circle cvv-help" title="Codigo de 3 ou 4 digitos no verso do cartao"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>CPF do Titular</label>
+                                                <input type="text" id="card_cpf" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" disabled class="cpf-locked">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>Parcelas</label>
+                                                <select id="card_installments" name="installments">
+                                                    <option value="1">1x de <?php echo formatPrice($total); ?> (sem juros)</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <h4>Pagamento 100% Seguro</h4>
-                                    <p>Seus dados de cartao serao processados de forma segura pelo <strong>Mercado Pago</strong>, uma das maiores plataformas de pagamento da America Latina.</p>
-                                    <div class="security-badges">
-                                        <span class="badge"><i class="fas fa-lock"></i> SSL Criptografado</span>
-                                        <span class="badge"><i class="fas fa-check-circle"></i> Mercado Pago</span>
+                                    
+                                    <div class="security-badges-row">
+                                        <span><i class="fas fa-lock"></i> SSL 256-bit</span>
+                                        <span><i class="fas fa-shield-alt"></i> Mercado Pago</span>
+                                        <span><i class="fas fa-check-circle"></i> PCI DSS</span>
                                     </div>
-                                    <p class="card-info-note">Ao clicar em "Finalizar Pedido", voce sera redirecionado para o checkout seguro do Mercado Pago para inserir os dados do seu cartao.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Conteudo Boleto -->
+                            <div id="boletoPayment" class="payment-content">
+                                <div class="payment-info-card">
+                                    <div class="payment-info-header">
+                                        <div class="boleto-icon">
+                                            <i class="fas fa-barcode"></i>
+                                        </div>
+                                        <div>
+                                            <h4>Boleto Bancario</h4>
+                                            <p>Vencimento em 3 dias uteis</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pix-cpf-display">
+                                        <label>CPF do Pagador</label>
+                                        <input type="text" id="boleto_cpf" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" disabled class="cpf-locked">
+                                        <small><i class="fas fa-lock"></i> CPF vinculado ao seu cadastro</small>
+                                    </div>
+                                    
+                                    <div class="boleto-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-clock"></i>
+                                            <span>O pedido sera confirmado em ate 3 dias uteis apos o pagamento</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-file-pdf"></i>
+                                            <span>Voce podera baixar o boleto em PDF ou copiar o codigo de barras</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -386,9 +511,9 @@ include __DIR__ . '/includes/public-header.php';
                     <input type="hidden" id="payment_method" name="payment_method" value="pix">
                     <input type="hidden" id="mp_token" name="mp_token" value="">
                     
-                    <!-- Botao para Pix (Payment Brick tem seu proprio botao) -->
+                    <!-- Botao de Pagamento -->
                     <button type="submit" class="btn-make-order" id="btnMakeOrder">
-                        FINALIZAR PEDIDO
+                        <i class="fas fa-qrcode" style="margin-right: 0.5rem;"></i> GERAR PIX
                     </button>
                     
                     <style>
@@ -843,76 +968,423 @@ include __DIR__ . '/includes/public-header.php';
     color: #C7A333;
 }
 
-/* Payment method tabs */
-.payment-method-tabs {
-    display: flex;
-    gap: 1rem;
+/* ====================================== */
+/* NOVA INTERFACE DE PAGAMENTO PREMIUM    */
+/* ====================================== */
+
+/* Tabs de Pagamento */
+.payment-tabs-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
 
-.payment-tab {
-    flex: 1;
-    padding: 1rem 1.5rem;
+.payment-tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 1rem;
     background: #fff;
     border: 2px solid #e5e5e5;
-    border-radius: 12px;
+    border-radius: 16px;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #666;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-tab-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #C7A333, #F7EF8A, #C7A333);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.payment-tab-btn:hover {
+    border-color: #C7A333;
+    background: #fffef5;
+    transform: translateY(-2px);
+}
+
+.payment-tab-btn.active {
+    border-color: #C7A333;
+    background: linear-gradient(135deg, #fef9e0 0%, #fff 100%);
+    box-shadow: 0 4px 15px rgba(199, 163, 51, 0.25);
+}
+
+.payment-tab-btn.active::before {
+    transform: scaleX(1);
+}
+
+.payment-tab-btn .tab-icon {
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    background: #f5f5f5;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    color: #666;
+    transition: all 0.3s ease;
 }
 
-.payment-tab i {
-    font-size: 1.25rem;
+.payment-tab-btn.active .tab-icon {
+    background: linear-gradient(135deg, #C7A333, #d4b84a);
+    color: #fff;
 }
 
-.payment-tab:hover {
-    border-color: #C7A333;
+.payment-tab-btn .tab-label {
+    font-weight: 700;
+    font-size: 1rem;
     color: #1a1a1a;
 }
 
-.payment-tab.active {
-    border-color: #C7A333;
-    background: #fef9e0;
-    color: #1a1a1a;
+.payment-tab-btn .tab-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
 }
 
-.payment-tab.active i {
-    color: #C7A333;
-}
-
+/* Payment Content */
 .payment-content {
     display: none;
-    padding: 1rem 0;
+    animation: fadeIn 0.3s ease;
 }
 
 .payment-content.active {
     display: block;
 }
 
-/* Pix recipient info */
-.pix-recipient {
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Payment Info Card */
+.payment-info-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.payment-info-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 1.25rem;
+}
+
+.payment-info-header .pix-logo,
+.payment-info-header .boleto-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00BCAA20, #00bcaa10);
+    border-radius: 12px;
+}
+
+.payment-info-header .boleto-icon {
+    background: linear-gradient(135deg, #C7A33320, #C7A33310);
+    font-size: 1.75rem;
+    color: #C7A333;
+}
+
+.payment-info-header h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.payment-info-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* CPF Display */
+.pix-cpf-display {
+    margin-bottom: 1.25rem;
+}
+
+.pix-cpf-display label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.pix-cpf-display .cpf-locked {
+    width: 100%;
+    padding: 0.9rem 1rem;
     background: #f8f8f8;
     border: 1px solid #e5e5e5;
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: 1px;
 }
 
-.pix-info-row {
+.pix-cpf-display small {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.pix-cpf-display small i {
+    color: #C7A333;
+}
+
+/* Pix Advantages */
+.pix-advantages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.pix-advantages .advantage-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.pix-advantages .advantage-item i {
+    font-size: 1.5rem;
+    color: #00BCAA;
+}
+
+.pix-advantages .advantage-item span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Card Preview */
+.card-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.card-preview {
+    perspective: 1000px;
+    margin-bottom: 0.5rem;
+}
+
+.card-preview-inner {
+    background: linear-gradient(135deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: #fff;
+    position: relative;
+    min-height: 180px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card-chip {
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #d4af37 0%, #f7ef8a 50%, #d4af37 100%);
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.card-number-preview {
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 1.5rem;
+}
+
+.card-details-preview {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #e5e5e5;
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
-.pix-info-row:last-child {
-    border-bottom: none;
+.card-holder-preview {
+    letter-spacing: 1px;
+}
+
+.card-brand-preview {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+/* Card Form Fields */
+.card-form-fields .form-group {
+    margin-bottom: 1rem;
+}
+
+.card-form-fields label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 0.5rem;
+}
+
+.card-form-fields input,
+.card-form-fields select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.card-form-fields input:focus,
+.card-form-fields select:focus {
+    outline: none;
+    border-color: #C7A333;
+    box-shadow: 0 0 0 3px rgba(199, 163, 51, 0.15);
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon input {
+    padding-right: 50px;
+}
+
+.input-with-icon .card-brand-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+}
+
+.input-with-icon .cvv-help {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: help;
+}
+
+/* Security Badges */
+.security-badges-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 1.25rem;
+}
+
+.security-badges-row span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.security-badges-row span i {
+    font-size: 1rem;
+}
+
+/* Boleto Info */
+.boleto-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.boleto-info .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.boleto-info .info-item i {
+    color: #C7A333;
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.boleto-info .info-item span {
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.4;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+    .payment-tabs-wrapper {
+        grid-template-columns: 1fr;
+    }
+    
+    .payment-tab-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 1rem 1.25rem;
+    }
+    
+    .payment-tab-btn .tab-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    
+    .payment-tab-btn .tab-label {
+        flex: 1;
+        text-align: left;
+    }
+    
+    .pix-advantages {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-number-preview {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+    
+    .security-badges-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
 }
 
 /* Address section styling */

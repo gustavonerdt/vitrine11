@@ -756,6 +756,68 @@ $csrf = generateCsrfToken();
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Card de Teste Avancado -->
+                            <div class="admin-card">
+                                <div class="card-header" style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--admin-border); background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));">
+                                    <h3 style="margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #22c55e;">
+                                        <i class="fas fa-flask"></i> Testar Integracao
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <p style="font-size: 0.85rem; color: var(--admin-text-secondary); margin-bottom: 1rem;">
+                                        Teste se os pagamentos estao funcionando corretamente antes de ir para producao.
+                                    </p>
+                                    
+                                    <div style="background: #f8f9fa; border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                                        <h4 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: #1a1a1a;">Cartoes de Teste</h4>
+                                        <div style="display: grid; gap: 0.5rem; font-size: 0.8rem;">
+                                            <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: #fff; border-radius: 6px;">
+                                                <span><i class="fab fa-cc-mastercard" style="color: #EB001B;"></i> Aprovado</span>
+                                                <code style="background: #e5e5e5; padding: 0.2rem 0.5rem; border-radius: 4px;">5031 4332 1540 6351</code>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: #fff; border-radius: 6px;">
+                                                <span><i class="fab fa-cc-visa" style="color: #1A1F71;"></i> Aprovado</span>
+                                                <code style="background: #e5e5e5; padding: 0.2rem 0.5rem; border-radius: 4px;">4235 6477 2802 5682</code>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: #fff; border-radius: 6px;">
+                                                <span><i class="fab fa-cc-visa" style="color: #ef4444;"></i> Recusado</span>
+                                                <code style="background: #e5e5e5; padding: 0.2rem 0.5rem; border-radius: 4px;">4013 5406 8274 6260</code>
+                                            </div>
+                                        </div>
+                                        <p style="margin: 0.75rem 0 0 0; font-size: 0.75rem; color: #888;">
+                                            CVV: <strong>123</strong> | Validade: <strong>11/25</strong> | Titular: <strong>APRO</strong>
+                                        </p>
+                                    </div>
+                                    
+                                    <div style="background: linear-gradient(135deg, rgba(0, 188, 170, 0.1), rgba(0, 188, 170, 0.05)); border: 1px solid rgba(0, 188, 170, 0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #00BCAA; display: flex; align-items: center; gap: 0.5rem;">
+                                            <svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor">
+                                                <path d="M242.4 292.5c-5.3 5.3-14 5.3-19.3 0L112.3 181.6c-23.1-23.1-60.5-23.1-83.6 0-23.1 23.1-23.1 60.5 0 83.6l110.8 110.8c46.2 46.2 121.1 46.2 167.3 0l110.8-110.8c23.1-23.1 23.1-60.5 0-83.6-23.1-23.1-60.5-23.1-83.6 0L223.1 292.5z"/>
+                                            </svg>
+                                            PIX em Teste
+                                        </h4>
+                                        <p style="margin: 0; font-size: 0.8rem; color: #666;">
+                                            O QR Code sera gerado mas nao pode ser pago. Use a API para simular aprovacao.
+                                        </p>
+                                    </div>
+                                    
+                                    <div style="background: linear-gradient(135deg, rgba(199, 163, 51, 0.1), rgba(199, 163, 51, 0.05)); border: 1px solid rgba(199, 163, 51, 0.3); border-radius: 10px; padding: 1rem;">
+                                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #C7A333; display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-barcode"></i> Boleto em Teste
+                                        </h4>
+                                        <p style="margin: 0; font-size: 0.8rem; color: #666;">
+                                            O boleto sera gerado com codigo de barras mas nao pode ser pago em modo teste.
+                                        </p>
+                                    </div>
+                                    
+                                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--admin-border);">
+                                        <a href="https://www.mercadopago.com.br/developers/pt/docs/checkout-api/integration-test/test-cards" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--admin-accent); font-weight: 600; text-decoration: none;">
+                                            <i class="fas fa-external-link-alt"></i> Ver documentacao completa de testes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
