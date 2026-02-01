@@ -27,7 +27,8 @@ $subtotal = 0;
 foreach ($_SESSION['cart'] as $product_id => $quantity) {
     try {
         $stmt = $pdo->prepare("
-            SELECT p.id, p.name, p.price, b.name as brand_name
+            SELECT p.id, p.name, p.price, b.name as brand_name,
+                   (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY sort_order ASC, id ASC LIMIT 1) as image_url
             FROM products p
             LEFT JOIN brands b ON p.brand_id = b.id
             WHERE p.id = ? AND p.is_active = 1
@@ -39,12 +40,19 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
             $item_total = floatval($product['price']) * $quantity;
             $subtotal += $item_total;
             
+            // Processar URL da imagem
+            $imageUrl = $product['image_url'] ?? '';
+            if (!empty($imageUrl) && !preg_match('/^https?:\/\//i', $imageUrl)) {
+                $imageUrl = rtrim(APP_URL, '/') . '/' . ltrim($imageUrl, '/');
+            }
+            
             $cart_items[] = [
                 'product_id' => (int)$product_id,
                 'name' => $product['name'],
                 'price' => floatval($product['price']),
                 'quantity' => $quantity,
-                'item_total' => $item_total
+                'item_total' => $item_total,
+                'image_url' => $imageUrl
             ];
         }
     } catch (PDOException $e) {
@@ -235,18 +243,10 @@ include __DIR__ . '/includes/public-header.php';
                         </div>
                     </div>
                     
-                    <!-- Salvar Dados -->
+                    <!-- Termos -->
                     <div class="form-section">
-                        <div class="form-checkbox">
-                            <input type="checkbox" id="save_data" name="save_data" checked>
-                            <label for="save_data">Salvar dados para comprar mais rápido</label>
-                        </div>
-                        <p class="save-data-info">
-                            Nas próximas compras enviaremos um código para: <?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>
-                            <a href="#" class="link-change">Alterar</a>
-                        </p>
-                        <p class="terms-text" style="color: #000 !important;">
-                            Ao continuar, voce concorda com nossos <a href="#" style="color: #000 !important; text-decoration: underline;">Termos de Uso</a> e <a href="#" style="color: #000 !important; text-decoration: underline;">Politica de Privacidade</a>
+                        <p class="terms-text" style="color: #333 !important; font-size: 0.9rem;">
+                            Ao continuar, voce concorda com nossos <a href="#" style="color: #333 !important; text-decoration: underline;">Termos de Uso</a> e <a href="#" style="color: #333 !important; text-decoration: underline;">Politica de Privacidade</a>
                         </p>
                     </div>
                     
@@ -354,11 +354,15 @@ include __DIR__ . '/includes/public-header.php';
                     <?php foreach ($cart_items as $item): ?>
                         <div class="summary-product-item">
                             <div class="summary-product-image">
-                                <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                <?php if (!empty($item['image_url'])): ?>
+                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                <?php else: ?>
+                                    <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                <?php endif; ?>
                             </div>
                             <div class="summary-product-info">
-                                <div class="summary-product-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                                <div class="summary-product-price"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
+                                <div class="summary-product-name" style="color: #1a1a1a; font-weight: 600;"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <div class="summary-product-price" style="color: #333;"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
                             </div>
                         </div>
                     <?php endforeach; ?>

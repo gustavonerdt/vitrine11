@@ -2,6 +2,33 @@
 
 let mpInstance = null;
 
+// Função global de notificação
+function showNotification(message, type = 'info') {
+    const existing = document.querySelector('.checkout-notification');
+    if (existing) {
+        existing.remove();
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = 'checkout-notification checkout-notification-' + type;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Payment method tabs
     const paymentTabs = document.querySelectorAll('.payment-tab');
@@ -164,32 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    function showNotification(message, type = 'info') {
-        const existing = document.querySelector('.checkout-notification');
-        if (existing) {
-            existing.remove();
-        }
-        
-        const notification = document.createElement('div');
-        notification.className = 'checkout-notification checkout-notification-' + type;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10);
-        
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-    
     // Form submission
     const paymentForm = document.getElementById('paymentForm');
     paymentForm.addEventListener('submit', function(e) {
@@ -259,16 +260,16 @@ function createPixPayment() {
             // Redirect to thank you page
             window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
         } else {
-            alert('Erro ao processar pagamento: ' + (data.error || 'Erro desconhecido'));
+            showNotification('Erro ao processar pagamento: ' + (data.error || 'Erro desconhecido'), 'error');
             document.getElementById('btnMakeOrder').disabled = false;
-            document.getElementById('btnMakeOrder').textContent = 'FAZER PEDIDO';
+            document.getElementById('btnMakeOrder').textContent = 'FINALIZAR PEDIDO';
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Erro ao processar pagamento');
+        showNotification('Erro ao processar pagamento. Tente novamente.', 'error');
         document.getElementById('btnMakeOrder').disabled = false;
-        document.getElementById('btnMakeOrder').textContent = 'FAZER PEDIDO';
+        document.getElementById('btnMakeOrder').textContent = 'FINALIZAR PEDIDO';
     });
 }
 

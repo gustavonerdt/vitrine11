@@ -17,7 +17,8 @@ $subtotal = 0;
 foreach ($_SESSION['cart'] as $product_id => $quantity) {
     try {
         $stmt = $pdo->prepare("
-            SELECT p.id, p.name, p.price, p.image_path, b.name as brand_name
+            SELECT p.id, p.name, p.price, b.name as brand_name,
+                   (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY sort_order ASC, id ASC LIMIT 1) as image_url
             FROM products p
             LEFT JOIN brands b ON p.brand_id = b.id
             WHERE p.id = ? AND p.is_active = 1
@@ -27,11 +28,18 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
         if ($product) {
             $item_total = floatval($product['price']) * $quantity;
             $subtotal += $item_total;
+            
+            // Processar URL da imagem
+            $imageUrl = $product['image_url'] ?? '';
+            if (!empty($imageUrl) && !preg_match('/^https?:\/\//i', $imageUrl)) {
+                $imageUrl = rtrim(APP_URL, '/') . '/' . ltrim($imageUrl, '/');
+            }
+            
             $cart_items[] = [
                 'name' => $product['name'],
                 'price' => floatval($product['price']),
                 'quantity' => $quantity,
-                'image_url' => $product['image_path']
+                'image_url' => $imageUrl
             ];
         }
     } catch (PDOException $e) { error_log($e->getMessage()); }
@@ -136,9 +144,16 @@ include __DIR__ . '/includes/public-header.php';
                 <div class="summary-products">
                     <?php foreach ($cart_items as $item): ?>
                         <div class="summary-product-item">
+                            <div class="summary-product-image">
+                                <?php if (!empty($item['image_url'])): ?>
+                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                <?php else: ?>
+                                    <div class="summary-placeholder"><i class="fas fa-spray-can"></i></div>
+                                <?php endif; ?>
+                            </div>
                             <div class="summary-product-info">
-                                <div><?php echo htmlspecialchars($item['name']); ?></div>
-                                <small><?php echo $item['quantity']; ?>x <?php echo number_format($item['price'], 2, ',', '.'); ?></small>
+                                <div style="color: #1a1a1a; font-weight: 600;"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <small style="color: #333;"><?php echo $item['quantity']; ?>x R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></small>
                             </div>
                         </div>
                     <?php endforeach; ?>
