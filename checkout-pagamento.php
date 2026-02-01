@@ -132,45 +132,125 @@ include __DIR__ . '/includes/public-header.php';
                     
                     <!-- Método de Entrega -->
                     <div class="form-section">
-                        <h2 class="section-title">Escolha uma Opcao</h2>
-                        <div class="shipping-options-container">
+                        <h2 class="section-title"><i class="fas fa-truck" style="color: #C7A333; margin-right: 8px;"></i>Escolha uma Opcao</h2>
+                        <div class="shipping-options-container" id="shippingOptionsContainer">
                             <?php
-                            // Buscar opcoes de frete disponiveis
+                            // Buscar opcoes de frete da API dos Correios
                             $cep_destino = preg_replace('/[^0-9]/', '', $checkout_data['cep'] ?? '');
                             $cep_origem = getSetting($pdo, 'correios_cep_origem', '01310100');
                             $cep_origem = preg_replace('/[^0-9]/', '', $cep_origem);
                             
-                            // Valores fixos de frete (como solicitado pelo usuario)
-                            $pac_price = 37.50;
-                            $sedex_price = 56.25;
-                            
-                            // Usar o valor da sessao se ja foi selecionado
-                            if ($shipping_cost > 0) {
-                                // Manter o valor da sessao
-                            } else {
-                                // Definir PAC como padrao
-                                $shipping_cost = $pac_price;
-                                $_SESSION['checkout_data']['shipping_price'] = $pac_price;
-                                $_SESSION['checkout_data']['shipping_method'] = 'PAC (Correios)';
+                            // Função para calcular frete via API dos Correios
+                            function calcularFreteCorreios($cep_origem, $cep_destino, $pdo) {
+                                $shipping_options = [];
+                                $servicos = [
+                                    'PAC' => '04510',
+                                    'SEDEX' => '04014'
+                                ];
+                                
+                                // Peso e dimensões padrão
+                                $peso_total = 0.5;
+                                $altura = 20;
+                                $largura = 15;
+                                $comprimento = 16;
+                                
+                                if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                                    $peso_total = count($_SESSION['cart']) * 0.5;
+                                    $peso_total = max($peso_total, 0.3);
+                                }
+                                
+                                foreach ($servicos as $nome => $codigo) {
+                                    try {
+                                        $url = "https://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx";
+                                        $params = http_build_query([
+                                            'nCdEmpresa' => '',
+                                            'sDsSenha' => '',
+                                            'nCdServico' => $codigo,
+                                            'sCepOrigem' => $cep_origem,
+                                            'sCepDestino' => $cep_destino,
+                                            'nVlPeso' => number_format($peso_total, 2, ',', ''),
+                                            'nCdFormato' => '1',
+                                            'nVlComprimento' => $comprimento,
+                                            'nVlAltura' => $altura,
+                                            'nVlLargura' => $largura,
+                                            'nVlDiametro' => '0',
+                                            'sCdMaoPropria' => 'N',
+                                            'nVlValorDeclarado' => '0',
+                                            'sCdAvisoRecebimento' => 'N',
+                                            'StrRetorno' => 'xml'
+                                        ]);
+                                        
+                                        $ch = curl_init();
+                                        curl_setopt($ch, CURLOPT_URL, $url . '?' . $params);
+                                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                                        curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+                                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 4);
+                                        $response = curl_exec($ch);
+                                        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                                        curl_close($ch);
+                                        
+                                        if ($httpCode === 200 && !empty($response)) {
+                                            $xml = @simplexml_load_string($response);
+                                            if ($xml && isset($xml->cServico)) {
+                                                $servico = $xml->cServico;
+                                                $erro = (string)$servico->Erro;
+                                                
+                                                if ($erro === '0' || empty($erro) || $erro === '010' || $erro === '011') {
+                                                    $valor = str_replace(',', '.', (string)$servico->Valor);
+                                                    $prazo = (int)$servico->PrazoEntrega;
+                                                    
+                                                    if (floatval($valor) > 0) {
+                                                        $shipping_options[] = [
+                                                            'code' => $codigo,
+                                                            'name' => $nome . ' (Correios)',
+                                                            'price' => floatval($valor),
+                                                            'days' => $prazo > 0 ? $prazo : ($nome === 'PAC' ? 10 : 5)
+                                                        ];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception $e) {
+                                        error_log("Erro ao calcular frete {$nome}: " . $e->getMessage());
+                                    }
+                                }
+                                
+                                // Fallback se API falhar
+                                if (empty($shipping_options)) {
+                                    $shipping_options = [
+                                        ['code' => '04510', 'name' => 'PAC (Correios)', 'price' => 35.00, 'days' => 10],
+                                        ['code' => '04014', 'name' => 'SEDEX (Correios)', 'price' => 55.00, 'days' => 5]
+                                    ];
+                                }
+                                
+                                return $shipping_options;
                             }
                             
-                            // Opcoes de frete padrão
-                            $shipping_options = [
-                                [
-                                    'code' => '04510',
-                                    'name' => 'PAC (Correios)',
-                                    'price' => $pac_price,
-                                    'days' => 10,
-                                    'selected' => ($checkout_data['shipping_method'] ?? 'PAC (Correios)') === 'PAC (Correios)'
-                                ],
-                                [
-                                    'code' => '04014',
-                                    'name' => 'SEDEX (Correios)',
-                                    'price' => $sedex_price,
-                                    'days' => 5,
-                                    'selected' => ($checkout_data['shipping_method'] ?? '') === 'SEDEX (Correios)'
-                                ]
-                            ];
+                            // Buscar fretes da API
+                            $shipping_options_api = calcularFreteCorreios($cep_origem, $cep_destino, $pdo);
+                            
+                            // Preparar opções com status de seleção
+                            $shipping_options = [];
+                            $current_method = $checkout_data['shipping_method'] ?? '';
+                            $first_selected = false;
+                            
+                            foreach ($shipping_options_api as $opt) {
+                                $is_selected = ($current_method === $opt['name']);
+                                if (!$first_selected && empty($current_method)) {
+                                    $is_selected = true;
+                                    $first_selected = true;
+                                }
+                                
+                                $shipping_options[] = array_merge($opt, ['selected' => $is_selected]);
+                                
+                                // Atualizar shipping_cost se este for o selecionado
+                                if ($is_selected) {
+                                    $shipping_cost = $opt['price'];
+                                    $_SESSION['checkout_data']['shipping_price'] = $opt['price'];
+                                    $_SESSION['checkout_data']['shipping_method'] = $opt['name'];
+                                }
+                            }
                             
                             // Recalcular total com o frete
                             $total = $subtotal + $shipping_cost;
