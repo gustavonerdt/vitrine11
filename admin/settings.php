@@ -1086,7 +1086,7 @@ $csrf = generateCsrfToken();
     .save-button-container {
         position: fixed;
         bottom: 0;
-        left: 250px; /* Largura padrão do sidebar */
+        left: 80px; /* Largura do sidebar colapsado */
         right: 0;
         background: var(--admin-bg-card);
         padding: 20px;

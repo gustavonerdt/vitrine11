@@ -201,9 +201,30 @@ if (!$is_ajax) {
     <!-- Main Product Section -->
     <div class="container">
         <div class="product-detail-container">
-            <!-- Left: Product Images Gallery -->
+            <!-- Left: Product Images Gallery - Layout com miniaturas na lateral -->
             <div class="product-image-container">
-                <div class="product-image-gallery">
+                <div class="product-image-gallery product-image-gallery-lateral">
+                    <!-- Thumbnail Gallery na Lateral (esquerda) -->
+                    <?php 
+                    $image_count = count($normalized_images);
+                    if (!empty($normalized_images) && $image_count > 1): 
+                    ?>
+                        <div class="product-thumbnails product-thumbnails-lateral">
+                            <?php foreach ($normalized_images as $index => $thumb_url): ?>
+                                <?php if (!empty($thumb_url)): ?>
+                                <div class="thumbnail-item <?php echo $index === 0 ? 'active' : ''; ?>" 
+                                     data-image-index="<?php echo $index; ?>"
+                                     onclick="changeMainImage('<?php echo htmlspecialchars($thumb_url, ENT_QUOTES); ?>', <?php echo $index; ?>)">
+                                    <img src="<?php echo htmlspecialchars($thumb_url); ?>" 
+                                         alt="Imagem <?php echo $index + 1; ?>"
+                                         loading="lazy"
+                                         onerror="console.error('Erro ao carregar thumbnail:', this.src); this.onerror=null; this.parentElement.style.display='none';">
+                                </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    
                     <!-- Main Image -->
                     <div class="product-main-image-wrapper">
                         <?php if (!empty($normalized_images)): ?>
@@ -231,27 +252,6 @@ if (!$is_ajax) {
                             </div>
                         <?php endif; ?>
                     </div>
-                    
-                    <!-- Thumbnail Gallery -->
-                    <?php 
-                    $image_count = count($normalized_images);
-                    if (!empty($normalized_images) && $image_count > 1): 
-                    ?>
-                        <div class="product-thumbnails">
-                            <?php foreach ($normalized_images as $index => $thumb_url): ?>
-                                <?php if (!empty($thumb_url)): ?>
-                                <div class="thumbnail-item <?php echo $index === 0 ? 'active' : ''; ?>" 
-                                     data-image-index="<?php echo $index; ?>"
-                                     onclick="changeMainImage('<?php echo htmlspecialchars($thumb_url, ENT_QUOTES); ?>', <?php echo $index; ?>)">
-                                    <img src="<?php echo htmlspecialchars($thumb_url); ?>" 
-                                         alt="Imagem <?php echo $index + 1; ?>"
-                                         loading="lazy"
-                                         onerror="console.error('Erro ao carregar thumbnail:', this.src); this.onerror=null; this.parentElement.style.display='none';">
-                                </div>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
                 </div>
             </div>
 

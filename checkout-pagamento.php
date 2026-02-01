@@ -117,24 +117,67 @@ include __DIR__ . '/includes/public-header.php';
                             echo htmlspecialchars(implode(', ', $address_parts));
                             ?>
                         </p>
-                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">Alterar</a>
+                        <a href="#" class="link-change" onclick="openAddressModal(); return false;">Alterar</a>
                     </div>
                     
                     <!-- Método de Entrega -->
                     <div class="form-section">
-                        <h2 class="section-title">FORMA DE ENTREGA</h2>
-                        <div class="shipping-selected">
-                            <strong><?php echo htmlspecialchars($checkout_data['shipping_method']); ?></strong>
-                            <span><?php echo formatPrice($shipping_cost); ?></span>
-                        </div>
-                        <p class="shipping-estimate">
+                        <h2 class="section-title">Escolha uma Opcao</h2>
+                        <div class="shipping-options-container">
                             <?php
-                            // Calcular data estimada (aproximadamente 5-7 dias úteis)
-                            $estimated_date = date('d/m/Y', strtotime('+5 weekdays'));
-                            echo "Chega " . $estimated_date;
+                            // Buscar opcoes de frete disponiveis
+                            $cep_destino = preg_replace('/[^0-9]/', '', $checkout_data['cep'] ?? '');
+                            $cep_origem = getSetting($pdo, 'correios_cep_origem', '01310100');
+                            $cep_origem = preg_replace('/[^0-9]/', '', $cep_origem);
+                            
+                            // Opcoes de frete padrão
+                            $shipping_options = [
+                                [
+                                    'code' => '04510',
+                                    'name' => 'PAC (Correios)',
+                                    'price' => $shipping_cost,
+                                    'days' => 10,
+                                    'selected' => ($checkout_data['shipping_method'] ?? '') === 'PAC (Correios)'
+                                ],
+                                [
+                                    'code' => '04014',
+                                    'name' => 'SEDEX (Correios)',
+                                    'price' => $shipping_cost * 1.5,
+                                    'days' => 5,
+                                    'selected' => ($checkout_data['shipping_method'] ?? '') === 'SEDEX (Correios)'
+                                ]
+                            ];
+                            
+                            // Se nenhum selecionado, selecionar o primeiro
+                            $has_selected = false;
+                            foreach ($shipping_options as $opt) {
+                                if ($opt['selected']) $has_selected = true;
+                            }
+                            if (!$has_selected && !empty($shipping_options)) {
+                                $shipping_options[0]['selected'] = true;
+                            }
                             ?>
-                        </p>
-                        <a href="<?php echo APP_URL; ?>/checkout-entrega.php" class="link-change">Alterar</a>
+                            
+                            <?php foreach ($shipping_options as $index => $option): ?>
+                            <div class="shipping-option-card <?php echo $option['selected'] ? 'selected' : ''; ?>" 
+                                 data-price="<?php echo $option['price']; ?>"
+                                 data-method="<?php echo htmlspecialchars($option['name']); ?>"
+                                 onclick="selectShippingOption(this)">
+                                <input type="radio" 
+                                       name="shipping_option" 
+                                       id="shipping_<?php echo $index; ?>"
+                                       value="<?php echo htmlspecialchars($option['name']); ?>"
+                                       data-price="<?php echo $option['price']; ?>"
+                                       <?php echo $option['selected'] ? 'checked' : ''; ?>
+                                       style="display: none;">
+                                <div class="shipping-option-info">
+                                    <strong class="shipping-option-name"><?php echo htmlspecialchars($option['name']); ?></strong>
+                                    <span class="shipping-option-days">Chega em ate <?php echo $option['days']; ?> dias uteis</span>
+                                </div>
+                                <span class="shipping-option-price"><?php echo formatPrice($option['price']); ?></span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     
                     <!-- Observacoes do Pedido (Opcional) -->
@@ -202,8 +245,8 @@ include __DIR__ . '/includes/public-header.php';
                             Nas próximas compras enviaremos um código para: <?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>
                             <a href="#" class="link-change">Alterar</a>
                         </p>
-                        <p class="terms-text">
-                            Ao salvar, você aceita os <a href="#">Termos de uso</a> e <a href="#">Política de Privacidade</a>
+                        <p class="terms-text" style="color: #000 !important;">
+                            Ao continuar, voce concorda com nossos <a href="#" style="color: #000 !important; text-decoration: underline;">Termos de Uso</a> e <a href="#" style="color: #000 !important; text-decoration: underline;">Politica de Privacidade</a>
                         </p>
                     </div>
                     
@@ -346,12 +389,423 @@ include __DIR__ . '/includes/public-header.php';
     </div>
 </div>
 
+<!-- Modal Editar Endereco -->
+<div id="addressModal" class="checkout-modal" style="display: none;">
+    <div class="checkout-modal-content">
+        <div class="checkout-modal-header">
+            <h3>Editar Endereco de Entrega</h3>
+            <button type="button" class="checkout-modal-close" onclick="closeAddressModal()">&times;</button>
+        </div>
+        <div class="checkout-modal-body">
+            <form id="addressEditForm">
+                <div class="form-group">
+                    <label>CEP</label>
+                    <input type="text" id="edit_cep" name="cep" value="<?php echo htmlspecialchars($checkout_data['cep'] ?? ''); ?>" maxlength="9" placeholder="00000-000">
+                </div>
+                <div class="form-group">
+                    <label>Rua</label>
+                    <input type="text" id="edit_street" name="street" value="<?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Numero</label>
+                        <input type="text" id="edit_number" name="number" value="<?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label>Complemento</label>
+                        <input type="text" id="edit_complement" name="complement" value="<?php echo htmlspecialchars($checkout_data['complement'] ?? ''); ?>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Bairro</label>
+                    <input type="text" id="edit_neighborhood" name="neighborhood" value="<?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?>">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cidade</label>
+                        <input type="text" id="edit_city" name="city" value="<?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <input type="text" id="edit_state" name="state" value="<?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?>" maxlength="2">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="checkout-modal-footer">
+            <button type="button" class="btn-modal-cancel" onclick="closeAddressModal()">Cancelar</button>
+            <button type="button" class="btn-modal-save" onclick="saveAddressChanges()">Salvar Alteracoes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cupom de Desconto -->
+<div id="couponModal" class="checkout-modal" style="display: none;">
+    <div class="checkout-modal-content" style="max-width: 400px;">
+        <div class="checkout-modal-header">
+            <h3><i class="fas fa-tag"></i> Cupom de Desconto</h3>
+            <button type="button" class="checkout-modal-close" onclick="closeCouponModal()">&times;</button>
+        </div>
+        <div class="checkout-modal-body">
+            <div class="form-group">
+                <label>Digite seu cupom</label>
+                <input type="text" id="coupon_code" name="coupon_code" placeholder="CODIGO DO CUPOM" style="text-transform: uppercase;">
+            </div>
+            <div id="coupon_message" style="display: none; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;"></div>
+        </div>
+        <div class="checkout-modal-footer">
+            <button type="button" class="btn-modal-cancel" onclick="closeCouponModal()">Cancelar</button>
+            <button type="button" class="btn-modal-save" onclick="applyCoupon()">Aplicar Cupom</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modal Styles */
+.checkout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.checkout-modal-content {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.checkout-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.checkout-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000;
+}
+
+.checkout-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+}
+
+.checkout-modal-close:hover {
+    color: #000;
+}
+
+.checkout-modal-body {
+    padding: 1.5rem;
+}
+
+.checkout-modal-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e5e5e5;
+    justify-content: flex-end;
+}
+
+.btn-modal-cancel {
+    padding: 0.75rem 1.5rem;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-modal-cancel:hover {
+    background: #e5e5e5;
+}
+
+.btn-modal-save {
+    padding: 0.75rem 1.5rem;
+    background: #c7a333;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-modal-save:hover {
+    background: #b8962e;
+}
+
+/* Shipping Options Cards */
+.shipping-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.shipping-option-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.shipping-option-card:hover {
+    border-color: #c7a333;
+}
+
+.shipping-option-card.selected {
+    border-color: #c7a333;
+    background: #252525;
+}
+
+.shipping-option-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.shipping-option-name {
+    color: #fff;
+    font-size: 1rem;
+}
+
+.shipping-option-days {
+    color: #999;
+    font-size: 0.875rem;
+}
+
+.shipping-option-price {
+    color: #c7a333;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+/* Payment method border color fix */
+.payment-tab {
+    border: 2px solid #e5e5e5 !important;
+}
+
+.payment-tab.active {
+    border-color: #c7a333 !important;
+    color: #c7a333 !important;
+}
+
+.payment-tab:hover {
+    border-color: #c7a333 !important;
+}
+</style>
+
 <script>
     window.APP_URL = '<?php echo APP_URL; ?>';
     window.MP_PUBLIC_KEY = '<?php echo htmlspecialchars($mp_public_key); ?>';
     window.orderTotal = <?php echo $total; ?>;
     window.checkoutEmail = '<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>';
     window.checkoutCpf = '<?php echo preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? ''); ?>';
+    window.appliedCoupon = null;
+    window.couponDiscount = 0;
+    
+    // Address Modal Functions
+    function openAddressModal() {
+        document.getElementById('addressModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeAddressModal() {
+        document.getElementById('addressModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    function saveAddressChanges() {
+        const formData = new FormData();
+        formData.append('cep', document.getElementById('edit_cep').value);
+        formData.append('street', document.getElementById('edit_street').value);
+        formData.append('number', document.getElementById('edit_number').value);
+        formData.append('complement', document.getElementById('edit_complement').value);
+        formData.append('neighborhood', document.getElementById('edit_neighborhood').value);
+        formData.append('city', document.getElementById('edit_city').value);
+        formData.append('state', document.getElementById('edit_state').value);
+        
+        fetch(window.APP_URL + '/api/update-checkout-address.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Endereco atualizado com sucesso!', 'success');
+                closeAddressModal();
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showNotification(data.error || 'Erro ao atualizar endereco', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Erro ao atualizar endereco', 'error');
+        });
+    }
+    
+    // Coupon Modal Functions
+    function openCouponModal() {
+        document.getElementById('couponModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('coupon_code').focus();
+    }
+    
+    function closeCouponModal() {
+        document.getElementById('couponModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    function applyCoupon() {
+        const couponCode = document.getElementById('coupon_code').value.trim().toUpperCase();
+        const messageDiv = document.getElementById('coupon_message');
+        
+        if (!couponCode) {
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+            messageDiv.style.color = '#ef4444';
+            messageDiv.textContent = 'Digite um codigo de cupom';
+            return;
+        }
+        
+        fetch(window.APP_URL + '/api/validate-coupon.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ coupon_code: couponCode, total: window.orderTotal })
+        })
+        .then(response => response.json())
+        .then(data => {
+            messageDiv.style.display = 'block';
+            if (data.success) {
+                messageDiv.style.background = 'rgba(34, 197, 94, 0.1)';
+                messageDiv.style.color = '#22c55e';
+                messageDiv.textContent = 'Cupom aplicado! Desconto: R$ ' + data.discount.toFixed(2).replace('.', ',');
+                
+                window.appliedCoupon = couponCode;
+                window.couponDiscount = data.discount;
+                
+                // Update total display
+                updateTotalWithDiscount(data.discount);
+                
+                setTimeout(() => {
+                    closeCouponModal();
+                    showNotification('Cupom aplicado com sucesso!', 'success');
+                }, 1500);
+            } else {
+                messageDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                messageDiv.style.color = '#ef4444';
+                messageDiv.textContent = data.error || 'Cupom invalido';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+            messageDiv.style.color = '#ef4444';
+            messageDiv.textContent = 'Erro ao validar cupom';
+        });
+    }
+    
+    function updateTotalWithDiscount(discount) {
+        const totalElement = document.querySelector('.summary-total span:last-child');
+        const discountRow = document.querySelector('.summary-row:nth-child(3) span:last-child');
+        
+        if (discountRow) {
+            discountRow.textContent = '- R$ ' + discount.toFixed(2).replace('.', ',');
+        }
+        
+        if (totalElement) {
+            const newTotal = window.orderTotal - discount;
+            totalElement.textContent = 'R$ ' + newTotal.toFixed(2).replace('.', ',');
+            window.orderTotal = newTotal;
+        }
+    }
+    
+    // Shipping Option Selection
+    function selectShippingOption(element) {
+        // Remove selected from all
+        document.querySelectorAll('.shipping-option-card').forEach(card => {
+            card.classList.remove('selected');
+            card.querySelector('input[type="radio"]').checked = false;
+        });
+        
+        // Add selected to clicked
+        element.classList.add('selected');
+        element.querySelector('input[type="radio"]').checked = true;
+        
+        // Update shipping cost in session
+        const price = parseFloat(element.dataset.price);
+        const method = element.dataset.method;
+        
+        fetch(window.APP_URL + '/api/update-shipping.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ shipping_price: price, shipping_method: method })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update display
+                location.reload();
+            }
+        });
+    }
+    
+    // CEP mask
+    document.getElementById('edit_cep')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        e.target.value = value;
+        
+        // Auto-fill address
+        if (value.replace(/\D/g, '').length === 8) {
+            fetch('https://viacep.com.br/ws/' + value.replace(/\D/g, '') + '/json/')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    document.getElementById('edit_street').value = data.logradouro || '';
+                    document.getElementById('edit_neighborhood').value = data.bairro || '';
+                    document.getElementById('edit_city').value = data.localidade || '';
+                    document.getElementById('edit_state').value = data.uf || '';
+                }
+            });
+        }
+    });
+    
+    // Coupon link handler
+    document.querySelector('.link-add-coupon')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        openCouponModal();
+    });
 </script>
 <script src="<?php echo APP_URL; ?>/assets/js/checkout-pagamento.js"></script>
 

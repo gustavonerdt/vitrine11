@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $target_brand_id = !empty($_POST['target_brand_id']) ? (int)$_POST['target_brand_id'] : null;
             $target_product_id = !empty($_POST['target_product_id']) ? (int)$_POST['target_product_id'] : null;
             $carousel_images = [];
-            for ($i = 1; $i <= 4; $i++) {
+            for ($i = 1; $i <= 8; $i++) {
                 // Imagem desktop (recomendada 390x153)
                 $imgDesktop = trim($_POST['carousel_image_' . $i] ?? '');
                 // Imagem mobile (recomendada 600x717)
@@ -548,7 +548,7 @@ if (db_table_exists($pdo, 'products')) {
         .save-button-container {
             position: fixed;
             bottom: 0;
-            left: 250px; /* Largura padrão do sidebar */
+            left: 80px; /* Largura do sidebar colapsado */
             right: 0;
             background: var(--admin-bg-card);
             padding: 20px;
@@ -710,11 +710,11 @@ if (db_table_exists($pdo, 'products')) {
                                 <span class="step-number">1</span>
                                 Adicione suas Imagens
                             </h3>
-                            <p>Você pode adicionar até 4 imagens. A primeira é obrigatória, as outras são opcionais.</p>
+                            <p>Você pode adicionar até 8 imagens. A primeira é obrigatória, as outras são opcionais.</p>
                             
                             <?php 
                             $carouselImages = $carouselBanner['carousel_images'] ?? [];
-                            for ($i = 1; $i <= 4; $i++): 
+                            for ($i = 1; $i <= 8; $i++): 
                                 $carouselImg = $carouselImages[$i-1] ?? null;
                                 $desktopUrl = $carouselImg['image_url'] ?? $carouselImg['image_url_desktop'] ?? '';
                                 $mobileUrl = $carouselImg['mobile_image_url'] ?? $carouselImg['image_url_mobile'] ?? '';
@@ -869,7 +869,7 @@ if (db_table_exists($pdo, 'products')) {
                 return;
             }
             
-            <?php for ($i = 1; $i <= 4; $i++): ?>
+            <?php for ($i = 1; $i <= 8; $i++): ?>
             (function(index) {
                 // Desktop
                 const containerIdDesktop = 'carouselImageUpload' + index;

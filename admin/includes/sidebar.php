@@ -154,6 +154,12 @@ if ($musicEnabled == 1) {
                         <span>Leads</span>
                     </a>
                 </li>
+                <li>
+                    <a href="cupons.php" class="<?php echo $current_page == 'cupons.php' ? 'active' : ''; ?>" data-title="Cupons">
+                        <i class="fas fa-tag"></i>
+                        <span>Cupons</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
