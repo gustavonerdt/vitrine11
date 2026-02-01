@@ -997,6 +997,26 @@ INSERT INTO `upsell_settings` (`page_type`, `is_enabled`, `title`, `description`
 ('obrigado', 0, 'Oferta Exclusiva!', 'Por ter comprado conosco, ganhe um desconto especial', 'QUERO APROVEITAR');
 
 -- ============================================
+-- DADOS INICIAIS - Faixa Rotativa
+-- ============================================
+INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES
+('faixa_enabled', '1', 'appearance'),
+('faixa_bg_color', '#b67c90', 'appearance'),
+('faixa_text_color', '#ffffff', 'appearance'),
+('faixa_font_size', '14', 'appearance'),
+('faixa_frases', 'PARCELAMENTO EM ATE 6X SEM JUROS|ENTREGA RAPIDA PARA TODO PAIS|5% DE DESCONTO NO PIX|TROCA GRATIS EM ATE 30 DIAS', 'appearance'),
+('faixa_links', '|||', 'appearance'),
+('faixa_interval', '4000', 'appearance'),
+('search_placeholder', 'Oi, o que voce procura hoje? ;)', 'appearance'),
+('filter_button_text', 'Escolher Marca', 'appearance'),
+('buy_button_text', 'COMPRAR AGORA', 'appearance'),
+('empty_cart_text', 'Seu carrinho esta vazio', 'appearance'),
+('logo_redirect_url', '/', 'appearance'),
+('after_add_cart_redirect', 'stay', 'appearance'),
+('after_purchase_url', '/obrigado.php', 'appearance')
+ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
+
+-- ============================================
 -- FINALIZAR
 -- ============================================
 SET FOREIGN_KEY_CHECKS = 1;

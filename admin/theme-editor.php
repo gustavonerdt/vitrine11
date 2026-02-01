@@ -1455,9 +1455,17 @@ $googleFonts = [
             slider.addEventListener('input', function() {
                 const target = this.dataset.target;
                 const value = this.value;
-                const unit = target === 'products_per_row' ? '' : 'px';
+                let displayValue = value;
                 
-                this.closest('.range-wrapper').querySelector('.range-value').textContent = value + unit;
+                if (target === 'products_per_row') {
+                    displayValue = value;
+                } else if (target === 'faixa_interval') {
+                    displayValue = (parseInt(value) / 1000).toFixed(1) + 's';
+                } else {
+                    displayValue = value + 'px';
+                }
+                
+                this.closest('.range-wrapper').querySelector('.range-value').textContent = displayValue;
                 updateThemeValue(target, value);
             });
         });
@@ -1471,6 +1479,58 @@ $googleFonts = [
             updateThemeValue(target, value);
         });
     });
+    
+    // Text Inputs
+    document.querySelectorAll('.option-input[data-target]').forEach(input => {
+        input.addEventListener('input', function() {
+            const target = this.dataset.target;
+            const value = this.value;
+            updateThemeValue(target, value);
+        });
+    });
+    
+    // Radio buttons (faixa_enabled)
+    document.querySelectorAll('input[name="faixa_enabled"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateThemeValue('faixa_enabled', this.value);
+        });
+    });
+    
+    // Frase/Link inputs
+    document.querySelectorAll('.frase-text, .frase-link').forEach(input => {
+        input.addEventListener('input', function() {
+            hasChanges = true;
+        });
+    });
+    
+    // Funcao para coletar frases e links
+    function collectFaixaData() {
+        const frases = [];
+        const links = [];
+        
+        for (let i = 0; i < 6; i++) {
+            const fraseInput = document.querySelector(`input[name="frase_${i}"]`);
+            const linkInput = document.querySelector(`input[name="link_${i}"]`);
+            
+            if (fraseInput) frases.push(fraseInput.value.trim());
+            if (linkInput) links.push(linkInput.value.trim());
+        }
+        
+        themeState.faixa_frases = frases.filter(f => f !== '').join('|');
+        themeState.faixa_links = links.join('|');
+    }
+    
+    // Funcao para coletar inputs de texto
+    function collectTextInputs() {
+        document.querySelectorAll('.option-input[name]').forEach(input => {
+            const name = input.name;
+            if (name && !name.startsWith('frase_') && !name.startsWith('link_')) {
+                if (input.dataset.target) {
+                    themeState[name] = input.value;
+                }
+            }
+        });
+    }
     
     // Device Switcher
     function initDeviceSwitcher() {
@@ -1581,18 +1641,24 @@ $googleFonts = [
     }
     
     // Save Theme
-    async function saveTheme() {
-        showLoading(true);
-        
-        try {
-            const response = await fetch('<?php echo APP_URL; ?>/api/admin/save-theme.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    theme: themeState,
-                    create_version: true
-                })
-            });
+async function saveTheme() {
+  showLoading(true);
+  
+  // Coletar frases e links da faixa rotativa
+  collectFaixaData();
+  
+  // Coletar inputs de texto
+  collectTextInputs();
+  
+  try {
+  const response = await fetch('<?php echo APP_URL; ?>/api/admin/save-theme.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+  theme: themeState,
+  create_version: true
+  })
+  });
             
             const data = await response.json();
             
