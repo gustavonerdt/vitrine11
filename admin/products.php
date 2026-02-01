@@ -1880,7 +1880,220 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
                 showNotification('Erro de conexão: ' + err.message, 'error');
             }
         }
+        
+        // ============================================
+        // ALERTA DE IMAGENS QUEBRADAS
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const brokenImages = [];
+            const productImages = document.querySelectorAll('.product-image img, .product-thumb img');
+            
+            productImages.forEach(function(img) {
+                // Verificar se a imagem já está com erro
+                if (!img.complete || img.naturalWidth === 0) {
+                    checkBrokenImage(img);
+                }
+                
+                // Adicionar handler de erro
+                img.addEventListener('error', function() {
+                    handleBrokenImage(this);
+                });
+                
+                // Verificar após carregar
+                img.addEventListener('load', function() {
+                    if (this.naturalWidth === 0) {
+                        handleBrokenImage(this);
+                    }
+                });
+            });
+            
+            function checkBrokenImage(img) {
+                // Tentar recarregar a imagem para verificar
+                const testImg = new Image();
+                testImg.onload = function() {
+                    // Imagem OK
+                };
+                testImg.onerror = function() {
+                    handleBrokenImage(img);
+                };
+                testImg.src = img.src;
+            }
+            
+            function handleBrokenImage(img) {
+                const productRow = img.closest('tr') || img.closest('.product-card');
+                if (!productRow) return;
+                
+                // Marcar a linha/card com aviso
+                if (!productRow.classList.contains('has-broken-image')) {
+                    productRow.classList.add('has-broken-image');
+                    
+                    // Adicionar icone de aviso
+                    const warningIcon = document.createElement('span');
+                    warningIcon.className = 'broken-image-warning';
+                    warningIcon.innerHTML = '<i class="fas fa-exclamation-triangle" title="Imagem indisponivel ou quebrada"></i>';
+                    warningIcon.title = 'Imagem indisponivel ou quebrada';
+                    
+                    const imageCell = img.closest('td') || img.parentElement;
+                    if (imageCell && !imageCell.querySelector('.broken-image-warning')) {
+                        imageCell.style.position = 'relative';
+                        imageCell.appendChild(warningIcon);
+                    }
+                    
+                    // Adicionar à lista de imagens quebradas
+                    const productName = productRow.querySelector('.product-name')?.textContent || 
+                                       productRow.querySelector('strong')?.textContent || 'Produto';
+                    brokenImages.push({ element: productRow, name: productName.trim() });
+                }
+            }
+            
+            // Mostrar alerta se houver imagens quebradas (após um delay para carregar todas)
+            setTimeout(function() {
+                if (brokenImages.length > 0) {
+                    showBrokenImagesAlert(brokenImages);
+                }
+            }, 2000);
+        });
+        
+        function showBrokenImagesAlert(brokenImages) {
+            // Criar alerta fixo no topo
+            const alertBox = document.createElement('div');
+            alertBox.className = 'broken-images-alert';
+            alertBox.innerHTML = `
+                <div class="alert-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="alert-text">
+                        <strong>Atencao!</strong> ${brokenImages.length} produto(s) com imagem quebrada ou indisponivel.
+                        <button class="btn-show-broken" onclick="highlightBrokenImages()">Ver produtos</button>
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Inserir após o header
+            const mainContent = document.querySelector('.admin-main') || document.body;
+            mainContent.insertBefore(alertBox, mainContent.firstChild.nextSibling);
+        }
+        
+        function highlightBrokenImages() {
+            const brokenRows = document.querySelectorAll('.has-broken-image');
+            brokenRows.forEach(function(row, index) {
+                row.style.animation = 'none';
+                row.offsetHeight; // Trigger reflow
+                row.style.animation = 'highlightBroken 2s ease';
+                
+                // Scroll para o primeiro
+                if (index === 0) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
     </script>
+    
+    <style>
+    /* Estilos para alerta de imagens quebradas */
+    .broken-images-alert {
+        background: linear-gradient(135deg, #fef3cd, #fff3cd);
+        border: 1px solid #f59e0b;
+        border-left: 4px solid #f59e0b;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem;
+        position: sticky;
+        top: 80px;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+    
+    .broken-images-alert .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .broken-images-alert i.fa-exclamation-triangle {
+        color: #f59e0b;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    
+    .broken-images-alert .alert-text {
+        flex: 1;
+        color: #92400e;
+    }
+    
+    .broken-images-alert .alert-text strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+    
+    .broken-images-alert .btn-show-broken {
+        background: #f59e0b;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: 8px;
+        transition: all 0.2s;
+    }
+    
+    .broken-images-alert .btn-show-broken:hover {
+        background: #d97706;
+        transform: translateY(-1px);
+    }
+    
+    .broken-images-alert .alert-close {
+        background: transparent;
+        border: none;
+        color: #92400e;
+        cursor: pointer;
+        padding: 4px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .broken-images-alert .alert-close:hover {
+        opacity: 1;
+    }
+    
+    .has-broken-image {
+        background: rgba(245, 158, 11, 0.1) !important;
+        border-left: 3px solid #f59e0b !important;
+    }
+    
+    .broken-image-warning {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: #f59e0b;
+        color: #fff;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        z-index: 10;
+        cursor: help;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes highlightBroken {
+        0%, 100% { background: rgba(245, 158, 11, 0.1); }
+        50% { background: rgba(245, 158, 11, 0.3); }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    </style>
+    
     <style>
     .variant-item {
         display: flex;

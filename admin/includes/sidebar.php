@@ -77,12 +77,17 @@ if ($musicEnabled == 1) {
     }
 }
 ?>
-<aside class="sidebar">
+<aside class="sidebar" id="adminSidebar">
     <div class="sidebar-header">
         <a href="<?php echo APP_URL; ?>" class="sidebar-logo">
             <span class="sidebar-app-name"><?php echo htmlspecialchars(APP_NAME); ?></span>
         </a>
     </div>
+    
+    <!-- Botão Toggle para expandir/recolher -->
+    <button class="sidebar-toggle" id="sidebarToggle" title="Expandir/Recolher menu">
+        <i class="fas fa-chevron-right"></i>
+    </button>
     
     <nav class="sidebar-nav">
         <div class="sidebar-section">
