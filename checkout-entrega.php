@@ -156,5 +156,5 @@ include __DIR__ . '/includes/public-header.php';
     window.APP_URL = '<?php echo APP_URL; ?>';
     window.cartSubtotal = <?php echo $subtotal; ?>;
 </script>
-<script src="<?php echo APP_URL; ?>/assets/js/checkout-entrega.js"></script>
+<script src="<?php echo APP_URL; ?>/assets/js/checkout-entrega.js?v=<?php echo time(); ?>"></script>
 <?php include __DIR__ . '/includes/public-footer.php'; ?>
