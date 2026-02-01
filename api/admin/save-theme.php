@@ -34,12 +34,23 @@ $createVersion = isset($input['create_version']) && $input['create_version'] ===
 
 // Lista de configuracoes permitidas
 $allowedSettings = [
+    // Cores
     'color_primary', 'color_secondary', 'color_accent', 'color_background',
     'color_text', 'color_text_muted', 'header_bg', 'header_text', 'nav_bg',
     'card_bg', 'card_border', 'card_hover_bg', 'button_primary_bg',
     'button_primary_text', 'button_secondary_bg', 'button_secondary_text',
-    'footer_bg', 'footer_text', 'font_heading', 'font_body', 'font_size_base',
-    'border_radius', 'spacing_unit', 'container_max_width', 'products_per_row'
+    'footer_bg', 'footer_text',
+    // Tipografia
+    'font_heading', 'font_body', 'font_size_base',
+    // Layout
+    'border_radius', 'spacing_unit', 'container_max_width', 'products_per_row',
+    // Faixa Rotativa
+    'faixa_enabled', 'faixa_bg_color', 'faixa_text_color', 'faixa_font_size',
+    'faixa_frases', 'faixa_links', 'faixa_interval',
+    // Textos do site
+    'search_placeholder', 'filter_button_text', 'buy_button_text', 'empty_cart_text',
+    // Redirecionamentos
+    'logo_redirect_url', 'after_add_cart_redirect', 'after_purchase_url'
 ];
 
 try {

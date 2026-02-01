@@ -198,6 +198,147 @@ $currentBrandId = !empty($_GET['brand']) ? (int)$_GET['brand'] : null;
 // Get carousel banners for current brand (or all if no brand)
 $carouselBanners = getCarouselBanners($pdo, $currentBrandId);
 ?>
+<?php
+// Buscar configuracoes da faixa rotativa
+$faixaEnabled = getSetting($pdo, 'faixa_enabled', '1') === '1';
+$faixaBgColor = getSetting($pdo, 'faixa_bg_color', '#b67c90');
+$faixaTextColor = getSetting($pdo, 'faixa_text_color', '#ffffff');
+$faixaFontSize = getSetting($pdo, 'faixa_font_size', '14');
+$faixaFrases = getSetting($pdo, 'faixa_frases', 'PARCELAMENTO EM ATE 6X SEM JUROS|ENTREGA RAPIDA PARA TODO PAIS|5% DE DESCONTO NO PIX|TROCA GRATIS EM ATE 30 DIAS');
+$faixaLinks = getSetting($pdo, 'faixa_links', '|||'); // Links para cada frase (separados por |)
+$faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
+?>
+
+<?php if ($faixaEnabled): ?>
+<!-- Faixa Rotativa Promocional -->
+<style>
+    .faixa-container {
+        background-color: <?php echo htmlspecialchars($faixaBgColor); ?>;
+        color: <?php echo htmlspecialchars($faixaTextColor); ?>;
+        font-family: 'Helvetica', 'Arial', sans-serif;
+        font-size: <?php echo htmlspecialchars($faixaFontSize); ?>px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 100;
+    }
+    .faixa-btn {
+        background: none;
+        border: none;
+        color: <?php echo htmlspecialchars($faixaTextColor); ?>;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0 20px;
+        transition: opacity 0.2s ease;
+        outline: none;
+        user-select: none;
+    }
+    .faixa-btn:hover { opacity: 0.6; }
+    .faixa-texto {
+        flex-grow: 1;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        user-select: none;
+        opacity: 1;
+        transition: opacity 0.4s ease-in-out;
+    }
+    .faixa-texto a {
+        color: inherit;
+        text-decoration: none;
+    }
+    .faixa-texto a:hover {
+        text-decoration: underline;
+    }
+    .faixa-texto.escondido { opacity: 0; }
+    @media (max-width: 480px) {
+        .faixa-texto { font-size: <?php echo max(10, intval($faixaFontSize) - 2); ?>px; }
+        .faixa-btn { padding: 0 10px; }
+    }
+</style>
+
+<div class="faixa-container" id="faixa-topo">
+    <button class="faixa-btn" id="btn-voltar" aria-label="Anterior">&#10094;</button>
+    <div class="faixa-texto" id="texto-rotativo"></div>
+    <button class="faixa-btn" id="btn-avancar" aria-label="Proximo">&#10095;</button>
+</div>
+
+<script>
+(function() {
+    var frasesRaw = <?php echo json_encode(explode('|', $faixaFrases)); ?>;
+    var linksRaw = <?php echo json_encode(explode('|', $faixaLinks)); ?>;
+    var intervalo = <?php echo intval($faixaInterval); ?>;
+    
+    var frases = frasesRaw.map(function(f, i) {
+        return { texto: f.trim(), link: (linksRaw[i] || '').trim() };
+    });
+    
+    var indiceAtual = 0;
+    var textoElemento = document.getElementById("texto-rotativo");
+    var btnVoltar = document.getElementById("btn-voltar");
+    var btnAvancar = document.getElementById("btn-avancar");
+    var animando = false;
+    var intervaloAutoplay;
+    
+    function renderFrase() {
+        var item = frases[indiceAtual];
+        if (item.link && item.link !== '') {
+            textoElemento.innerHTML = '<a href="' + item.link + '">' + item.texto + '</a>';
+        } else {
+            textoElemento.innerText = item.texto;
+        }
+    }
+    
+    function mudarFrase(direcao) {
+        if (animando) return;
+        animando = true;
+        textoElemento.classList.add("escondido");
+        setTimeout(function() {
+            if (direcao === 'proximo') {
+                indiceAtual++;
+                if (indiceAtual >= frases.length) indiceAtual = 0;
+            } else {
+                indiceAtual--;
+                if (indiceAtual < 0) indiceAtual = frases.length - 1;
+            }
+            renderFrase();
+            textoElemento.classList.remove("escondido");
+            animando = false;
+        }, 400);
+    }
+    
+    function reiniciarTimer() {
+        clearInterval(intervaloAutoplay);
+        intervaloAutoplay = setInterval(function() {
+            mudarFrase('proximo');
+        }, intervalo);
+    }
+    
+    btnVoltar.addEventListener("click", function() {
+        mudarFrase('anterior');
+        reiniciarTimer();
+    });
+    
+    btnAvancar.addEventListener("click", function() {
+        mudarFrase('proximo');
+        reiniciarTimer();
+    });
+    
+    // Inicializar
+    renderFrase();
+    reiniciarTimer();
+})();
+</script>
+<?php endif; ?>
+
 <style> .vitrine-top-bar{background-color:#fef8d5;}</style>
 <div class="vitrine-page" style="background-color:#1a1a1a;">
     <!-- Top Search and Filters Bar (above banner) -->
@@ -2804,7 +2945,7 @@ a.btn-whatsapp-modern[data-product-id] i {
     top: 50% !important;
     transform: translateY(-50%) !important;
     background-color: #ffffff !important; /* Fundo Branco */
-    color: #25D366 !important; /* Símbolo Verde */
+    color: #25D366 !important; /* S��mbolo Verde */
     width: 32px !important;
     height: 32px !important;
     border-radius: 50% !important;

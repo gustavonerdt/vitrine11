@@ -17,6 +17,15 @@ $page_title = 'Editor Visual';
 
 // Buscar configuracoes atuais do tema
 $themeSettings = [
+    // Faixa Rotativa
+    'faixa_enabled' => getSetting($pdo, 'faixa_enabled', '1'),
+    'faixa_bg_color' => getSetting($pdo, 'faixa_bg_color', '#b67c90'),
+    'faixa_text_color' => getSetting($pdo, 'faixa_text_color', '#ffffff'),
+    'faixa_font_size' => getSetting($pdo, 'faixa_font_size', '14'),
+    'faixa_frases' => getSetting($pdo, 'faixa_frases', 'PARCELAMENTO EM ATE 6X SEM JUROS|ENTREGA RAPIDA PARA TODO PAIS|5% DE DESCONTO NO PIX|TROCA GRATIS EM ATE 30 DIAS'),
+    'faixa_links' => getSetting($pdo, 'faixa_links', '|||'),
+    'faixa_interval' => getSetting($pdo, 'faixa_interval', '4000'),
+    
     // Cores principais
     'color_primary' => getSetting($pdo, 'color_primary', '#C7A333'),
     'color_secondary' => getSetting($pdo, 'color_secondary', '#1a1a1a'),
@@ -773,6 +782,10 @@ $googleFonts = [
                     <i class="fas fa-palette"></i>
                     Cores
                 </button>
+                <button class="editor-tab" data-tab="content">
+                    <i class="fas fa-edit"></i>
+                    Conteudo
+                </button>
                 <button class="editor-tab" data-tab="typography">
                     <i class="fas fa-font"></i>
                     Fontes
@@ -953,6 +966,163 @@ $googleFonts = [
                                     </div>
                                     <input type="text" class="color-hex" value="<?php echo $themeSettings['footer_bg']; ?>" data-color="footer_bg">
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab: Conteudo -->
+                <div class="editor-panel" id="panel-content">
+                    <!-- Faixa Rotativa -->
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-bullhorn"></i> Faixa Promocional
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Ativar Faixa</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="faixa_enabled" value="1" <?php echo $themeSettings['faixa_enabled'] === '1' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Sim
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="faixa_enabled" value="0" <?php echo $themeSettings['faixa_enabled'] === '0' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Nao
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Cor de Fundo</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo $themeSettings['faixa_bg_color']; ?>">
+                                        <input type="color" name="faixa_bg_color" value="<?php echo $themeSettings['faixa_bg_color']; ?>" data-target="faixa_bg_color">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo $themeSettings['faixa_bg_color']; ?>" data-color="faixa_bg_color">
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Cor do Texto</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo $themeSettings['faixa_text_color']; ?>">
+                                        <input type="color" name="faixa_text_color" value="<?php echo $themeSettings['faixa_text_color']; ?>" data-target="faixa_text_color">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo $themeSettings['faixa_text_color']; ?>" data-color="faixa_text_color">
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Tamanho da Fonte</label>
+                                <div class="range-wrapper">
+                                    <input type="range" class="range-slider" name="faixa_font_size" min="10" max="20" value="<?php echo $themeSettings['faixa_font_size']; ?>" data-target="faixa_font_size">
+                                    <span class="range-value"><?php echo $themeSettings['faixa_font_size']; ?>px</span>
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Intervalo de Troca (ms)</label>
+                                <div class="range-wrapper">
+                                    <input type="range" class="range-slider" name="faixa_interval" min="2000" max="10000" step="500" value="<?php echo $themeSettings['faixa_interval']; ?>" data-target="faixa_interval">
+                                    <span class="range-value"><?php echo number_format(intval($themeSettings['faixa_interval']) / 1000, 1); ?>s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Frases da Faixa -->
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-quote-right"></i> Frases Rotativas
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <p style="color: #888; font-size: 0.8rem; margin-bottom: 1rem;">Adicione ate 6 frases promocionais. Deixe o link vazio para nao redirecionar.</p>
+                            
+                            <?php 
+                            $frases = explode('|', $themeSettings['faixa_frases']);
+                            $links = explode('|', $themeSettings['faixa_links']);
+                            for ($i = 0; $i < 6; $i++): 
+                                $frase = isset($frases[$i]) ? trim($frases[$i]) : '';
+                                $link = isset($links[$i]) ? trim($links[$i]) : '';
+                            ?>
+                            <div class="frase-item" style="background: #141414; border: 1px solid #2a2a2a; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <span style="background: #d4af37; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;"><?php echo $i + 1; ?></span>
+                                    <span style="color: #666; font-size: 0.8rem;">Frase <?php echo $i + 1; ?></span>
+                                </div>
+                                <input type="text" class="option-input frase-text" name="frase_<?php echo $i; ?>" value="<?php echo htmlspecialchars($frase); ?>" placeholder="Ex: FRETE GRATIS ACIMA DE R$299" style="margin-bottom: 0.5rem; text-transform: uppercase;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-link" style="color: #666;"></i>
+                                    <input type="text" class="option-input frase-link" name="link_<?php echo $i; ?>" value="<?php echo htmlspecialchars($link); ?>" placeholder="https://... (opcional)" style="font-size: 0.85rem;">
+                                </div>
+                            </div>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Textos do Site -->
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-file-alt"></i> Textos Gerais
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Placeholder da Busca</label>
+                                <input type="text" class="option-input" name="search_placeholder" value="<?php echo htmlspecialchars(getSetting($pdo, 'search_placeholder', 'Oi, o que você procura hoje? ;)')); ?>" data-target="search_placeholder">
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Botao de Filtro</label>
+                                <input type="text" class="option-input" name="filter_button_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'filter_button_text', 'Escolher Marca')); ?>" data-target="filter_button_text">
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Texto do Botao Comprar</label>
+                                <input type="text" class="option-input" name="buy_button_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'buy_button_text', 'COMPRAR AGORA')); ?>" data-target="buy_button_text" style="text-transform: uppercase;">
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Texto do Carrinho Vazio</label>
+                                <input type="text" class="option-input" name="empty_cart_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'empty_cart_text', 'Seu carrinho esta vazio')); ?>" data-target="empty_cart_text">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Redirecionamentos -->
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-external-link-alt"></i> Redirecionamentos
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Link do Logo (ao clicar)</label>
+                                <input type="text" class="option-input" name="logo_redirect_url" value="<?php echo htmlspecialchars(getSetting($pdo, 'logo_redirect_url', '/')); ?>" data-target="logo_redirect_url" placeholder="/">
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Pagina Apos Adicionar ao Carrinho</label>
+                                <select class="option-select" name="after_add_cart_redirect" data-target="after_add_cart_redirect">
+                                    <?php $afterCartRedirect = getSetting($pdo, 'after_add_cart_redirect', 'stay'); ?>
+                                    <option value="stay" <?php echo $afterCartRedirect === 'stay' ? 'selected' : ''; ?>>Permanecer na pagina</option>
+                                    <option value="cart" <?php echo $afterCartRedirect === 'cart' ? 'selected' : ''; ?>>Ir para o carrinho</option>
+                                    <option value="checkout" <?php echo $afterCartRedirect === 'checkout' ? 'selected' : ''; ?>>Ir direto para checkout</option>
+                                </select>
+                            </div>
+                            
+                            <div class="option-item">
+                                <label class="option-label">Pagina Apos Finalizar Compra</label>
+                                <input type="text" class="option-input" name="after_purchase_url" value="<?php echo htmlspecialchars(getSetting($pdo, 'after_purchase_url', '/obrigado.php')); ?>" data-target="after_purchase_url" placeholder="/obrigado.php">
                             </div>
                         </div>
                     </div>
