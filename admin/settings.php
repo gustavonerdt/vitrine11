@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'mercado_pago_environment' => trim($_POST['mercado_pago_environment'] ?? 'test'),
                 // Frete
                 'correios_cep_origem' => trim($_POST['correios_cep_origem'] ?? ''),
+                'melhor_envio_token' => trim($_POST['melhor_envio_token'] ?? ''),
                 'frete_gratis_valor_minimo' => trim($_POST['frete_gratis_valor_minimo'] ?? '0'),
                 // WhatsApp Flutuante
                 'whatsapp_float_enabled' => isset($_POST['whatsapp_float_enabled']) ? '1' : '0',
@@ -111,6 +112,7 @@ $currentSettings = [
     'mercado_pago_environment' => getSetting($pdo, 'mercado_pago_environment', 'test'),
     // Frete
     'correios_cep_origem' => getSetting($pdo, 'correios_cep_origem', ''),
+    'melhor_envio_token' => getSetting($pdo, 'melhor_envio_token', ''),
     'frete_gratis_valor_minimo' => getSetting($pdo, 'frete_gratis_valor_minimo', '0'),
     // WhatsApp Flutuante
     'whatsapp_float_enabled' => getSetting($pdo, 'whatsapp_float_enabled', '1'),
@@ -757,11 +759,11 @@ $csrf = generateCsrfToken();
                         </div>
                     </div>
 
-                    <!-- Seção: Frete -->
+                    <!-- Seção: Frete (Melhor Envio) -->
                     <div class="settings-section" style="margin-top: 3rem;">
                         <div class="section-header">
-                            <h2><i class="fas fa-truck"></i> Configurações de Frete</h2>
-                            <p class="section-description">Configure o cálculo de frete usando a API dos Correios.</p>
+                            <h2><i class="fas fa-truck"></i> Configuracoes de Frete</h2>
+                            <p class="section-description">Configure o calculo de frete usando a API do Melhor Envio.</p>
                         </div>
                         
                         <div class="settings-grid">
@@ -769,30 +771,76 @@ $csrf = generateCsrfToken();
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>CEP de Origem</label>
-                                        <div style="display: flex; gap: 0.5rem;">
-                                            <input type="text" name="correios_cep_origem" 
-                                                   value="<?php echo htmlspecialchars($currentSettings['correios_cep_origem']); ?>"
-                                                   placeholder="00000-000"
-                                                   maxlength="9"
-                                                   id="correios_cep_origem"
-                                                   style="flex: 1;">
-                                            <button type="button" class="btn-test-api" data-api="correios" style="padding: 0.75rem 1.5rem; background: var(--admin-accent); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">
-                                                <i class="fas fa-vial"></i> Testar
-                                            </button>
-                                        </div>
-                                        <small class="form-hint">CEP de onde os produtos serão enviados</small>
-                                        <div id="correios_test_result" style="margin-top: 0.5rem; display: none;"></div>
+                                        <input type="text" name="correios_cep_origem" 
+                                               value="<?php echo htmlspecialchars($currentSettings['correios_cep_origem']); ?>"
+                                               placeholder="00000-000"
+                                               maxlength="9"
+                                               id="correios_cep_origem">
+                                        <small class="form-hint">CEP de onde os produtos serao enviados</small>
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label>Valor Mínimo para Frete Grátis (R$)</label>
+                                        <label>Token Melhor Envio (Opcional)</label>
+                                        <input type="text" name="melhor_envio_token" 
+                                               value="<?php echo htmlspecialchars($currentSettings['melhor_envio_token'] ?? ''); ?>"
+                                               placeholder="Seu token do Melhor Envio"
+                                               id="melhor_envio_token">
+                                        <small class="form-hint">Se nao tiver token, o sistema usara calculo simulado. <a href="https://melhorenvio.com.br" target="_blank" style="color: var(--admin-accent);">Obter token</a></small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Valor Minimo para Frete Gratis (R$)</label>
                                         <input type="number" name="frete_gratis_valor_minimo" 
                                                value="<?php echo htmlspecialchars($currentSettings['frete_gratis_valor_minimo']); ?>"
                                                step="0.01"
                                                min="0"
                                                placeholder="0.00">
-                                        <small class="form-hint">Deixe 0 para desativar frete grátis</small>
+                                        <small class="form-hint">Deixe 0 para desativar frete gratis</small>
                                     </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Calculadora de Frete -->
+                            <div class="admin-card">
+                                <div class="card-header" style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--admin-border);">
+                                    <h3 style="margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-calculator"></i> Calculadora de Frete
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <p style="font-size: 0.85rem; color: var(--admin-text-secondary); margin-bottom: 1rem;">
+                                        Faca uma cotacao de frete para testar os valores.
+                                    </p>
+                                    
+                                    <div class="form-group">
+                                        <label>CEP de Destino</label>
+                                        <input type="text" id="calc_cep_destino" placeholder="00000-000" maxlength="9">
+                                    </div>
+                                    
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label style="font-size: 0.8rem;">Peso (kg)</label>
+                                            <input type="number" id="calc_peso" value="0.3" step="0.01" min="0.01">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label style="font-size: 0.8rem;">Altura (cm)</label>
+                                            <input type="number" id="calc_altura" value="10" step="1" min="1">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label style="font-size: 0.8rem;">Largura (cm)</label>
+                                            <input type="number" id="calc_largura" value="10" step="1" min="1">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label style="font-size: 0.8rem;">Comprimento (cm)</label>
+                                            <input type="number" id="calc_comprimento" value="10" step="1" min="1">
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="button" id="btnCalcularFrete" style="width: 100%; margin-top: 1rem; padding: 0.75rem; background: var(--admin-accent); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                        <i class="fas fa-calculator"></i> Calcular Frete
+                                    </button>
+                                    
+                                    <div id="frete_calc_result" style="margin-top: 1rem; display: none;"></div>
                                 </div>
                             </div>
                         </div>
@@ -1315,6 +1363,97 @@ $csrf = generateCsrfToken();
                 btn.innerHTML = originalText;
             });
         });
+    });
+    </script>
+    
+    <script>
+    // Calculadora de Frete
+    document.getElementById('btnCalcularFrete')?.addEventListener('click', async function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+        const resultDiv = document.getElementById('frete_calc_result');
+        
+        const cepOrigem = document.getElementById('correios_cep_origem')?.value.replace(/\D/g, '') || '';
+        const cepDestino = document.getElementById('calc_cep_destino')?.value.replace(/\D/g, '') || '';
+        const peso = parseFloat(document.getElementById('calc_peso')?.value) || 0.3;
+        const altura = parseInt(document.getElementById('calc_altura')?.value) || 10;
+        const largura = parseInt(document.getElementById('calc_largura')?.value) || 10;
+        const comprimento = parseInt(document.getElementById('calc_comprimento')?.value) || 10;
+        
+        if (!cepOrigem || cepOrigem.length !== 8) {
+            resultDiv.innerHTML = '<div style="padding: 0.75rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;"><i class="fas fa-times-circle"></i> Configure o CEP de origem primeiro.</div>';
+            resultDiv.style.display = 'block';
+            return;
+        }
+        
+        if (!cepDestino || cepDestino.length !== 8) {
+            resultDiv.innerHTML = '<div style="padding: 0.75rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;"><i class="fas fa-times-circle"></i> Digite um CEP de destino valido.</div>';
+            resultDiv.style.display = 'block';
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+        resultDiv.style.display = 'none';
+        
+        try {
+            const response = await fetch('<?php echo APP_URL; ?>/api/calculate-shipping.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cep_destino: cepDestino,
+                    peso: peso,
+                    altura: altura,
+                    largura: largura,
+                    comprimento: comprimento
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.options && data.options.length > 0) {
+                let html = '<div style="background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 8px; padding: 1rem;">';
+                html += '<h4 style="margin: 0 0 0.75rem 0; color: #22c55e; font-size: 0.9rem;"><i class="fas fa-check-circle"></i> Opcoes de Frete Encontradas</h4>';
+                html += '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+                
+                data.options.forEach(opt => {
+                    html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 6px;">';
+                    html += '<span style="font-size: 0.85rem; color: #ccc;">' + opt.name + ' (' + opt.delivery_time + ' dias uteis)</span>';
+                    html += '<strong style="color: #22c55e;">R$ ' + parseFloat(opt.price).toFixed(2).replace('.', ',') + '</strong>';
+                    html += '</div>';
+                });
+                
+                html += '</div></div>';
+                resultDiv.innerHTML = html;
+            } else {
+                resultDiv.innerHTML = '<div style="padding: 0.75rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;"><i class="fas fa-times-circle"></i> ' + (data.error || 'Nao foi possivel calcular o frete') + '</div>';
+            }
+            
+            resultDiv.style.display = 'block';
+        } catch (error) {
+            resultDiv.innerHTML = '<div style="padding: 0.75rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;"><i class="fas fa-times-circle"></i> Erro: ' + error.message + '</div>';
+            resultDiv.style.display = 'block';
+        }
+        
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+    
+    // Mascara CEP
+    document.getElementById('calc_cep_destino')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        e.target.value = value;
+    });
+    
+    document.getElementById('correios_cep_origem')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        e.target.value = value;
     });
     </script>
 

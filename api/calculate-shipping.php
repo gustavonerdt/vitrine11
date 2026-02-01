@@ -7,11 +7,28 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['success' => false, 'error' => 'Método não permitido']);
+    echo json_encode(['success' => false, 'error' => 'Metodo nao permitido']);
     exit;
 }
 
-$cep_destino = preg_replace('/[^0-9]/', '', $_POST['cep'] ?? '');
+// Aceitar tanto POST normal quanto JSON
+$input_json = file_get_contents('php://input');
+$json_data = json_decode($input_json, true);
+
+// Pegar CEP de destino
+$cep_destino = preg_replace('/[^0-9]/', '', 
+    $json_data['cep_destino'] ?? 
+    $json_data['cep'] ?? 
+    $_POST['cep_destino'] ?? 
+    $_POST['cep'] ?? ''
+);
+
+// Pegar dimensoes se fornecidas (para calculadora do admin)
+$peso_fornecido = isset($json_data['peso']) ? floatval($json_data['peso']) : null;
+$altura_fornecida = isset($json_data['altura']) ? intval($json_data['altura']) : null;
+$largura_fornecida = isset($json_data['largura']) ? intval($json_data['largura']) : null;
+$comprimento_fornecido = isset($json_data['comprimento']) ? intval($json_data['comprimento']) : null;
+
 $cep_origem = getSetting($pdo, 'correios_cep_origem', '');
 $cep_origem = preg_replace('/[^0-9]/', '', $cep_origem);
 
@@ -72,11 +89,19 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         }
     }
 } else {
-    // Se não tem carrinho, usar valores padrão de 1 produto
-    $peso_total = $peso_padrao;
-    $altura_total = $altura_padrao;
-    $largura_total = $largura_padrao;
-    $comprimento_total = $comprimento_padrao;
+    // Se não tem carrinho, verificar se foram fornecidas dimensoes (calculadora admin)
+    if ($peso_fornecido !== null) {
+        $peso_total = $peso_fornecido;
+        $altura_total = $altura_fornecida ?? $altura_padrao;
+        $largura_total = $largura_fornecida ?? $largura_padrao;
+        $comprimento_total = $comprimento_fornecido ?? $comprimento_padrao;
+    } else {
+        // Usar valores padrão de 1 produto
+        $peso_total = $peso_padrao;
+        $altura_total = $altura_padrao;
+        $largura_total = $largura_padrao;
+        $comprimento_total = $comprimento_padrao;
+    }
     $valor_total = 100; // Valor padrão para seguro
 }
 

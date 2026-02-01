@@ -4,7 +4,7 @@ $currentUser = getCurrentUser($pdo);
 ?>
 <header class="admin-header">
     <div class="admin-header-left">
-        <button id="sidebarToggle" class="btn-icon mobile-only">
+        <button id="mobileMenuToggle" class="btn-icon mobile-only" type="button" aria-label="Abrir menu">
             <i class="fas fa-bars"></i>
         </button>
         
@@ -17,20 +17,23 @@ $currentUser = getCurrentUser($pdo);
             $currentPage = basename($_SERVER['PHP_SELF']);
             $pageNames = [
                 'dashboard.php' => 'Dashboard',
-                'users.php' => 'Usuários',
+                'users.php' => 'Usuarios',
                 'products.php' => 'Produtos',
                 'packages.php' => 'Pacotes',
                 'brands.php' => 'Marcas',
                 'invoices.php' => 'Faturas',
                 'withdrawals.php' => 'Saques',
-                'commissions.php' => 'Comissões',
+                'commissions.php' => 'Comissoes',
                 'logs.php' => 'Logs',
-                'settings.php' => 'Configurações',
+                'settings.php' => 'Configuracoes',
                 'banners.php' => 'Banners',
-                'dynamic-showcases.php' => 'Vitrine Dinâmica',
-                'faq.php' => 'FAQ e Dúvidas',
+                'dynamic-showcases.php' => 'Vitrine Dinamica',
+                'faq.php' => 'FAQ e Duvidas',
                 'orders.php' => 'Pedidos',
-                'leads.php' => 'Leads'
+                'leads.php' => 'Leads',
+                'cupons.php' => 'Cupons',
+                'music.php' => 'Musica',
+                'shipping-calculator.php' => 'Calculadora de Frete'
             ];
             if (isset($pageNames[$currentPage]) && $currentPage !== 'dashboard.php'):
             ?>
@@ -38,8 +41,6 @@ $currentUser = getCurrentUser($pdo);
                 <span class="breadcrumb-current"><?php echo $pageNames[$currentPage]; ?></span>
             <?php endif; ?>
         </nav>
-        
-       
     </div>
     <div class="admin-header-right">
         <div class="admin-user">
@@ -54,77 +55,32 @@ $currentUser = getCurrentUser($pdo);
     </div>
 </header>
 
-<script>
-// Global Search Toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const searchToggle = document.getElementById('searchToggle');
-    const globalSearch = document.getElementById('globalSearch');
-    
-    if (searchToggle && globalSearch) {
-        searchToggle.addEventListener('click', function() {
-            if (globalSearch.style.display === 'none' || !globalSearch.style.display) {
-                globalSearch.style.display = 'block';
-                globalSearch.focus();
-                globalSearch.style.width = '300px';
-            } else {
-                globalSearch.style.display = 'none';
-                globalSearch.style.width = '0';
-            }
-        });
-        
-        globalSearch.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const query = this.value.trim();
-                if (query) {
-                    // Redirect to users page with search
-                    window.location.href = '<?php echo APP_URL; ?>/admin/users.php?search=' + encodeURIComponent(query);
-                }
-            }
-        });
-    }
-});
-</script>
+<!-- Overlay para mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('sidebarToggle');
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
     
-    // Create overlay if it doesn't exist
-    let overlay = document.querySelector('.sidebar-overlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
+    if (!mobileMenuToggle || !sidebar || !overlay) {
+        console.error('[v0] Mobile menu elements not found');
+        return;
     }
     
     function openSidebar() {
-        // Force reflow to ensure animation starts
-        sidebar.style.display = 'flex';
-        overlay.style.display = 'block';
-        
-        // Small delay to trigger animation
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                sidebar.classList.add('show');
-                overlay.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            });
-        });
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        mobileMenuToggle.innerHTML = '<i class="fas fa-times"></i>';
     }
     
     function closeSidebar() {
         sidebar.classList.remove('show');
         overlay.classList.remove('show');
-        
-        // Wait for animation to complete before hiding
-        setTimeout(() => {
-            if (!sidebar.classList.contains('show')) {
-                sidebar.style.display = '';
-                overlay.style.display = 'none';
-            }
-            document.body.style.overflow = '';
-        }, 400); // Match animation duration
+        document.body.style.overflow = '';
+        mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
     }
     
     function toggleSidebar() {
@@ -135,54 +91,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Toggle button
-    toggle?.addEventListener('click', (e) => {
+    // Toggle button click
+    mobileMenuToggle.addEventListener('click', function(e) {
+        e.preventDefault();
         e.stopPropagation();
         toggleSidebar();
     });
     
     // Close on overlay click
-    overlay.addEventListener('click', () => {
+    overlay.addEventListener('click', function() {
         closeSidebar();
     });
     
-    // Close on sidebar link click (mobile only)
-    if (sidebar) {
-        const sidebarLinks = sidebar.querySelectorAll('a');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 1024) {
-                    closeSidebar();
-                }
-            });
-        });
-    }
-    
     // Close on ESC key
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && sidebar.classList.contains('show')) {
             closeSidebar();
         }
     });
     
-    // Handle window resize
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            if (window.innerWidth > 1024) {
+    // Close on link click (mobile)
+    const sidebarLinks = sidebar.querySelectorAll('a');
+    sidebarLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 1024) {
                 closeSidebar();
             }
-        }, 250);
+        });
     });
-
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 1024 && 
-            sidebar.classList.contains('show') &&
-            !sidebar.contains(e.target) && 
-            !toggle.contains(e.target) &&
-            !overlay.contains(e.target)) {
+    
+    // Handle resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 1024 && sidebar.classList.contains('show')) {
             closeSidebar();
         }
     });

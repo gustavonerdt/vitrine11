@@ -629,15 +629,55 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="checkbox custom-checkbox-label">
-                                        <input type="checkbox" name="is_active" value="1" class="custom-checkbox-input" checked>
-                                        <span class="custom-checkbox"></span>
-                                        <span>Produto ativo (visível no marketplace)</span>
-                                    </label>
-                                </div>
+<!-- Campos de Frete/Dimensões -->
+                                                <div class="form-group" style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05)); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                                                    <h4 style="margin-bottom: 16px; color: #3b82f6; display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
+                                                        <i class="fas fa-truck"></i> Informacoes para Frete (Opcional)
+                                                    </h4>
+                                                    <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin-bottom: 16px;">
+                                                        Preencha para calcular frete com mais precisao. Se deixar em branco, sera usado um peso medio de perfume (0.3kg).
+                                                    </p>
+                                                    
+                                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label class="label" style="font-size: 0.85rem;">
+                                                                <i class="fas fa-weight-hanging"></i> Peso (kg)
+                                                            </label>
+                                                            <input type="number" step="0.01" min="0" name="shipping_weight" id="shippingWeight" class="form-control form-control-modern" placeholder="Ex: 0.30">
+                                                        </div>
+                                                        
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label class="label" style="font-size: 0.85rem;">
+                                                                <i class="fas fa-ruler-vertical"></i> Altura (cm)
+                                                            </label>
+                                                            <input type="number" step="1" min="0" name="shipping_height" id="shippingHeight" class="form-control form-control-modern" placeholder="Ex: 15">
+                                                        </div>
+                                                        
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label class="label" style="font-size: 0.85rem;">
+                                                                <i class="fas fa-ruler-horizontal"></i> Largura (cm)
+                                                            </label>
+                                                            <input type="number" step="1" min="0" name="shipping_width" id="shippingWidth" class="form-control form-control-modern" placeholder="Ex: 10">
+                                                        </div>
+                                                        
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label class="label" style="font-size: 0.85rem;">
+                                                                <i class="fas fa-arrows-alt-h"></i> Comprimento (cm)
+                                                            </label>
+                                                            <input type="number" step="1" min="0" name="shipping_length" id="shippingLength" class="form-control form-control-modern" placeholder="Ex: 10">
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                <button type="submit" class="btn-primary w-full mt-4" id="submitBtn">Adicionar Produto</button>
+                                                <div class="form-group">
+                                                    <label class="checkbox custom-checkbox-label">
+                                                        <input type="checkbox" name="is_active" value="1" class="custom-checkbox-input" checked>
+                                                        <span class="custom-checkbox"></span>
+                                                        <span>Produto ativo (visível no marketplace)</span>
+                                                    </label>
+                                                </div>
+
+                                                <button type="submit" class="btn-primary w-full mt-4" id="submitBtn">Adicionar Produto</button>
                             </form>
                         </div>
                     </div>

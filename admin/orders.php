@@ -331,136 +331,363 @@ include __DIR__ . '/includes/sidebar.php';
 </main>
 
 <style>
+/* Orders Page Premium Styles */
+.admin-content {
+    padding: 1.5rem;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--admin-border, #2a2a2a);
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Unseen orders highlight */
 .unseen-order {
-    background: rgba(254, 243, 199, 0.3) !important;
-    border-left: 4px solid #f59e0b !important;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent) !important;
+    border-left: 4px solid #d4af37 !important;
+}
+
+.unseen-order td {
     font-weight: 600;
 }
 
+/* Order Details Grid */
 .order-details-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .detail-section {
-    background: var(--admin-bg-card);
-    border: 1px solid var(--admin-border);
-    border-radius: 12px;
+    background: linear-gradient(145deg, #1a1a1a, #141414);
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
     padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .detail-section h3 {
-    margin-bottom: 1rem;
-    color: var(--admin-text-primary);
-    font-size: 1.125rem;
+    margin: 0 0 1.25rem 0;
+    color: #fff;
+    font-size: 1rem;
     font-weight: 700;
-    border-bottom: 2px solid var(--admin-accent);
-    padding-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #d4af37;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-section h3::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #d4af37;
+    border-radius: 50%;
 }
 
 .detail-item {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--admin-border);
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
 }
 
 .detail-label {
-    color: var(--admin-text-secondary);
-    font-weight: 600;
+    color: #888;
+    font-weight: 500;
+    font-size: 0.9rem;
 }
 
 .detail-value {
-    color: var(--admin-text-primary);
+    color: #fff;
+    font-weight: 600;
+    text-align: right;
 }
 
 .address-block {
     line-height: 1.8;
+    color: #ccc;
 }
 
+.address-block p {
+    margin: 0.5rem 0;
+}
+
+.address-block strong {
+    color: #fff;
+}
+
+/* Order Items Section */
 .order-items-section {
     margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--admin-border);
+    background: linear-gradient(145deg, #1a1a1a, #141414);
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .order-items-section h3 {
-    margin-bottom: 1rem;
+    margin: 0 0 1.25rem 0;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-/* Melhorias visuais para tabela de pedidos */
+/* Admin Card */
+.admin-card {
+    background: linear-gradient(145deg, #1a1a1a, #141414);
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: rgba(212, 175, 55, 0.05);
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.card-badge {
+    background: linear-gradient(135deg, #d4af37, #b8962e);
+    color: #000;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--admin-bg-card);
-    border-radius: 8px;
-    overflow: hidden;
+    min-width: 600px;
 }
 
 .admin-table thead {
-    background: var(--admin-bg-secondary);
+    background: rgba(212, 175, 55, 0.08);
 }
 
 .admin-table thead th {
-    padding: 1rem;
+    padding: 1rem 1.25rem;
     text-align: left;
-    color: var(--admin-text-primary);
+    color: #d4af37;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
-    border-bottom: 2px solid var(--admin-border);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    border-bottom: 2px solid #2a2a2a;
+    white-space: nowrap;
 }
 
 .admin-table tbody tr {
-    border-bottom: 1px solid var(--admin-border);
-    transition: background 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
 }
 
 .admin-table tbody tr:hover {
-    background: var(--admin-bg-hover);
+    background: rgba(212, 175, 55, 0.05);
 }
 
 .admin-table tbody td {
-    padding: 1rem;
-    color: var(--admin-text-primary);
+    padding: 1rem 1.25rem;
+    color: #ccc;
+    font-size: 0.9rem;
+    vertical-align: middle;
 }
 
-.btn-primary.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    background: var(--admin-accent);
+.admin-table tbody td strong {
+    color: #fff;
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #d4af37, #b8962e);
     color: #000;
     border: none;
-    border-radius: 6px;
-    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.btn-primary.btn-sm:hover {
-    background: var(--admin-accent-hover);
+.btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
 }
 
+.btn-primary.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .admin-table {
-        font-size: 0.875rem;
+    .admin-content {
+        padding: 1rem;
     }
     
-    .admin-table th,
-    .admin-table td {
-        padding: 0.75rem 0.5rem !important;
+    .page-header h1 {
+        font-size: 1.35rem;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .admin-table thead th,
+    .admin-table tbody td {
+        padding: 0.75rem;
+        font-size: 0.8rem;
     }
     
     .order-details-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .detail-section {
+        padding: 1.25rem;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .detail-value {
+        text-align: left;
+    }
+    
+    .btn-primary.btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
     }
 }
 </style>

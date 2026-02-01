@@ -444,36 +444,74 @@ if (db_table_exists($pdo, 'products')) {
         }
         
         .upload-area {
-            min-height: 200px;
-            margin-bottom: 15px;
+            min-height: 280px;
+            margin-bottom: 20px;
             overflow: visible;
             position: relative;
         }
         
+        .upload-area > div[id*="carouselImageUpload"] {
+            min-height: 250px !important;
+        }
+        
+        /* Force image upload components to be larger */
+        .image-upload-container {
+            min-height: 250px !important;
+        }
+        
+        .image-upload-container .upload-dropzone {
+            min-height: 240px !important;
+            padding: 40px !important;
+        }
+        
+        .image-upload-container .upload-preview img {
+            max-height: 220px !important;
+            width: auto !important;
+            object-fit: contain !important;
+        }
+        
         @media (max-width: 768px) {
             .upload-area {
-                min-height: 250px !important;
+                min-height: 320px !important;
                 overflow: visible !important;
                 max-height: none !important;
-                padding: 20px !important;
+                padding: 15px !important;
             }
             
+            .upload-area > div[id*="carouselImageUpload"],
             #carouselImageUpload1,
             #carouselImageUpload2,
             #carouselImageUpload3,
             #carouselImageUpload4,
+            #carouselImageUpload5,
+            #carouselImageUpload6,
+            #carouselImageUpload7,
+            #carouselImageUpload8,
             #carouselImageUpload1_mobile,
             #carouselImageUpload2_mobile,
             #carouselImageUpload3_mobile,
-            #carouselImageUpload4_mobile {
-                min-height: 250px !important;
+            #carouselImageUpload4_mobile,
+            #carouselImageUpload5_mobile,
+            #carouselImageUpload6_mobile,
+            #carouselImageUpload7_mobile,
+            #carouselImageUpload8_mobile {
+                min-height: 300px !important;
                 overflow: visible !important;
                 max-height: none !important;
-                padding: 20px !important;
             }
             
             .image-card {
-                margin-bottom: 25px;
+                margin-bottom: 30px;
+                padding: 20px;
+            }
+            
+            .image-upload-container .upload-dropzone {
+                min-height: 280px !important;
+                padding: 30px !important;
+            }
+            
+            .image-upload-container .upload-preview img {
+                max-height: 260px !important;
             }
         }
         
