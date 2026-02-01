@@ -77,8 +77,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $image_path = !empty($product_images) ? $product_images[0] : trim($_POST['image_path'] ?? '');
                 error_log("Final image_path: $image_path");
                 
-                $stmt = $pdo->prepare("INSERT INTO products (name, brand_id, price, description, is_vip, image_path, is_dynamic_ad, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW())");
-                $stmt->execute([$name, $brand_id, $price, $description, $is_vip, $image_path, $is_dynamic_ad]);
+                // Processar preco original (de)
+                $originalPriceRaw = $_POST['original_price'] ?? '';
+                $original_price = null;
+                if (!empty($originalPriceRaw)) {
+                    $originalPriceStr = str_replace(' ', '', $originalPriceRaw);
+                    $originalPriceStr = str_replace(',', '.', $originalPriceStr);
+                    if (substr_count($originalPriceStr, '.') > 1) {
+                        $parts = explode('.', $originalPriceStr);
+                        $lastPart = array_pop($parts);
+                        $originalPriceStr = implode('', $parts) . '.' . $lastPart;
+                    }
+                    $original_price = (float)$originalPriceStr;
+                    if ($original_price <= 0) $original_price = null;
+                }
+                
+                $stmt = $pdo->prepare("INSERT INTO products (name, brand_id, price, original_price, description, is_vip, image_path, is_dynamic_ad, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW())");
+                $stmt->execute([$name, $brand_id, $price, $original_price, $description, $is_vip, $image_path, $is_dynamic_ad]);
                 
                 $productId = $pdo->lastInsertId();
                 error_log("Product ID created: $productId");
@@ -235,6 +250,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $is_vip = isset($_POST['is_vip']) ? 1 : 0;
                 $is_active = isset($_POST['is_active']) ? 1 : 0;
                 $is_dynamic_ad = isset($_POST['enable_dynamic_ads']) ? 1 : 0;
+                
+                // Processar preco original (de)
+                $originalPriceRaw = $_POST['original_price'] ?? '';
+                $original_price = null;
+                if (!empty($originalPriceRaw)) {
+                    $originalPriceStr = str_replace(' ', '', $originalPriceRaw);
+                    $originalPriceStr = str_replace(',', '.', $originalPriceStr);
+                    if (substr_count($originalPriceStr, '.') > 1) {
+                        $parts = explode('.', $originalPriceStr);
+                        $lastPart = array_pop($parts);
+                        $originalPriceStr = implode('', $parts) . '.' . $lastPart;
+                    }
+                    $original_price = (float)$originalPriceStr;
+                    if ($original_price <= 0) $original_price = null;
+                }
 
                 if (empty($name)) {
                     throw new Exception("Nome do produto é obrigatório.");
@@ -272,8 +302,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 error_log("Final image_path: $image_path");
                 
                 // Update product
-                $stmt = $pdo->prepare("UPDATE products SET name = ?, brand_id = ?, price = ?, description = ?, is_vip = ?, image_path = ?, is_dynamic_ad = ?, is_active = ? WHERE id = ?");
-                $stmt->execute([$name, $brand_id, $price, $description, $is_vip, $image_path, $is_dynamic_ad, $is_active, $id]);
+                $stmt = $pdo->prepare("UPDATE products SET name = ?, brand_id = ?, price = ?, original_price = ?, description = ?, is_vip = ?, image_path = ?, is_dynamic_ad = ?, is_active = ? WHERE id = ?");
+                $stmt->execute([$name, $brand_id, $price, $original_price, $description, $is_vip, $image_path, $is_dynamic_ad, $is_active, $id]);
                 
                 // Create product_images table if it doesn't exist
                 if (!db_table_exists($pdo, 'product_images')) {
@@ -571,11 +601,32 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="label">
-                                        <i class="fas fa-dollar-sign"></i> Preço (R$) <span class="required">*</span>
-                                    </label>
-                                    <input type="number" step="0.01" min="0" name="price" class="form-control form-control-modern" required placeholder="0.00">
+                                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group">
+                                        <label class="label">
+                                            <i class="fas fa-tag"></i> De (Preco Original)
+                                        </label>
+                                        <input type="number" step="0.01" min="0" name="original_price" class="form-control form-control-modern" placeholder="0.00">
+                                        <small style="color: #888; font-size: 0.75rem;">Preco antes do desconto (opcional)</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="label">
+                                            <i class="fas fa-dollar-sign"></i> Por (Preco Atual) <span class="required">*</span>
+                                        </label>
+                                        <input type="number" step="0.01" min="0" name="price" class="form-control form-control-modern" required placeholder="0.00">
+                                        <small style="color: #22c55e; font-size: 0.75rem;">Preco de venda</small>
+                                    </div>
+                                </div>
+                                
+                                <div id="discountPreview" style="display: none; background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 1px solid #22c55e; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span style="background: #ef4444; color: #fff; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700;" id="discountBadge">-0%</span>
+                                        <div>
+                                            <span style="text-decoration: line-through; color: #888; font-size: 0.9rem;" id="previewOriginalPrice">R$ 0,00</span>
+                                            <span style="color: #22c55e; font-weight: 700; font-size: 1.1rem; margin-left: 0.5rem;" id="previewFinalPrice">R$ 0,00</span>
+                                        </div>
+                                        <span style="color: #22c55e; font-size: 0.8rem; font-weight: 600; margin-left: auto;">Economia de <span id="previewEconomy">R$ 0,00</span></span>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -970,18 +1021,57 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
         let currentProductName = '';
         let multipleImageUpload;
 
-        // Initialize multiple image upload component
-        document.addEventListener('DOMContentLoaded', function() {
-            multipleImageUpload = new MultipleImageUpload('productImagesUpload', {
-                uploadUrl: '<?php echo APP_URL; ?>/api/upload-image.php',
-                inputName: 'product_images',
-                folder: 'products',
-                maxImages: 5,
-                showLinkOption: true
-            });
-            // Make it globally accessible
-            window.multipleImageUpload = multipleImageUpload;
-            console.log('MultipleImageUpload initialized:', window.multipleImageUpload);
+// Funcao para atualizar preview de desconto
+function updateDiscountPreview() {
+    const originalPriceInput = document.querySelector('input[name="original_price"]');
+    const priceInput = document.querySelector('input[name="price"]');
+    const previewDiv = document.getElementById('discountPreview');
+    
+    if (!originalPriceInput || !priceInput || !previewDiv) return;
+    
+    const originalPrice = parseFloat(originalPriceInput.value) || 0;
+    const finalPrice = parseFloat(priceInput.value) || 0;
+    
+    if (originalPrice > 0 && finalPrice > 0 && originalPrice > finalPrice) {
+        const discount = Math.round(((originalPrice - finalPrice) / originalPrice) * 100);
+        const economy = originalPrice - finalPrice;
+        
+        document.getElementById('discountBadge').textContent = '-' + discount + '%';
+        document.getElementById('previewOriginalPrice').textContent = 'R$ ' + originalPrice.toFixed(2).replace('.', ',');
+        document.getElementById('previewFinalPrice').textContent = 'R$ ' + finalPrice.toFixed(2).replace('.', ',');
+        document.getElementById('previewEconomy').textContent = 'R$ ' + economy.toFixed(2).replace('.', ',');
+        
+        previewDiv.style.display = 'block';
+    } else {
+        previewDiv.style.display = 'none';
+    }
+}
+
+// Adicionar listeners para os campos de preco
+document.addEventListener('DOMContentLoaded', function() {
+    const originalPriceInput = document.querySelector('input[name="original_price"]');
+    const priceInput = document.querySelector('input[name="price"]');
+    
+    if (originalPriceInput) {
+        originalPriceInput.addEventListener('input', updateDiscountPreview);
+    }
+    if (priceInput) {
+        priceInput.addEventListener('input', updateDiscountPreview);
+    }
+});
+
+// Initialize multiple image upload component
+document.addEventListener('DOMContentLoaded', function() {
+  multipleImageUpload = new MultipleImageUpload('productImagesUpload', {
+  uploadUrl: '<?php echo APP_URL; ?>/api/upload-image.php',
+  inputName: 'product_images',
+  folder: 'products',
+  maxImages: 5,
+  showLinkOption: true
+  });
+  // Make it globally accessible
+  window.multipleImageUpload = multipleImageUpload;
+  console.log('MultipleImageUpload initialized:', window.multipleImageUpload);
             
             // Initialize variant image upload component (single image) - lazy initialization
             // Will be initialized when modal opens
@@ -1555,11 +1645,22 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
                             priceValue = priceNum.toFixed(2);
                         }
                     }
-                    document.querySelector('input[name="price"]').value = priceValue;
-                    
-                    document.querySelector('textarea[name="description"]').value = product.description || '';
-                    document.querySelector('input[name="is_active"]').checked = (product.is_active == 1 || product.is_active === null);
-                    document.getElementById('enableDynamicAds').checked = product.is_dynamic_ad == 1;
+document.querySelector('input[name="price"]').value = priceValue;
+  
+  // Carregar preco original (de)
+  let originalPriceValue = '';
+  if (product.original_price !== null && product.original_price !== undefined && product.original_price !== '') {
+      const originalPriceNum = parseFloat(product.original_price);
+      if (!isNaN(originalPriceNum) && originalPriceNum > 0) {
+          originalPriceValue = originalPriceNum.toFixed(2);
+      }
+  }
+  document.querySelector('input[name="original_price"]').value = originalPriceValue;
+  updateDiscountPreview();
+  
+  document.querySelector('textarea[name="description"]').value = product.description || '';
+  document.querySelector('input[name="is_active"]').checked = (product.is_active == 1 || product.is_active === null);
+  document.getElementById('enableDynamicAds').checked = product.is_dynamic_ad == 1;
                     toggleDynamicAds();
                     
                     // Load product images
@@ -1665,21 +1766,30 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
         }
         
         // Reset form to add mode
-        function resetProductForm() {
-            document.getElementById('formTitle').textContent = 'Adicionar Produto';
-            document.getElementById('formAction').value = 'add_product';
-            document.getElementById('productId').value = '';
-            document.getElementById('submitBtn').textContent = 'Adicionar Produto';
-            document.getElementById('productForm').reset();
-            const uploadComponent = window.multipleImageUpload_productImagesUpload || 
-                                   window.multipleImageUpload || 
-                                   multipleImageUpload;
-            if (uploadComponent && typeof uploadComponent.setImages === 'function') {
-                uploadComponent.setImages([], 0);
-            }
-            dynamicVariants = [];
-            renderDynamicVariants();
-        }
+function resetProductForm() {
+  document.getElementById('formTitle').textContent = 'Adicionar Produto';
+  document.getElementById('formAction').value = 'add_product';
+  document.getElementById('productId').value = '';
+  document.getElementById('submitBtn').textContent = 'Adicionar Produto';
+  document.getElementById('productForm').reset();
+  
+  // Limpar campo de preco original
+  const originalPriceInput = document.querySelector('input[name="original_price"]');
+  if (originalPriceInput) originalPriceInput.value = '';
+  
+  // Esconder preview de desconto
+  const discountPreview = document.getElementById('discountPreview');
+  if (discountPreview) discountPreview.style.display = 'none';
+  
+  const uploadComponent = window.multipleImageUpload_productImagesUpload ||
+  window.multipleImageUpload ||
+  multipleImageUpload;
+  if (uploadComponent && typeof uploadComponent.setImages === 'function') {
+  uploadComponent.setImages([], 0);
+  }
+  dynamicVariants = [];
+  renderDynamicVariants();
+  }
         
         // Add variants to form before submit
         document.addEventListener('DOMContentLoaded', function() {

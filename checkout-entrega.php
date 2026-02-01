@@ -17,7 +17,7 @@ $subtotal = 0;
 foreach ($_SESSION['cart'] as $product_id => $quantity) {
     try {
         $stmt = $pdo->prepare("
-            SELECT p.id, p.name, p.price, b.name as brand_name,
+            SELECT p.id, p.name, p.price, p.original_price, b.name as brand_name,
                    (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY sort_order ASC, id ASC LIMIT 1) as image_url
             FROM products p
             LEFT JOIN brands b ON p.brand_id = b.id
@@ -38,6 +38,7 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
             $cart_items[] = [
                 'name' => $product['name'],
                 'price' => floatval($product['price']),
+                'original_price' => !empty($product['original_price']) ? floatval($product['original_price']) : null,
                 'quantity' => $quantity,
                 'image_url' => $imageUrl
             ];
@@ -142,7 +143,10 @@ include __DIR__ . '/includes/public-header.php';
             <div class="checkout-summary">
                 <h3 class="summary-title">RESUMO DO PEDIDO</h3>
                 <div class="summary-products">
-                    <?php foreach ($cart_items as $item): ?>
+                    <?php foreach ($cart_items as $item): 
+                        $hasDiscount = !empty($item['original_price']) && $item['original_price'] > $item['price'];
+                        $discountPercent = $hasDiscount ? round((($item['original_price'] - $item['price']) / $item['original_price']) * 100) : 0;
+                    ?>
                         <div class="summary-product-item">
                             <div class="summary-product-image">
                                 <?php if (!empty($item['image_url'])): ?>
@@ -153,7 +157,16 @@ include __DIR__ . '/includes/public-header.php';
                             </div>
                             <div class="summary-product-info">
                                 <div style="color: #1a1a1a; font-weight: 600;"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <?php if ($hasDiscount): ?>
+                                <small style="color: #333;">
+                                    <?php echo $item['quantity']; ?>x 
+                                    <span style="text-decoration: line-through; color: #888;">R$ <?php echo number_format($item['original_price'], 2, ',', '.'); ?></span>
+                                    <span style="color: #22c55e; font-weight: 600;">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></span>
+                                    <span style="background: #ef4444; color: #fff; padding: 1px 4px; border-radius: 3px; font-size: 0.65rem; margin-left: 4px;">-<?php echo $discountPercent; ?>%</span>
+                                </small>
+                                <?php else: ?>
                                 <small style="color: #333;"><?php echo $item['quantity']; ?>x R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></small>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>

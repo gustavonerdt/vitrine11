@@ -18,7 +18,7 @@ try {
     $hasDescription = db_has_column($pdo, 'products', 'description');
     
     // Construir query com colunas específicas
-    $columns = "p.id, p.brand_id, p.name, p.price, p.image_path, p.is_vip, p.is_dynamic_ad, p.is_active, p.created_at, p.updated_at";
+    $columns = "p.id, p.brand_id, p.name, p.price, p.original_price, p.image_path, p.is_vip, p.is_dynamic_ad, p.is_active, p.created_at, p.updated_at";
     if ($hasDescription) {
         $columns .= ", p.description";
     }
@@ -80,7 +80,7 @@ try {
     $hasDescription = db_has_column($pdo, 'products', 'description');
     
     // Construir query com colunas específicas
-    $columns = "p.id, p.brand_id, p.name, p.price, p.image_path, p.is_vip, p.is_dynamic_ad, p.is_active, p.created_at, p.updated_at";
+    $columns = "p.id, p.brand_id, p.name, p.price, p.original_price, p.image_path, p.is_vip, p.is_dynamic_ad, p.is_active, p.created_at, p.updated_at";
     if ($hasDescription) {
         $columns .= ", p.description";
     }
@@ -246,6 +246,15 @@ if (!$is_ajax) {
                             </div>
                         <?php endif; ?>
                         
+                        <?php 
+                        $hasDiscountBadge = !empty($product['original_price']) && floatval($product['original_price']) > floatval($product['price']);
+                        $discountPercentBadge = $hasDiscountBadge ? round(((floatval($product['original_price']) - floatval($product['price'])) / floatval($product['original_price'])) * 100) : 0;
+                        ?>
+                        <?php if ($hasDiscountBadge): ?>
+                            <div class="product-discount-badge" style="position: absolute; top: 15px; left: 15px; background: #ef4444; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; z-index: 5; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+                                -<?php echo $discountPercentBadge; ?>% OFF
+                            </div>
+                        <?php endif; ?>
                         <?php if ($product['is_vip'] == 1): ?>
                             <div class="product-vip-badge">
                                 <span class="vip-badge">⭐ VIP</span>
@@ -267,12 +276,33 @@ if (!$is_ajax) {
                 </div>
 
                 <!-- Price Section -->
+                <?php 
+                $hasDiscount = !empty($product['original_price']) && floatval($product['original_price']) > floatval($product['price']);
+                $discountPercent = $hasDiscount ? round(((floatval($product['original_price']) - floatval($product['price'])) / floatval($product['original_price'])) * 100) : 0;
+                $economy = $hasDiscount ? floatval($product['original_price']) - floatval($product['price']) : 0;
+                ?>
                 <div class="product-price-section">
                     <div class="price-main">
+                        <?php if ($hasDiscount): ?>
+                        <div class="price-discount-wrapper">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                <span style="background: #ef4444; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">-<?php echo $discountPercent; ?>% OFF</span>
+                                <span style="text-decoration: line-through; color: #888; font-size: 1rem;">R$ <?php echo number_format($product['original_price'], 2, ',', '.'); ?></span>
+                            </div>
+                            <div class="price-range">
+                                <span class="price-label" style="color: #22c55e;">Por apenas</span>
+                                <span class="price-value" style="color: #22c55e; font-size: 2rem;">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                            </div>
+                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 1px solid #22c55e; border-radius: 8px; padding: 8px 12px; margin-top: 8px; display: inline-block;">
+                                <span style="color: #22c55e; font-weight: 600; font-size: 0.9rem;">Voce economiza R$ <?php echo number_format($economy, 2, ',', '.'); ?></span>
+                            </div>
+                        </div>
+                        <?php else: ?>
                         <div class="price-range">
-                            <span class="price-label">Preço</span>
+                            <span class="price-label">Preco</span>
                             <span class="price-value">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
 

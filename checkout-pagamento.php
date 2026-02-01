@@ -27,7 +27,7 @@ $subtotal = 0;
 foreach ($_SESSION['cart'] as $product_id => $quantity) {
     try {
         $stmt = $pdo->prepare("
-            SELECT p.id, p.name, p.price, b.name as brand_name,
+            SELECT p.id, p.name, p.price, p.original_price, b.name as brand_name,
                    (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY sort_order ASC, id ASC LIMIT 1) as image_url
             FROM products p
             LEFT JOIN brands b ON p.brand_id = b.id
@@ -50,6 +50,7 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
                 'product_id' => (int)$product_id,
                 'name' => $product['name'],
                 'price' => floatval($product['price']),
+                'original_price' => !empty($product['original_price']) ? floatval($product['original_price']) : null,
                 'quantity' => $quantity,
                 'item_total' => $item_total,
                 'image_url' => $imageUrl
@@ -609,21 +610,35 @@ include __DIR__ . '/includes/public-header.php';
             <div class="checkout-summary" style="background: #1a1a1a; border-radius: 16px; padding: 1.5rem;">
                 <h3 class="summary-title" style="color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.05em;">RESUMO DO PEDIDO</h3>
                 <div class="summary-products" style="margin-bottom: 1.25rem;">
-                    <?php foreach ($cart_items as $item): ?>
-                        <div class="summary-product-item" style="display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div class="summary-product-image" style="flex-shrink: 0;">
-                                <?php if (!empty($item['image_url'])): ?>
-                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
-                                <?php else: ?>
-                                    <div class="summary-placeholder" style="width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-spray-can" style="color: #C7A333;"></i></div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="summary-product-info" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                                <div class="summary-product-name" style="color: #fff; font-weight: 600; font-size: 0.95rem; line-height: 1.3;"><?php echo htmlspecialchars($item['name']); ?></div>
-                                <div class="summary-product-price" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+<?php foreach ($cart_items as $item): 
+    $hasDiscount = !empty($item['original_price']) && $item['original_price'] > $item['price'];
+    $discountPercent = $hasDiscount ? round((($item['original_price'] - $item['price']) / $item['original_price']) * 100) : 0;
+?>
+<div class="summary-product-item" style="display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+<div class="summary-product-image" style="flex-shrink: 0; position: relative;">
+  <?php if (!empty($item['image_url'])): ?>
+  <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+  <?php if ($hasDiscount): ?>
+  <span style="position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff; padding: 2px 5px; border-radius: 4px; font-size: 0.6rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
+  <?php endif; ?>
+  <?php else: ?>
+  <div class="summary-placeholder" style="width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-spray-can" style="color: #C7A333;"></i></div>
+  <?php endif; ?>
+  </div>
+<div class="summary-product-info" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+<div class="summary-product-name" style="color: #fff; font-weight: 600; font-size: 0.95rem; line-height: 1.3;"><?php echo htmlspecialchars($item['name']); ?></div>
+<?php if ($hasDiscount): ?>
+<div class="summary-product-price" style="font-size: 0.875rem;">
+    <span style="text-decoration: line-through; color: rgba(255,255,255,0.4);"><?php echo formatPrice($item['original_price']); ?></span>
+    <span style="color: #22c55e; font-weight: 600; margin-left: 4px;"><?php echo formatPrice($item['price']); ?></span>
+    <span style="color: rgba(255,255,255,0.6);"> x <?php echo $item['quantity']; ?></span>
+</div>
+<?php else: ?>
+<div class="summary-product-price" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>
+<?php endif; ?>
+  </div>
+  </div>
+  <?php endforeach; ?>
                 </div>
                 <div class="summary-totals">
                     <div class="summary-row">

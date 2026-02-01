@@ -34,7 +34,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $product_id => $quantity) {
         try {
             $stmt = $pdo->prepare("
-                SELECT p.id, p.name, p.price, p.image_path, b.name as brand_name
+                SELECT p.id, p.name, p.price, p.original_price, p.image_path, b.name as brand_name
                 FROM products p
                 LEFT JOIN brands b ON p.brand_id = b.id
                 WHERE p.id = ? AND p.is_active = 1
@@ -70,6 +70,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                     'name' => $product['name'],
                     'brand_name' => $product['brand_name'] ?? '',
                     'price' => floatval($product['price']),
+                    'original_price' => !empty($product['original_price']) ? floatval($product['original_price']) : null,
                     'quantity' => $quantity,
                     'item_total' => $item_total,
                     'image_url' => $image_url
@@ -88,7 +89,7 @@ $tem_frete_gratis = $subtotal >= $frete_gratis_min;
 $order_bumps = [];
 try {
     $bumpStmt = $pdo->prepare("
-        SELECT p.id, p.name, p.price, p.image_path, b.name as brand_name
+        SELECT p.id, p.name, p.price, p.original_price, p.image_path, b.name as brand_name
         FROM products p
         LEFT JOIN brands b ON p.brand_id = b.id
         WHERE p.is_active = 1
@@ -235,7 +236,19 @@ include __DIR__ . '/includes/public-header.php';
                             <div class="cart-item-details">
                                 <div class="cart-item-brand"><?php echo htmlspecialchars($item['brand_name']); ?></div>
                                 <div class="cart-item-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <?php 
+                                $hasDiscount = !empty($item['original_price']) && $item['original_price'] > $item['price'];
+                                $discountPercent = $hasDiscount ? round((($item['original_price'] - $item['price']) / $item['original_price']) * 100) : 0;
+                                ?>
+                                <?php if ($hasDiscount): ?>
+                                <div class="cart-item-price-wrapper">
+                                    <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-right: 6px;">-<?php echo $discountPercent; ?>%</span>
+                                    <span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 6px;"><?php echo formatPrice($item['original_price']); ?></span>
+                                    <span class="cart-item-price" style="color: #22c55e;"><?php echo formatPrice($item['price']); ?></span>
+                                </div>
+                                <?php else: ?>
                                 <div class="cart-item-price"><?php echo formatPrice($item['price']); ?></div>
+                                <?php endif; ?>
                             </div>
                             <div class="cart-item-actions" style="display: flex; align-items: center; gap: 1rem;">
                                 <div class="quantity-selector" style="display: flex; align-items: center; background: #f5f5f5; border-radius: 12px; padding: 5px;">
@@ -275,15 +288,28 @@ include __DIR__ . '/includes/public-header.php';
                     <button class="carousel-nav-btn nav-next" onclick="scrollBumps(1)"><i class="fas fa-chevron-right"></i></button>
                     
                     <div class="bumps-track" id="bumpsTrack">
-                        <?php foreach ($order_bumps as $bump): ?>
+                        <?php foreach ($order_bumps as $bump): 
+                            $bumpHasDiscount = !empty($bump['original_price']) && floatval($bump['original_price']) > floatval($bump['price']);
+                            $bumpDiscountPercent = $bumpHasDiscount ? round(((floatval($bump['original_price']) - floatval($bump['price'])) / floatval($bump['original_price'])) * 100) : 0;
+                        ?>
                             <div class="order-bump-card">
                                 <a href="<?php echo APP_URL; ?>/product.php?id=<?php echo $bump['id']; ?>" class="bump-img-wrapper">
                                     <img src="<?php echo htmlspecialchars($bump['image_url']); ?>" alt="<?php echo htmlspecialchars($bump['name']); ?>">
+                                    <?php if ($bumpHasDiscount): ?>
+                                    <span style="position: absolute; top: 8px; right: 8px; background: #ef4444; color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;">-<?php echo $bumpDiscountPercent; ?>%</span>
+                                    <?php endif; ?>
                                 </a>
                                 <div class="bump-info">
                                     <div class="bump-brand"><?php echo htmlspecialchars($bump['brand_name'] ?? 'Premium'); ?></div>
                                     <div class="bump-title"><?php echo htmlspecialchars($bump['name']); ?></div>
+                                    <?php if ($bumpHasDiscount): ?>
+                                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                        <span style="text-decoration: line-through; color: #888; font-size: 0.85rem;"><?php echo formatPrice($bump['original_price']); ?></span>
+                                        <span class="bump-price" style="color: #22c55e; margin: 0;"><?php echo formatPrice($bump['price']); ?></span>
+                                    </div>
+                                    <?php else: ?>
                                     <div class="bump-price"><?php echo formatPrice($bump['price']); ?></div>
+                                    <?php endif; ?>
                                 </div>
                                 <button class="btn-add-bump-direct" onclick="addToCart(<?php echo $bump['id']; ?>, 1)">ADICIONAR</button>
                             </div>

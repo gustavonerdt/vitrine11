@@ -806,6 +806,15 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                             </div>
                                         <?php endif; ?>
                                       
+                                        <?php 
+                                        $hasDiscountBadge = !empty($sp['original_price']) && floatval($sp['original_price']) > floatval($sp['price']);
+                                        $discountPercentBadge = $hasDiscountBadge ? round(((floatval($sp['original_price']) - floatval($sp['price'])) / floatval($sp['original_price'])) * 100) : 0;
+                                        ?>
+                                        <?php if ($hasDiscountBadge): ?>
+                                            <div class="product-discount-badge" style="position: absolute; top: 10px; left: 10px; background: #ef4444; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; z-index: 5;">
+                                                -<?php echo $discountPercentBadge; ?>% OFF
+                                            </div>
+                                        <?php endif; ?>
                                         <?php if ($sp['is_vip'] == 1): ?>
                                             <div class="product-vip-badge-modern">
                                                 <span class="vip-star">⭐</span>
@@ -817,7 +826,22 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                     <div class="product-info-modern">
                                         <p class="product-brand-modern"><?php echo htmlspecialchars($sp['brand_name'] ?? 'Naipe da Gringa'); ?></p>
                                         <h3 class="product-name-modern"><?php echo htmlspecialchars($sp['name']); ?></h3>
-                                        <div class="product-price-modern"><?php echo formatPrice($sp['price']); ?></div><div class="price-installments" style="font-size: 0.75rem; color: #888; margin-top: 2px; font-weight: 500;">10x de R$ <?php echo number_format($sp['price'] / 10, 2, ',', '.'); ?> <span style="font-size: 0.65rem; opacity: 0.8;">+ taxas</span></div>
+                                        <?php 
+                                        $hasDiscount = !empty($sp['original_price']) && floatval($sp['original_price']) > floatval($sp['price']);
+                                        $discountPercent = $hasDiscount ? round(((floatval($sp['original_price']) - floatval($sp['price'])) / floatval($sp['original_price'])) * 100) : 0;
+                                        ?>
+                                        <?php if ($hasDiscount): ?>
+                                        <div class="product-price-wrapper" style="display: flex; flex-direction: column; gap: 2px;">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
+                                                <span style="text-decoration: line-through; color: #888; font-size: 0.85rem;"><?php echo formatPrice($sp['original_price']); ?></span>
+                                            </div>
+                                            <div class="product-price-modern" style="color: #22c55e;"><?php echo formatPrice($sp['price']); ?></div>
+                                        </div>
+                                        <?php else: ?>
+                                        <div class="product-price-modern"><?php echo formatPrice($sp['price']); ?></div>
+                                        <?php endif; ?>
+                                        <div class="price-installments" style="font-size: 0.75rem; color: #888; margin-top: 2px; font-weight: 500;">10x de R$ <?php echo number_format($sp['price'] / 10, 2, ',', '.'); ?> <span style="font-size: 0.65rem; opacity: 0.8;">+ taxas</span></div>
                                     </div>
                                 </a>
                               
@@ -958,6 +982,15 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                     <?php endif; ?>
                                   
                                     <?php if ($p['is_vip'] == 1): ?>
+                                        <?php 
+                                        $hasDiscountBadge = !empty($p['original_price']) && floatval($p['original_price']) > floatval($p['price']);
+                                        $discountPercentBadge = $hasDiscountBadge ? round(((floatval($p['original_price']) - floatval($p['price'])) / floatval($p['original_price'])) * 100) : 0;
+                                        ?>
+                                        <?php if ($hasDiscountBadge): ?>
+                                            <div class="product-discount-badge" style="position: absolute; top: 10px; left: 10px; background: #ef4444; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; z-index: 5;">
+                                                -<?php echo $discountPercentBadge; ?>% OFF
+                                            </div>
+                                        <?php endif; ?>
                                         <div class="product-vip-badge-modern">
                                             <span class="vip-star">⭐</span>
                                             <span>VIP</span>
@@ -968,7 +1001,22 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                 <div class="product-info-modern">
                                     <p class="product-brand-modern"><?php echo htmlspecialchars($p['brand_name'] ?? 'Naipe da Gringa'); ?></p>
                                     <h3 class="product-name-modern"><?php echo htmlspecialchars($p['name']); ?></h3>
-                                    <div class="product-price-modern"><?php echo formatPrice($p['price']); ?></div><div class="price-installments" style="font-size: 0.75rem; color: #888; margin-top: 2px; font-weight: 500;">10x de R$ <?php echo number_format($p['price'] / 10, 2, ',', '.'); ?> <span style="font-size: 0.65rem; opacity: 0.8;">+ taxas</span></div>
+                                    <?php 
+                                    $hasDiscount = !empty($p['original_price']) && floatval($p['original_price']) > floatval($p['price']);
+                                    $discountPercent = $hasDiscount ? round(((floatval($p['original_price']) - floatval($p['price'])) / floatval($p['original_price'])) * 100) : 0;
+                                    ?>
+                                    <?php if ($hasDiscount): ?>
+                                    <div class="product-price-wrapper" style="display: flex; flex-direction: column; gap: 2px;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
+                                            <span style="text-decoration: line-through; color: #888; font-size: 0.85rem;"><?php echo formatPrice($p['original_price']); ?></span>
+                                        </div>
+                                        <div class="product-price-modern" style="color: #22c55e;"><?php echo formatPrice($p['price']); ?></div>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="product-price-modern"><?php echo formatPrice($p['price']); ?></div>
+                                    <?php endif; ?>
+                                    <div class="price-installments" style="font-size: 0.75rem; color: #888; margin-top: 2px; font-weight: 500;">10x de R$ <?php echo number_format($p['price'] / 10, 2, ',', '.'); ?> <span style="font-size: 0.65rem; opacity: 0.8;">+ taxas</span></div>
                                 </div>
                             </a>
                           
