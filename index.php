@@ -547,6 +547,89 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
     .logo-scrolled-desktop {
         transform: scale(0.85);
     }
+    
+    /* Empty State Styles */
+    .empty-state-wrapper {
+        padding: 3rem 1rem;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(199, 163, 51, 0.05);
+        border: 2px dashed #C7A333;
+        border-radius: 20px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #C7A333, #d4af37);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 30px rgba(199, 163, 51, 0.3);
+    }
+    .empty-state-icon i {
+        font-size: 2rem;
+        color: #fff;
+    }
+    .empty-state h3 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #C7A333;
+        margin-bottom: 0.75rem;
+    }
+    .empty-state p {
+        color: #C7A333;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        opacity: 0.85;
+    }
+    .empty-state-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    .btn-clear-filters-empty,
+    .btn-expert-empty {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-width: 200px;
+        justify-content: center;
+    }
+    .btn-clear-filters-empty {
+        background: #C7A333;
+        color: #000;
+        border: 2px solid #C7A333;
+    }
+    .btn-clear-filters-empty:hover {
+        background: #000;
+        color: #C7A333;
+        border-color: #000;
+    }
+    .btn-expert-empty {
+        background: transparent;
+        color: #C7A333;
+        border: 2px solid #C7A333;
+    }
+    .btn-expert-empty:hover {
+        background: #000;
+        color: #C7A333;
+        border-color: #000;
+    }
 </style>
 <style>
     @media (max-width: 480px) {
@@ -595,7 +678,7 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
 .marcas-carousel-section {
     position: relative;
     overflow: hidden;
-    padding: 60px 0; /* Ajuste o padding conforme sua necessidade */
+    padding: 20px 0; /* Reduzido para hierarquia visual */
   
     /* Degradê Ouro Naipers (Linear para facilitar a animação de movimento) */
     background: linear-gradient(270deg,
@@ -613,6 +696,48 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
     animation: goldFlow 10s ease infinite;
   
     border-bottom: none !important;
+}
+
+/* Carrossel de Marcas - Logos menores para hierarquia */
+.marcas-carousel-section .swiper-slide img {
+    max-height: 35px !important;
+    width: auto !important;
+    object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+    .marcas-carousel-section {
+        padding: 12px 0 !important;
+    }
+    .marcas-carousel-section .swiper-slide img {
+        max-height: 25px !important;
+    }
+}
+
+/* Banner Principal - Maior destaque */
+.carousel-banner-wrapper {
+    margin-bottom: 0;
+}
+
+.carousel-banner-wrapper .carousel-slide img,
+.carousel-banner-wrapper .render-carousel img {
+    min-height: 280px;
+    object-fit: cover;
+}
+
+@media (min-width: 769px) {
+    .carousel-banner-wrapper .carousel-slide img,
+    .carousel-banner-wrapper .render-carousel img {
+        min-height: 380px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-banner-wrapper .carousel-slide img,
+    .carousel-banner-wrapper .render-carousel img {
+        min-height: 200px;
+        aspect-ratio: 16/9;
+    }
 }
 /* Efeito de Brilho Extra (Overlay) */
 .marcas-carousel-section::before {
@@ -1112,6 +1237,34 @@ a.cta-wpp-38126317318[data-prod-ref] .label-wpp-38126317318 {
     a.cta-wpp-38126317318[data-prod-ref]:hover .icon-wpp-03813791873 {
         transform: rotate(360deg);
         background: linear-gradient(145deg, #ffd700, #d4af37);
+    }
+}
+
+/* ================= MOBILE BUTTON LAYOUT ================= */
+@media (max-width: 768px) {
+    .product-actions-modern {
+        flex-direction: column !important;
+        gap: 8px !important;
+        padding: 0 10px 10px !important;
+    }
+    
+    .product-actions-modern .btn-view-details {
+        order: 1 !important;
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 0.85rem !important;
+        justify-content: center !important;
+    }
+    
+    .product-actions-modern a.cta-wpp-38126317318[data-prod-ref] {
+        order: 2 !important;
+        width: 100% !important;
+        padding: 12px !important;
+        justify-content: center !important;
+    }
+    
+    .product-actions-modern a.cta-wpp-38126317318[data-prod-ref] .label-wpp-38126317318 {
+        font-size: 0.8rem !important;
     }
 }
 

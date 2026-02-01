@@ -193,6 +193,49 @@ include __DIR__ . '/includes/public-header.php';
     .nav-prev { left: -15px; }
     .nav-next { right: -15px; }
     @media (max-width: 768px) { .nav-prev, .nav-next { display: none; } }
+    
+    /* MOBILE OPTIMIZATIONS */
+    @media (max-width: 768px) {
+        .cart-page-container { padding: 1rem 0; }
+        .cart-title { font-size: 1.3rem; margin-bottom: 1rem; }
+        
+        .cart-items-section { padding: 1rem; border-radius: 16px; }
+        .cart-item { grid-template-columns: 70px 1fr; gap: 0.75rem; padding: 1rem 0; }
+        .cart-item-image { width: 70px; height: 70px; border-radius: 12px; }
+        .cart-item-name { font-size: 0.95rem; margin-bottom: 4px; }
+        .cart-item-price { font-size: 1rem; }
+        .cart-item-brand { font-size: 0.7rem; }
+        
+        .cart-item-actions { 
+            grid-column: 1 / -1; 
+            justify-content: space-between; 
+            margin-top: 0.75rem; 
+            padding-top: 0.75rem; 
+            border-top: 1px dashed #eee;
+        }
+        .quantity-selector { padding: 3px; }
+        .quantity-selector button { width: 32px; height: 32px; font-size: 1.2rem; }
+        .qty-display { font-size: 1rem; }
+        
+        /* ORDER BUMPS MOBILE - 2 cards visible */
+        .order-bumps-section { margin-top: 2rem; padding: 0 5px; }
+        .order-bumps-title { font-size: 1.3rem; margin-bottom: 1rem; }
+        .bumps-track { gap: 10px; padding: 5px 2px 15px; }
+        .order-bump-card { 
+            min-width: calc(50% - 10px); 
+            max-width: calc(50% - 10px); 
+            padding: 8px; 
+            border-radius: 14px; 
+        }
+        .bump-img-wrapper { border-radius: 10px; margin-bottom: 8px; }
+        .bump-brand { font-size: 0.6rem; }
+        .bump-title { font-size: 0.8rem; height: 2.4em; margin-bottom: 4px; }
+        .bump-price { font-size: 0.95rem; margin-bottom: 8px; }
+        .btn-add-bump-direct { padding: 8px; font-size: 0.75rem; border-radius: 10px; }
+        
+        .cart-summary { border-radius: 16px; padding: 1.5rem; margin-top: 1rem; }
+        .btn-checkout { padding: 1rem; font-size: 0.95rem; border-radius: 12px; }
+    }
 
     /* MODAL DE RETENÇÃO - DOURADO */
     .retention-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }

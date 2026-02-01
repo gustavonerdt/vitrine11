@@ -350,7 +350,7 @@ if (!$is_ajax) {
                         Calcular Frete e Prazo
                     </h4>
                     <div class="shipping-calculator-form">
-                        <input type="text" id="shipping-cep" placeholder="Digite seu CEP" maxlength="9">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" id="shipping-cep" placeholder="Digite seu CEP" maxlength="9">
                         <button type="button" id="calc-shipping-btn" onclick="calculateShipping()">
                             Calcular
                         </button>

@@ -1,7 +1,8 @@
 -- ============================================
 -- NAIPE DA GRINGA - DATABASE COMPLETO
--- Versao: 2.0
--- Data: 2026
+-- Versao: 2.1
+-- Data: Fev 2026
+-- Atualizacoes: Sistema de desconto De/Por, Faixa rotativa, Mobile optimization
 -- ============================================
 -- Execute este arquivo para criar todas as tabelas
 -- e dados iniciais do sistema
