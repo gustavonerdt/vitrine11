@@ -1,26 +1,7 @@
 <?php
-session_start();
+// session_start() ja e chamado em config.php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/functions.php';
-
-// #region agent log
-$logFile = __DIR__ . '/../.cursor/debug.log';
-$logDir = dirname($logFile);
-if (!is_dir($logDir)) {
-    @mkdir($logDir, 0755, true);
-}
-$logData = json_encode([
-    'id' => 'log_' . time() . '_addcart',
-    'timestamp' => time() * 1000,
-    'location' => 'add-to-cart.php:8',
-    'message' => 'Add to cart API called',
-    'data' => ['method' => $_SERVER['REQUEST_METHOD'], 'has_post' => !empty($_POST), 'session_id' => session_id()],
-    'sessionId' => 'debug-session',
-    'runId' => 'run1',
-    'hypothesisId' => 'A'
-]) . "\n";
-@file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
-// #endregion
 
 header('Content-Type: application/json');
 
@@ -32,20 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $product_id = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
 $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
-
-// #region agent log
-$logData = json_encode([
-    'id' => 'log_' . time() . '_addcart_params',
-    'timestamp' => time() * 1000,
-    'location' => 'add-to-cart.php:17',
-    'message' => 'Product params received',
-    'data' => ['product_id' => $product_id, 'quantity' => $quantity, 'cart_exists' => isset($_SESSION['cart']), 'cart_count' => isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0],
-    'sessionId' => 'debug-session',
-    'runId' => 'run1',
-    'hypothesisId' => 'A'
-]) . "\n";
-@file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
-// #endregion
 
 if ($product_id <= 0) {
     echo json_encode(['success' => false, 'error' => 'ID do produto inválido']);
@@ -85,20 +52,6 @@ try {
     foreach ($_SESSION['cart'] as $qty) {
         $total_items += $qty;
     }
-    
-    // #region agent log
-    $logData = json_encode([
-        'id' => 'log_' . time() . '_addcart_success',
-        'timestamp' => time() * 1000,
-        'location' => 'add-to-cart.php:48',
-        'message' => 'Product added to cart successfully',
-        'data' => ['product_id' => $product_id, 'old_qty' => $old_qty, 'new_qty' => $_SESSION['cart'][$product_id], 'total_items' => $total_items, 'cart_items' => $_SESSION['cart']],
-        'sessionId' => 'debug-session',
-        'runId' => 'run1',
-        'hypothesisId' => 'A'
-    ]) . "\n";
-    @file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
-    // #endregion
     
     echo json_encode([
         'success' => true,

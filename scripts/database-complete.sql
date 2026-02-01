@@ -826,6 +826,29 @@ INSERT INTO `banners` (`name`, `carousel_type`, `is_active`, `display_order`) VA
 ('Carousel Principal', 'carousel', 1, 1);
 
 -- ============================================
+-- TABELA DE LOGS DE ATIVIDADE (para auditoria)
+-- ============================================
+CREATE TABLE IF NOT EXISTS `activity_logs` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NULL,
+    `action` VARCHAR(100) NOT NULL,
+    `entity_type` VARCHAR(50) NULL,
+    `entity_id` INT NULL,
+    `details` TEXT NULL,
+    `ip_address` VARCHAR(45) NULL,
+    `user_agent` TEXT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_activity_user` (`user_id`),
+    INDEX `idx_activity_action` (`action`),
+    INDEX `idx_activity_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- INDICE PARA order_metadata (performance)
+-- ============================================
+CREATE INDEX IF NOT EXISTS `idx_order_metadata_order` ON `order_metadata` (`order_id`);
+
+-- ============================================
 -- FINALIZAR
 -- ============================================
 SET FOREIGN_KEY_CHECKS = 1;

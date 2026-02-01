@@ -1,26 +1,7 @@
 <?php
-session_start();
+// session_start() ja e chamado em config.php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/functions.php';
-
-// #region agent log
-$logFile = __DIR__ . '/../.cursor/debug.log';
-$logDir = dirname($logFile);
-if (!is_dir($logDir)) {
-    @mkdir($logDir, 0755, true);
-}
-$logData = json_encode([
-    'id' => 'log_' . time() . '_payment',
-    'timestamp' => time() * 1000,
-    'location' => 'create-payment.php:8',
-    'message' => 'Create payment API called',
-    'data' => ['method' => $_SERVER['REQUEST_METHOD'], 'has_checkout_data' => isset($_SESSION['checkout_data']), 'has_cart' => isset($_SESSION['cart']), 'cart_count' => isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0],
-    'sessionId' => 'debug-session',
-    'runId' => 'run1',
-    'hypothesisId' => 'C'
-]) . "\n";
-@file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
-// #endregion
 
 header('Content-Type: application/json');
 
@@ -360,12 +341,17 @@ function createMercadoPagoPixPayment($access_token, $order_id, $amount, $checkou
                 'last_name' => implode(' ', array_slice(explode(' ', $checkout_data['recipient_name']), 1)) ?? '',
                 'identification' => [
                     'type' => 'CPF',
-                    'number' => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
+                    'number' => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '')
                 ]
             ],
             'notification_url' => $webhook_url,
             'external_reference' => (string)$order_id
         ];
+        
+        // Remover identificacao se CPF estiver vazio (evita erro no MP)
+        if (empty($payment_data['payer']['identification']['number'])) {
+            unset($payment_data['payer']['identification']);
+        }
         
         $ch = curl_init('https://api.mercadopago.com/v1/payments');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -435,6 +421,12 @@ function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checko
             
             $paymentClient = new MercadoPago\Client\Payment\PaymentClient();
             
+            $cpf_number = preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '');
+            $payer_data = ["email" => $checkout_data['email']];
+            if (!empty($cpf_number)) {
+                $payer_data["identification"] = ["type" => "CPF", "number" => $cpf_number];
+            }
+            
             $payment = $paymentClient->create([
                 "transaction_amount" => floatval($amount),
                 "token" => $token,
@@ -442,13 +434,7 @@ function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checko
                 "installments" => intval($installments),
                 "payment_method_id" => $payment_method_id,
                 "issuer_id" => $issuer_id ? (string)$issuer_id : null,
-                "payer" => [
-                    "email" => $checkout_data['email'],
-                    "identification" => [
-                        "type" => "CPF",
-                        "number" => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
-                    ]
-                ],
+                "payer" => $payer_data,
                 "notification_url" => APP_URL . '/api/mercado-pago-webhook.php',
                 "external_reference" => (string)$order_id
             ]);
@@ -475,6 +461,12 @@ function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checko
     // Fallback para cURL se SDK não estiver disponível
     $webhook_url = APP_URL . '/api/mercado-pago-webhook.php';
     
+    $cpf_number_curl = preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '');
+    $payer_data_curl = ['email' => $checkout_data['email']];
+    if (!empty($cpf_number_curl)) {
+        $payer_data_curl['identification'] = ['type' => 'CPF', 'number' => $cpf_number_curl];
+    }
+    
     $payment_data = [
         'transaction_amount' => floatval($amount),
         'token' => $token,
@@ -482,13 +474,7 @@ function createMercadoPagoCardPayment($access_token, $order_id, $amount, $checko
         'installments' => $installments,
         'payment_method_id' => $payment_method_id ?: 'visa',
         'issuer_id' => $issuer_id,
-        'payer' => [
-            'email' => $checkout_data['email'],
-            'identification' => [
-                'type' => 'CPF',
-                'number' => preg_replace('/[^0-9]/', '', $checkout_data['cpf_cnpj'] ?? '00000000000')
-            ]
-        ],
+        'payer' => $payer_data_curl,
         'notification_url' => $webhook_url,
         'external_reference' => (string)$order_id
     ];

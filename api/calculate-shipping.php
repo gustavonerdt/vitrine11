@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start() ja e chamado em config.php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/functions.php';
 
@@ -39,8 +39,16 @@ $melhor_envio_sandbox = getSetting($pdo, 'melhor_envio_sandbox', '1') === '1';
 // Valor mínimo para frete grátis
 $frete_gratis_valor_minimo = floatval(getSetting($pdo, 'frete_gratis_valor_minimo', '0'));
 
-if (empty($cep_destino) || strlen($cep_destino) !== 8) {
-    echo json_encode(['success' => false, 'error' => 'CEP inválido']);
+// Validar CEP (8 digitos e formato valido)
+if (empty($cep_destino) || strlen($cep_destino) !== 8 || !preg_match('/^[0-9]{8}$/', $cep_destino)) {
+    echo json_encode(['success' => false, 'error' => 'CEP invalido. Informe os 8 digitos.']);
+    exit;
+}
+
+// Validar se CEP comeca com digito valido (01-99)
+$cep_prefix = substr($cep_destino, 0, 2);
+if ((int)$cep_prefix < 1 || (int)$cep_prefix > 99) {
+    echo json_encode(['success' => false, 'error' => 'CEP invalido. Prefixo nao reconhecido.']);
     exit;
 }
 
@@ -316,7 +324,7 @@ function calcularFreteCorreiosDireto($cep_origem, $cep_destino, $peso, $altura, 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url . '?' . $params);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // Seguranca: validar certificado SSL
             curl_setopt($ch, CURLOPT_TIMEOUT, 8);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 4);
             $response = curl_exec($ch);
