@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Rate limiting: max 5 tentativas de pagamento por minuto
+if (!applyRateLimit($pdo, 'create_payment', 5, 60)) {
+    exit;
+}
+
 // Verificar se há dados de checkout e carrinho
 if (!isset($_SESSION['checkout_data']) || empty($_SESSION['checkout_data'])) {
     echo json_encode(['success' => false, 'error' => 'Dados de checkout não encontrados']);
@@ -84,17 +89,24 @@ if (empty($seller_name)) {
     $seller_name = getSetting($pdo, 'app_name', APP_NAME);
 }
 
-// Calcular totais
+// Calcular totais e validar estoque
 $cart_items = [];
 $subtotal = 0;
+$stock_errors = [];
 
 foreach ($_SESSION['cart'] as $product_id => $quantity) {
     try {
-        $stmt = $pdo->prepare("SELECT id, name, price FROM products WHERE id = ? AND is_active = 1");
+        $stmt = $pdo->prepare("SELECT id, name, price, stock_quantity FROM products WHERE id = ? AND is_active = 1");
         $stmt->execute([$product_id]);
         $product = $stmt->fetch();
         
         if ($product) {
+            // Validar estoque (se a coluna existir e tiver valor)
+            $stock = isset($product['stock_quantity']) ? (int)$product['stock_quantity'] : null;
+            if ($stock !== null && $stock >= 0 && $quantity > $stock) {
+                $stock_errors[] = "Produto '{$product['name']}' tem apenas {$stock} unidades em estoque";
+            }
+            
             $item_total = floatval($product['price']) * $quantity;
             $subtotal += $item_total;
             
@@ -104,14 +116,44 @@ foreach ($_SESSION['cart'] as $product_id => $quantity) {
                 'price' => floatval($product['price']),
                 'quantity' => $quantity
             ];
+        } else {
+            $stock_errors[] = "Produto ID {$product_id} nao esta mais disponivel";
         }
     } catch (PDOException $e) {
         error_log("Cart item fetch error: " . $e->getMessage());
     }
 }
 
+// Retornar erro se houver problemas de estoque
+if (!empty($stock_errors)) {
+    echo json_encode([
+        'success' => false, 
+        'error' => 'Problemas com estoque: ' . implode('; ', $stock_errors),
+        'stock_errors' => $stock_errors
+    ]);
+    exit;
+}
+
 $shipping_cost = floatval($checkout_data['shipping_price'] ?? 0);
-$total = $subtotal + $shipping_cost;
+
+// Aplicar desconto de cupom se existir
+$discount_amount = 0;
+$coupon_code = null;
+$coupon_id = null;
+
+if (isset($_SESSION['applied_coupon']) && !empty($_SESSION['applied_coupon'])) {
+    $discount_amount = floatval($_SESSION['applied_coupon']['discount'] ?? 0);
+    $coupon_code = $_SESSION['applied_coupon']['code'] ?? null;
+    $coupon_id = $_SESSION['applied_coupon']['coupon_id'] ?? null;
+    
+    // Garantir que desconto nao seja maior que subtotal
+    if ($discount_amount > $subtotal) {
+        $discount_amount = $subtotal;
+    }
+}
+
+$total = $subtotal + $shipping_cost - $discount_amount;
+$total = max(0, $total); // Garantir que total nao seja negativo
 
 try {
     $pdo->beginTransaction();
@@ -144,10 +186,20 @@ try {
     $user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
     
     $stmt = $pdo->prepare("
-        INSERT INTO orders (session_id, user_id, status, total_amount, shipping_cost, discount_amount, payment_method, created_at)
-        VALUES (?, ?, 'pending', ?, ?, 0, ?, NOW())
+        INSERT INTO orders (session_id, user_id, status, total_amount, shipping_cost, discount_amount, coupon_code, payment_method, created_at)
+        VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, NOW())
     ");
-    $stmt->execute([$session_id, $user_id, $total, $shipping_cost, $payment_method]);
+    $stmt->execute([$session_id, $user_id, $total, $shipping_cost, $discount_amount, $coupon_code, $payment_method]);
+    
+    // Incrementar uso do cupom se foi aplicado
+    if ($coupon_id) {
+        try {
+            $updateCoupon = $pdo->prepare("UPDATE coupons SET usage_count = usage_count + 1 WHERE id = ?");
+            $updateCoupon->execute([$coupon_id]);
+        } catch (PDOException $e) {
+            error_log("Coupon usage update error: " . $e->getMessage());
+        }
+    }
     $order_id = $pdo->lastInsertId();
     
     // Adicionar itens do pedido
@@ -248,8 +300,9 @@ try {
     
     $pdo->commit();
     
-    // Limpar carrinho
+    // Limpar carrinho e cupom aplicado
     $_SESSION['cart'] = [];
+    unset($_SESSION['applied_coupon']);
     
     // Salvar order_id na sessão para confirmação
     $_SESSION['last_order_id'] = $order_id;

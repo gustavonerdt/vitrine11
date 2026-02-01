@@ -221,6 +221,18 @@ define('SESSION_TIMEOUT', 1800);
 define('MAX_LOGIN_ATTEMPTS', 5);
 define('RATE_LIMIT_WINDOW', 900);
 
+// Shipping defaults (para calculos de frete)
+define('SHIPPING_DEFAULT_WEIGHT', 0.3);     // Peso padrao em kg
+define('SHIPPING_DEFAULT_HEIGHT', 15);       // Altura padrao em cm
+define('SHIPPING_DEFAULT_WIDTH', 8);         // Largura padrao em cm
+define('SHIPPING_DEFAULT_LENGTH', 8);        // Comprimento padrao em cm
+define('SHIPPING_MIN_WEIGHT', 0.1);          // Peso minimo em kg
+define('SHIPPING_MIN_HEIGHT', 2);            // Altura minima em cm
+define('SHIPPING_MIN_WIDTH', 11);            // Largura minima em cm
+define('SHIPPING_MIN_LENGTH', 16);           // Comprimento minimo em cm
+define('SHIPPING_FALLBACK_PRICE', 25.00);    // Preco de frete padrao quando APIs falham
+define('SHIPPING_FALLBACK_DAYS', 10);        // Prazo padrao em dias uteis
+
 // Admin Settings - Load from .env file
 define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'admin@naipersclub.com'));
 

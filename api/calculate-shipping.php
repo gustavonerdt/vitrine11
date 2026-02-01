@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Rate limiting: max 20 calculos de frete por minuto
+if (!applyRateLimit($pdo, 'calculate_shipping', 20, 60)) {
+    exit;
+}
+
 // Aceitar tanto POST normal quanto JSON
 $input_json = file_get_contents('php://input');
 $json_data = json_decode($input_json, true);
@@ -64,11 +69,11 @@ $largura_total = 0;
 $comprimento_total = 0;
 $valor_total = 0;
 
-// Valores padrão para perfumes (quando não configurados)
-$peso_padrao = 0.3; // 300g por perfume
-$altura_padrao = 15; // cm
-$largura_padrao = 8; // cm
-$comprimento_padrao = 8; // cm
+// Valores padrão para perfumes (usando constantes do config.php)
+$peso_padrao = defined('SHIPPING_DEFAULT_WEIGHT') ? SHIPPING_DEFAULT_WEIGHT : 0.3;
+$altura_padrao = defined('SHIPPING_DEFAULT_HEIGHT') ? SHIPPING_DEFAULT_HEIGHT : 15;
+$largura_padrao = defined('SHIPPING_DEFAULT_WIDTH') ? SHIPPING_DEFAULT_WIDTH : 8;
+$comprimento_padrao = defined('SHIPPING_DEFAULT_LENGTH') ? SHIPPING_DEFAULT_LENGTH : 8;
 
 if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $product_id => $quantity) {
@@ -113,11 +118,11 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     $valor_total = 100; // Valor padrão para seguro
 }
 
-// Valores mínimos exigidos pelo Melhor Envio
-$peso_total = max($peso_total, 0.1);
-$altura_total = max($altura_total, 2);
-$largura_total = max($largura_total, 11);
-$comprimento_total = max($comprimento_total, 16);
+// Valores mínimos exigidos pelo Melhor Envio (usando constantes)
+$peso_total = max($peso_total, defined('SHIPPING_MIN_WEIGHT') ? SHIPPING_MIN_WEIGHT : 0.1);
+$altura_total = max($altura_total, defined('SHIPPING_MIN_HEIGHT') ? SHIPPING_MIN_HEIGHT : 2);
+$largura_total = max($largura_total, defined('SHIPPING_MIN_WIDTH') ? SHIPPING_MIN_WIDTH : 11);
+$comprimento_total = max($comprimento_total, defined('SHIPPING_MIN_LENGTH') ? SHIPPING_MIN_LENGTH : 16);
 
 $shipping_options = [];
 
@@ -149,16 +154,19 @@ if (empty($shipping_options)) {
     );
 }
 
-// Se ainda vazio, usar fallback fixo
+// Se ainda vazio, usar fallback fixo (usando constantes)
 if (empty($shipping_options)) {
+    $fallback_price = defined('SHIPPING_FALLBACK_PRICE') ? SHIPPING_FALLBACK_PRICE : 25.00;
+    $fallback_days = defined('SHIPPING_FALLBACK_DAYS') ? SHIPPING_FALLBACK_DAYS : 10;
+    
     $shipping_options = [
         [
             'code' => '99999',
             'name' => 'Entrega Padrão',
-            'price' => 25.00,
-            'days' => 10,
-            'delivery_date' => date('d/m/Y', strtotime("+10 weekdays")),
-            'delivery_text' => "Chega em até 10 dias úteis",
+            'price' => $fallback_price,
+            'days' => $fallback_days,
+            'delivery_date' => date('d/m/Y', strtotime("+{$fallback_days} weekdays")),
+            'delivery_text' => "Chega em até {$fallback_days} dias úteis",
             'company' => 'Padrão'
         ]
     ];

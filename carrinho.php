@@ -24,7 +24,27 @@ if (isset($_GET['add']) && !empty($_GET['add'])) {
 $pageTitle = 'Minha Sacola';
 $bodyClass = 'cart-page';
 
-// 2. BUSCAR ITENS DO CARRINHO
+// 2. LIMPAR PRODUTOS INATIVOS DO CARRINHO
+$removed_products = [];
+if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    $product_ids = array_keys($_SESSION['cart']);
+    if (!empty($product_ids)) {
+        $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
+        $stmt = $pdo->prepare("SELECT id FROM products WHERE id IN ($placeholders) AND is_active = 1");
+        $stmt->execute($product_ids);
+        $active_ids = array_column($stmt->fetchAll(), 'id');
+        
+        // Remover produtos inativos
+        foreach ($product_ids as $pid) {
+            if (!in_array($pid, $active_ids)) {
+                $removed_products[] = $pid;
+                unset($_SESSION['cart'][$pid]);
+            }
+        }
+    }
+}
+
+// 3. BUSCAR ITENS DO CARRINHO
 $cart_items = [];
 $subtotal = 0;
 $total_items = 0;

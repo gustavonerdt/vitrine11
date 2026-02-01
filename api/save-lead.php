@@ -3,10 +3,9 @@
  * API para salvar dados de lead em tempo real
  * Usado para capturar dados do checkout-entrega mesmo sem finalizar
  */
-session_start();
-header('Content-Type: application/json');
-
+// session_start() ja e chamado em config.php
 require_once __DIR__ . '/../config.php';
+header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

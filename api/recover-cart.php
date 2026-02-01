@@ -2,10 +2,9 @@
 /**
  * API para marcar carrinho como recuperado ou popup como mostrado
  */
-session_start();
-header('Content-Type: application/json');
-
+// session_start() ja e chamado em config.php
 require_once __DIR__ . '/../config.php';
+header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/functions.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';

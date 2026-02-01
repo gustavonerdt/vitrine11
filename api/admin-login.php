@@ -17,6 +17,12 @@ try {
         throw new Exception('Método não permitido');
     }
 
+    // Rate limiting: max 5 tentativas de login por minuto (protecao contra brute force)
+    $rateLimitResult = checkRateLimit($pdo, 'admin_login', 5, 60);
+    if (!$rateLimitResult['allowed']) {
+        throw new Exception('Muitas tentativas de login. Aguarde ' . 60 . ' segundos e tente novamente.');
+    }
+
     // Log da requisição
     error_log("Admin Login Attempt - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . " - Time: " . date('Y-m-d H:i:s'));
 

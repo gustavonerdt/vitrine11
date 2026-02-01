@@ -1490,4 +1490,81 @@ function renderCarousel($banner) {
     // Wrap in a container with the carousel ID e classe padrão
     return '<div id="' . $carouselId . '" class="premium-carousel-container">' . $html . '</div>';
 }
+
+// --- Rate Limiting ---
+
+/**
+ * Verifica rate limiting baseado em IP e acao
+ * @param PDO $pdo Conexao com banco de dados
+ * @param string $action Nome da acao (ex: 'login', 'payment', 'api_call')
+ * @param int $maxAttempts Numero maximo de tentativas permitidas
+ * @param int $windowSeconds Janela de tempo em segundos
+ * @return array ['allowed' => bool, 'remaining' => int, 'reset_at' => string]
+ */
+function checkRateLimit($pdo, $action, $maxAttempts = 10, $windowSeconds = 60) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    $key = md5($ip . ':' . $action);
+    $now = time();
+    $windowStart = $now - $windowSeconds;
+    
+    // Usar sessao para rate limiting simples (sem necessidade de tabela extra)
+    if (!isset($_SESSION['rate_limits'])) {
+        $_SESSION['rate_limits'] = [];
+    }
+    
+    // Limpar tentativas antigas
+    if (isset($_SESSION['rate_limits'][$key])) {
+        $_SESSION['rate_limits'][$key] = array_filter(
+            $_SESSION['rate_limits'][$key],
+            function($timestamp) use ($windowStart) {
+                return $timestamp > $windowStart;
+            }
+        );
+    } else {
+        $_SESSION['rate_limits'][$key] = [];
+    }
+    
+    $attempts = count($_SESSION['rate_limits'][$key]);
+    $allowed = $attempts < $maxAttempts;
+    $remaining = max(0, $maxAttempts - $attempts);
+    $resetAt = date('Y-m-d H:i:s', $now + $windowSeconds);
+    
+    // Se permitido, registrar esta tentativa
+    if ($allowed) {
+        $_SESSION['rate_limits'][$key][] = $now;
+    }
+    
+    return [
+        'allowed' => $allowed,
+        'remaining' => $remaining,
+        'reset_at' => $resetAt,
+        'attempts' => $attempts
+    ];
+}
+
+/**
+ * Aplica rate limiting e retorna erro JSON se excedido
+ * @param PDO $pdo Conexao com banco de dados
+ * @param string $action Nome da acao
+ * @param int $maxAttempts Numero maximo de tentativas
+ * @param int $windowSeconds Janela de tempo
+ * @return bool True se permitido, false se bloqueado (ja enviou resposta)
+ */
+function applyRateLimit($pdo, $action, $maxAttempts = 10, $windowSeconds = 60) {
+    $result = checkRateLimit($pdo, $action, $maxAttempts, $windowSeconds);
+    
+    if (!$result['allowed']) {
+        http_response_code(429);
+        header('Content-Type: application/json');
+        header('Retry-After: ' . $windowSeconds);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Muitas requisicoes. Tente novamente em alguns segundos.',
+            'retry_after' => $windowSeconds
+        ]);
+        return false;
+    }
+    
+    return true;
+}
 ?>
