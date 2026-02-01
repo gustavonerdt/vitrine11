@@ -112,16 +112,20 @@ function processPayment() {
 function createPixPayment() {
     const formData = new FormData();
     formData.append('payment_method', 'pix');
-    formData.append('seller_name', document.getElementById('seller_name').value);
+    formData.append('seller_name', document.getElementById('seller_name')?.value || '');
     
-    fetch(window.APP_URL + '/api/create-payment.php', {
+    // Usar a mesma API que cria preferencia do MP para PIX tambem
+    fetch(window.APP_URL + '/api/create-mp-preference.php', {
         method: 'POST',
         body: formData
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            // Redirect to thank you page
+        if (data.success && data.init_point) {
+            // Redirecionar para checkout do Mercado Pago (PIX)
+            window.location.href = data.init_point;
+        } else if (data.success && data.order_id) {
+            // Se nao tem MP configurado, ir para pagina de obrigado
             window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
         } else {
             showNotification('Erro ao processar pagamento: ' + (data.error || 'Erro desconhecido'), 'error');
@@ -141,10 +145,9 @@ function createCardPayment() {
     // Para cartao de credito, redirecionar para checkout do Mercado Pago
     const formData = new FormData();
     formData.append('payment_method', 'credit_card');
-    formData.append('seller_name', document.getElementById('seller_name').value || '');
-    formData.append('redirect_to_mp', '1');
+    formData.append('seller_name', document.getElementById('seller_name')?.value || '');
     
-    // Primeiro cria o pedido, depois redireciona para Mercado Pago Checkout Pro
+    // Criar pedido e redirecionar para Mercado Pago Checkout Pro
     fetch(window.APP_URL + '/api/create-mp-preference.php', {
         method: 'POST',
         body: formData
@@ -152,11 +155,11 @@ function createCardPayment() {
     .then(response => response.json())
     .then(data => {
         if (data.success && data.init_point) {
-            // Redirecionar para checkout do Mercado Pago
+            // Redirecionar para checkout do Mercado Pago (cartao/pix)
             window.location.href = data.init_point;
         } else if (data.success && data.order_id) {
-            // Pedido criado, ir para pagina de obrigado
-            window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id;
+            // Se nao tem MP configurado, ir para pagina de obrigado com aviso
+            window.location.href = window.APP_URL + '/obrigado.php?order_id=' + data.order_id + '&payment=pending';
         } else {
             showNotification(data.error || 'Erro ao processar. Tente novamente.', 'error');
             document.getElementById('btnMakeOrder').disabled = false;

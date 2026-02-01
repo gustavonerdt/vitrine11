@@ -32,6 +32,10 @@ if (isset($_GET['order_id']) && !empty($_GET['order_id'])) {
     }
 }
 
+// Verificar status do pagamento
+$payment_pending = isset($_GET['payment']) && $_GET['payment'] === 'pending';
+$payment_status = $_GET['status'] ?? null;
+
 // Buscar configuracoes da loja
 $appName = getSetting($pdo, 'app_name', APP_NAME);
 $whatsappNumber = getSetting($pdo, 'whatsapp_float_number', '');
@@ -147,6 +151,19 @@ include __DIR__ . '/includes/public-header.php';
     /* ESTILOS DA PAGINA DE OBRIGADO - IGUAL AO CARRINHO */
     .thank-you-container { background: #fef9e0; padding: 2rem 0; min-height: 80vh; overflow-x: hidden; }
     .thank-you-title { font-family: 'Sora', sans-serif; font-weight: 800; margin-bottom: 2rem; color: #1a1a1a; text-transform: uppercase; text-align: center; }
+    
+    /* Alerta de Pagamento Pendente */
+    .payment-pending-alert {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.1));
+        border: 2px solid #f59e0b;
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+    .payment-pending-alert i { color: #f59e0b; font-size: 1.5rem; }
+    .payment-pending-alert h4 { color: #d97706; font-weight: 700; }
+    .payment-pending-alert p { color: #92400e; font-size: 0.95rem; line-height: 1.5; }
     
     /* BOX PRINCIPAL */
     .thank-you-box { 
@@ -756,10 +773,25 @@ include __DIR__ . '/includes/public-header.php';
                 Obrigado por comprar com a <span class="store-name"><?php echo htmlspecialchars($appName); ?></span>!
             </h2>
             
+            <?php if ($payment_pending || ($order && $order['status'] === 'pending')): ?>
+            <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.1)); border: 2px solid #f59e0b; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas fa-clock" style="color: #f59e0b; font-size: 1.5rem; margin-top: 2px;"></i>
+                    <div>
+                        <h4 style="margin: 0 0 8px 0; color: #d97706; font-weight: 700;">Pagamento Pendente</h4>
+                        <p style="margin: 0; color: #92400e; font-size: 0.95rem; line-height: 1.5;">
+                            Seu pedido foi registrado, mas o pagamento ainda nao foi confirmado. 
+                            Entre em contato com a loja pelo WhatsApp para combinar a forma de pagamento.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
             <p class="thank-you-subtext">
                 Seu pedido foi recebido com sucesso e esta sendo processado. 
                 Voce recebera atualizacoes sobre o status da entrega.
             </p>
+            <?php endif; ?>
             
             <?php if ($order): ?>
             <div class="order-info">

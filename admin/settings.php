@@ -785,10 +785,28 @@ $csrf = generateCsrfToken();
                                                value="<?php echo htmlspecialchars($currentSettings['melhor_envio_token'] ?? ''); ?>"
                                                placeholder="Seu token do Melhor Envio"
                                                id="melhor_envio_token">
-                                        <small class="form-hint">Se nao tiver token, o sistema usara calculo simulado. <a href="https://melhorenvio.com.br" target="_blank" style="color: var(--admin-accent);">Obter token</a></small>
+                                        <small class="form-hint">Se nao tiver token, o sistema usara calculo simulado.</small>
                                     </div>
                                     
-                                    <div class="form-group">
+                                    <!-- Guia passo a passo -->
+                                    <div style="margin-top: 1.5rem; padding: 1.25rem; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px;">
+                                        <h4 style="margin: 0 0 1rem 0; color: #3b82f6; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                                            <i class="fas fa-info-circle"></i> Como obter o Token do Melhor Envio
+                                        </h4>
+                                        <ol style="margin: 0; padding-left: 1.25rem; color: var(--admin-text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                                            <li>Acesse <a href="https://melhorenvio.com.br" target="_blank" style="color: var(--admin-accent); font-weight: 600;">melhorenvio.com.br</a> e crie uma conta gratuita</li>
+                                            <li>Apos o cadastro, va em <strong style="color: var(--admin-text-primary);">Configuracoes</strong> no menu lateral</li>
+                                            <li>Clique em <strong style="color: var(--admin-text-primary);">Integracao</strong> ou <strong style="color: var(--admin-text-primary);">API</strong></li>
+                                            <li>Clique em <strong style="color: var(--admin-text-primary);">Gerar Token</strong></li>
+                                            <li>Escolha as permissoes: <strong style="color: var(--admin-text-primary);">shipping-calculate</strong> (calculo de frete)</li>
+                                            <li>Copie o token gerado e cole no campo acima</li>
+                                        </ol>
+                                        <p style="margin: 1rem 0 0 0; padding: 0.75rem; background: rgba(245, 158, 11, 0.1); border-radius: 8px; font-size: 0.85rem; color: #f59e0b;">
+                                            <i class="fas fa-exclamation-triangle"></i> <strong>Importante:</strong> Use o ambiente de <strong>Producao</strong> para valores reais. O ambiente Sandbox e apenas para testes.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-top: 1.5rem;">
                                         <label>Valor Minimo para Frete Gratis (R$)</label>
                                         <input type="number" name="frete_gratis_valor_minimo" 
                                                value="<?php echo htmlspecialchars($currentSettings['frete_gratis_valor_minimo']); ?>"
