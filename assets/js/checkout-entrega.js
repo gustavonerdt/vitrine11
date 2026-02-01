@@ -1,8 +1,9 @@
-// Checkout Entrega JavaScript - Simplificado (frete é selecionado no pagamento)
+// Checkout Entrega JavaScript - Com auto-save de leads
 console.log('checkout-entrega.js carregado');
 
-// Variáveis globais
+// Variaveis globais
 let cepTimeout;
+let saveLeadTimeout;
 let addressForm, deliveryDataSection, invoiceDataSection;
 
 // Inicialização
@@ -120,13 +121,98 @@ function initMasks() {
     }
 }
 
+// ========================================
+// FUNCAO PARA SALVAR LEAD AUTOMATICAMENTE
+// ========================================
+function initAutoSaveLead() {
+    // Campos que devem acionar o salvamento
+    const fieldsToWatch = ['email', 'cep', 'street', 'number', 'neighborhood', 'city', 'state', 'recipient_name', 'phone', 'cpf_cnpj'];
+    
+    fieldsToWatch.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // Salvar quando o usuario sair do campo (blur)
+            field.addEventListener('blur', function() {
+                scheduleLeadSave();
+            });
+            
+            // Salvar enquanto digita (com debounce)
+            field.addEventListener('input', function() {
+                scheduleLeadSave();
+            });
+        }
+    });
+    
+    // Salvar antes de sair da pagina
+    window.addEventListener('beforeunload', function() {
+        saveLeadData(true); // sync save
+    });
+    
+    // Salvar a cada 30 segundos se houver dados
+    setInterval(function() {
+        const email = document.getElementById('email')?.value;
+        if (email && email.includes('@')) {
+            saveLeadData(false);
+        }
+    }, 30000);
+}
+
+function scheduleLeadSave() {
+    clearTimeout(saveLeadTimeout);
+    saveLeadTimeout = setTimeout(function() {
+        saveLeadData(false);
+    }, 2000); // Salvar 2 segundos apos parar de digitar
+}
+
+function saveLeadData(sync = false) {
+    const email = document.getElementById('email')?.value || '';
+    
+    // Precisa ter email valido para salvar
+    if (!email || !email.includes('@')) return;
+    
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('recipient_name', document.getElementById('recipient_name')?.value || '');
+    formData.append('phone', document.getElementById('phone')?.value || '');
+    formData.append('cpf_cnpj', document.getElementById('cpf_cnpj')?.value || '');
+    formData.append('cep', document.getElementById('cep')?.value || '');
+    formData.append('street', document.getElementById('street')?.value || '');
+    formData.append('number', document.getElementById('number')?.value || '');
+    formData.append('neighborhood', document.getElementById('neighborhood')?.value || '');
+    formData.append('city', document.getElementById('city')?.value || '');
+    formData.append('state', document.getElementById('state')?.value || '');
+    formData.append('checkout_step', 'delivery');
+    
+    if (sync) {
+        // Envio sincrono (usado no beforeunload)
+        navigator.sendBeacon(window.APP_URL + '/api/save-lead.php', formData);
+    } else {
+        // Envio assincrono normal
+        fetch(window.APP_URL + '/api/save-lead.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Lead salvo:', data.lead_id);
+            }
+        })
+        .catch(err => console.log('Erro ao salvar lead:', err));
+    }
+}
+
 function showNotification(msg, type) {
     alert(msg);
 }
 
 // Iniciar
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCheckout);
+    document.addEventListener('DOMContentLoaded', function() {
+        initCheckout();
+        initAutoSaveLead();
+    });
 } else {
     initCheckout();
+    initAutoSaveLead();
 }

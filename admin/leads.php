@@ -9,7 +9,7 @@ if (!isLoggedIn() || !isAdmin()) {
 }
 
 $page_title = 'Leads';
-$page_subtitle = 'E-mails de clientes que optaram por receber ofertas';
+$page_subtitle = 'Carrinhos abandonados e potenciais clientes';
 
 $success = '';
 $error = '';
@@ -21,15 +21,29 @@ if (!db_table_exists($pdo, 'leads')) {
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `leads` (
                 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                `email` VARCHAR(255) NOT NULL,
                 `name` VARCHAR(255) DEFAULT NULL,
+                `email` VARCHAR(255) NOT NULL,
                 `phone` VARCHAR(50) DEFAULT NULL,
-                `opted_in` TINYINT(1) DEFAULT 1,
+                `cpf_cnpj` VARCHAR(20) DEFAULT NULL,
+                `cep` VARCHAR(10) DEFAULT NULL,
+                `street` VARCHAR(255) DEFAULT NULL,
+                `number` VARCHAR(20) DEFAULT NULL,
+                `neighborhood` VARCHAR(100) DEFAULT NULL,
+                `city` VARCHAR(100) DEFAULT NULL,
+                `state` VARCHAR(2) DEFAULT NULL,
+                `cart_data` LONGTEXT DEFAULT NULL,
+                `cart_total` DECIMAL(10,2) DEFAULT 0.00,
+                `checkout_step` ENUM('cart','delivery','payment') DEFAULT 'cart',
                 `source` VARCHAR(100) DEFAULT 'checkout',
+                `opted_in` TINYINT(1) DEFAULT 1,
+                `recovered` TINYINT(1) DEFAULT 0,
+                `session_id` VARCHAR(255) DEFAULT NULL,
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `idx_email` (`email`),
-                KEY `idx_opted_in` (`opted_in`)
+                KEY `idx_checkout_step` (`checkout_step`),
+                KEY `idx_recovered` (`recovered`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
     } catch (PDOException $e) {
@@ -87,13 +101,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Buscar leads
 $leads = [];
+$abandonedCount = 0;
+$recoveredCount = 0;
 try {
     $stmt = $pdo->query("
-        SELECT id, email, name, phone, opted_in, source, created_at
+        SELECT id, email, name, phone, cep, city, state, cart_total, checkout_step, 
+               source, opted_in, recovered, created_at, updated_at
         FROM leads
-        ORDER BY created_at DESC
+        ORDER BY updated_at DESC, created_at DESC
     ");
     $leads = $stmt->fetchAll();
+    
+    // Contar abandonados e recuperados
+    foreach ($leads as $l) {
+        if ($l['checkout_step'] !== 'cart' && !$l['recovered']) $abandonedCount++;
+        if ($l['recovered']) $recoveredCount++;
+    }
 } catch (PDOException $e) {
     error_log("Leads fetch error: " . $e->getMessage());
 }
@@ -148,7 +171,7 @@ try {
                 <?php endif; ?>
 
                 <!-- KPIs -->
-                <div class="kpi-grid">
+                <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
                     <div class="kpi-card">
                         <div class="kpi-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
                             <i class="fas fa-users"></i>
@@ -159,25 +182,33 @@ try {
                         </div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                            <i class="fas fa-check-circle"></i>
+                        <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-shopping-cart"></i>
                         </div>
                         <div class="kpi-content">
-                            <div class="kpi-value"><?php echo count(array_filter($leads, fn($l) => $l['opted_in'] == 1)); ?></div>
-                            <div class="kpi-label">Optaram Receber</div>
+                            <div class="kpi-value"><?php echo $abandonedCount; ?></div>
+                            <div class="kpi-label">Carrinhos Abandonados</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <div class="kpi-value"><?php echo $recoveredCount; ?></div>
+                            <div class="kpi-label">Recuperados</div>
                         </div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-icon" style="background: rgba(199, 163, 51, 0.1); color: #c7a333;">
-                            <i class="fas fa-calendar-day"></i>
+                            <i class="fas fa-dollar-sign"></i>
                         </div>
                         <div class="kpi-content">
                             <?php
-                            $today = date('Y-m-d');
-                            $leadsToday = count(array_filter($leads, fn($l) => date('Y-m-d', strtotime($l['created_at'])) === $today));
+                            $totalAbandoned = array_sum(array_column(array_filter($leads, fn($l) => !$l['recovered']), 'cart_total'));
                             ?>
-                            <div class="kpi-value"><?php echo $leadsToday; ?></div>
-                            <div class="kpi-label">Novos Hoje</div>
+                            <div class="kpi-value">R$ <?php echo number_format($totalAbandoned, 0, ',', '.'); ?></div>
+                            <div class="kpi-label">Valor Abandonado</div>
                         </div>
                     </div>
                 </div>
@@ -199,44 +230,89 @@ try {
                                 <table class="admin-table">
                                     <thead>
                                         <tr>
-                                            <th>E-mail</th>
-                                            <th>Nome</th>
-                                            <th>Optou In</th>
-                                            <th>Origem</th>
+                                            <th>Lead</th>
+                                            <th>Localizacao</th>
+                                            <th>Etapa</th>
+                                            <th>Valor</th>
+                                            <th>Status</th>
                                             <th>Data</th>
                                             <th>Acoes</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($leads as $lead): ?>
-                                            <tr>
+                                            <tr class="<?php echo (!$lead['recovered'] && $lead['checkout_step'] !== 'cart') ? 'abandoned-row' : ''; ?>">
                                                 <td>
-                                                    <strong style="color: var(--admin-accent);"><?php echo htmlspecialchars($lead['email']); ?></strong>
-                                                    <?php if (!empty($lead['phone'])): ?>
-                                                        <br><small style="color: var(--admin-text-muted);"><?php echo htmlspecialchars($lead['phone']); ?></small>
-                                                    <?php endif; ?>
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        <strong style="color: var(--admin-accent);"><?php echo htmlspecialchars($lead['email']); ?></strong>
+                                                        <?php if (!empty($lead['name'])): ?>
+                                                            <span style="color: var(--admin-text-primary);"><?php echo htmlspecialchars($lead['name']); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($lead['phone'])): ?>
+                                                            <small style="color: var(--admin-text-muted);"><?php echo htmlspecialchars($lead['phone']); ?></small>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </td>
-                                                <td><?php echo htmlspecialchars($lead['name'] ?? '-'); ?></td>
                                                 <td>
-                                                    <?php if ($lead['opted_in'] == 1): ?>
-                                                        <span class="badge badge-success">Sim</span>
+                                                    <?php if (!empty($lead['city'])): ?>
+                                                        <span><?php echo htmlspecialchars($lead['city']); ?>/<?php echo htmlspecialchars($lead['state']); ?></span>
+                                                        <?php if (!empty($lead['cep'])): ?>
+                                                            <br><small style="color: var(--admin-text-muted);">CEP: <?php echo htmlspecialchars($lead['cep']); ?></small>
+                                                        <?php endif; ?>
                                                     <?php else: ?>
-                                                        <span class="badge badge-danger">Nao</span>
+                                                        <span style="color: var(--admin-text-muted);">-</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <span class="badge badge-secondary"><?php echo htmlspecialchars($lead['source'] ?? 'checkout'); ?></span>
+                                                    <?php 
+                                                    $stepLabels = [
+                                                        'cart' => ['label' => 'Carrinho', 'color' => '#6b7280'],
+                                                        'delivery' => ['label' => 'Entrega', 'color' => '#f59e0b'],
+                                                        'payment' => ['label' => 'Pagamento', 'color' => '#ef4444']
+                                                    ];
+                                                    $step = $stepLabels[$lead['checkout_step']] ?? $stepLabels['cart'];
+                                                    ?>
+                                                    <span class="badge" style="background: <?php echo $step['color']; ?>20; color: <?php echo $step['color']; ?>; border: 1px solid <?php echo $step['color']; ?>40;">
+                                                        <?php echo $step['label']; ?>
+                                                    </span>
                                                 </td>
-                                                <td><?php echo date('d/m/Y H:i', strtotime($lead['created_at'])); ?></td>
                                                 <td>
-                                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir este lead?');">
-                                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
-                                                        <input type="hidden" name="action" value="delete_lead">
-                                                        <input type="hidden" name="id" value="<?php echo $lead['id']; ?>">
-                                                        <button type="submit" class="btn-icon-sm btn-danger" title="Excluir">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    <?php if ($lead['cart_total'] > 0): ?>
+                                                        <strong style="color: var(--admin-text-primary);">R$ <?php echo number_format($lead['cart_total'], 2, ',', '.'); ?></strong>
+                                                    <?php else: ?>
+                                                        <span style="color: var(--admin-text-muted);">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if ($lead['recovered']): ?>
+                                                        <span class="badge badge-success"><i class="fas fa-check"></i> Recuperado</span>
+                                                    <?php elseif ($lead['checkout_step'] !== 'cart'): ?>
+                                                        <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">Abandonado</span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-secondary">Novo</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <span><?php echo date('d/m/Y', strtotime($lead['created_at'])); ?></span>
+                                                    <br><small style="color: var(--admin-text-muted);"><?php echo date('H:i', strtotime($lead['updated_at'] ?? $lead['created_at'])); ?></small>
+                                                </td>
+                                                <td>
+                                                    <div style="display: flex; gap: 4px;">
+                                                        <?php if (!empty($lead['phone'])): ?>
+                                                        <a href="https://wa.me/55<?php echo preg_replace('/\D/', '', $lead['phone']); ?>?text=Oi%20<?php echo urlencode($lead['name'] ?? ''); ?>%2C%20vi%20que%20voce%20deixou%20alguns%20itens%20no%20carrinho..." 
+                                                           target="_blank" class="btn-icon-sm" style="background: #25d366; color: #fff;" title="WhatsApp">
+                                                            <i class="fab fa-whatsapp"></i>
+                                                        </a>
+                                                        <?php endif; ?>
+                                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Excluir este lead?');">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
+                                                            <input type="hidden" name="action" value="delete_lead">
+                                                            <input type="hidden" name="id" value="<?php echo $lead['id']; ?>">
+                                                            <button type="submit" class="btn-icon-sm btn-danger" title="Excluir">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -350,6 +426,21 @@ try {
         overflow-x: auto;
         border-radius: 8px;
         border: 1px solid var(--admin-border);
+    }
+    
+    .abandoned-row {
+        background: linear-gradient(90deg, rgba(239, 68, 68, 0.08), transparent) !important;
+        border-left: 3px solid #ef4444;
+    }
+    
+    .abandoned-row:hover {
+        background: linear-gradient(90deg, rgba(239, 68, 68, 0.12), rgba(255,255,255,0.02)) !important;
+    }
+    
+    @media (max-width: 768px) {
+        .kpi-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
     }
     </style>
 

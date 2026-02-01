@@ -635,18 +635,34 @@ CREATE TABLE `point_transactions` (
 -- ============================================
 DROP TABLE IF EXISTS `leads`;
 CREATE TABLE `leads` (
-    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) DEFAULT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `phone` VARCHAR(20) DEFAULT NULL,
-    `source` VARCHAR(100) DEFAULT NULL,
-    `opted_in` TINYINT(1) DEFAULT 1,
-    `tags` VARCHAR(500) DEFAULT NULL,
-    `notes` TEXT,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) DEFAULT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `cpf_cnpj` VARCHAR(20) DEFAULT NULL,
+  `cep` VARCHAR(10) DEFAULT NULL,
+  `street` VARCHAR(255) DEFAULT NULL,
+  `number` VARCHAR(20) DEFAULT NULL,
+  `neighborhood` VARCHAR(100) DEFAULT NULL,
+  `city` VARCHAR(100) DEFAULT NULL,
+  `state` VARCHAR(2) DEFAULT NULL,
+  `cart_data` LONGTEXT DEFAULT NULL COMMENT 'JSON com itens do carrinho',
+  `cart_total` DECIMAL(10,2) DEFAULT 0.00,
+  `checkout_step` ENUM('cart','delivery','payment') DEFAULT 'cart',
+  `source` VARCHAR(100) DEFAULT 'checkout',
+  `opted_in` TINYINT(1) DEFAULT 1,
+  `recovered` TINYINT(1) DEFAULT 0 COMMENT 'Se o carrinho foi recuperado',
+  `tags` VARCHAR(500) DEFAULT NULL,
+  `notes` TEXT,
+  `session_id` VARCHAR(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_email` (`email`),
+  KEY `idx_checkout_step` (`checkout_step`),
+  KEY `idx_recovered` (`recovered`),
+  KEY `idx_session` (`session_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
 -- TABELA: activity_logs

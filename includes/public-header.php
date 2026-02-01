@@ -28,6 +28,12 @@ $appName = getSetting($pdo, 'app_name', APP_NAME);
     <script src="<?php echo APP_URL; ?>/assets/js/tracking.js"></script>
 </head>
 <body class="<?php echo isset($bodyClass) ? $bodyClass : ''; ?>">
+    <script>window.APP_URL = '<?php echo APP_URL; ?>';</script>
+    
+    <?php 
+    // Incluir popup de recuperacao de carrinho abandonado
+    include __DIR__ . '/abandoned-cart-popup.php';
+    ?>
 	    
 	    <?php 
 	    // Verificar se música está ativada - ler diretamente do .env
