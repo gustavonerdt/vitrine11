@@ -1,12 +1,53 @@
-import {
-  Package,
-  ShoppingCart,
-  Users,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  ArrowUpRight,
-} from "lucide-react"
+// Icones SVG inline
+const Icons = {
+  DollarSign: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  ),
+  ShoppingCart: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  ),
+  Package: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+  ),
+  Users: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  TrendingUp: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </svg>
+  ),
+  TrendingDown: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+      <polyline points="17 18 23 18 23 12" />
+    </svg>
+  ),
+  ArrowUpRight: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="7" y1="17" x2="17" y2="7" />
+      <polyline points="7 7 17 7 17 17" />
+    </svg>
+  ),
+}
 
 const stats = [
   {
@@ -14,15 +55,15 @@ const stats = [
     value: "R$ 45.890,00",
     change: "+12.5%",
     trend: "up",
-    icon: DollarSign,
-    color: "amber",
+    icon: Icons.DollarSign,
+    color: "gold",
   },
   {
     title: "Pedidos",
     value: "156",
     change: "+8.2%",
     trend: "up",
-    icon: ShoppingCart,
+    icon: Icons.ShoppingCart,
     color: "blue",
   },
   {
@@ -30,16 +71,16 @@ const stats = [
     value: "324",
     change: "+3.1%",
     trend: "up",
-    icon: Package,
-    color: "emerald",
+    icon: Icons.Package,
+    color: "green",
   },
   {
     title: "Clientes",
     value: "1.289",
     change: "-2.4%",
     trend: "down",
-    icon: Users,
-    color: "violet",
+    icon: Icons.Users,
+    color: "purple",
   },
 ]
 
@@ -50,7 +91,7 @@ const recentOrders = [
     product: "Perfume Channel N5",
     total: "R$ 450,00",
     status: "Entregue",
-    statusColor: "emerald",
+    statusColor: "success",
   },
   {
     id: "#12346",
@@ -58,7 +99,7 @@ const recentOrders = [
     product: "Kit Perfumes Masculinos",
     total: "R$ 890,00",
     status: "Em transito",
-    statusColor: "amber",
+    statusColor: "warning",
   },
   {
     id: "#12347",
@@ -66,7 +107,7 @@ const recentOrders = [
     product: "Perfume Dior Sauvage",
     total: "R$ 650,00",
     status: "Processando",
-    statusColor: "blue",
+    statusColor: "info",
   },
   {
     id: "#12348",
@@ -74,7 +115,7 @@ const recentOrders = [
     product: "Perfume Versace",
     total: "R$ 380,00",
     status: "Pendente",
-    statusColor: "zinc",
+    statusColor: "neutral",
   },
   {
     id: "#12349",
@@ -82,7 +123,7 @@ const recentOrders = [
     product: "Perfume Gucci Bloom",
     total: "R$ 520,00",
     status: "Entregue",
-    statusColor: "emerald",
+    statusColor: "success",
   },
 ]
 
@@ -95,15 +136,15 @@ const topProducts = [
 
 export default function AdminDashboard() {
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="page-header">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 text-balance">Dashboard</h1>
-          <p className="text-zinc-500 text-sm mt-1">Visao geral do seu e-commerce</p>
+          <h1 className="text-balance">Dashboard</h1>
+          <p className="page-subtitle">Visao geral do seu e-commerce</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select className="px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 cursor-pointer">
+        <div>
+          <select className="form-select" style={{ width: "auto", minWidth: "180px" }}>
             <option>Ultimos 7 dias</option>
             <option>Ultimos 30 dias</option>
             <option>Ultimos 90 dias</option>
@@ -113,40 +154,23 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats-grid">
         {stats.map((stat) => {
           const Icon = stat.icon
-          const colorClasses: Record<string, string> = {
-            amber: "bg-amber-100 text-amber-600",
-            blue: "bg-blue-100 text-blue-600",
-            emerald: "bg-emerald-100 text-emerald-600",
-            violet: "bg-violet-100 text-violet-600",
-          }
           return (
-            <div
-              key={stat.title}
-              className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:border-zinc-300 transition-all duration-200 card-hover"
-            >
-              <div className="flex items-start justify-between">
-                <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[stat.color]}`}
-                >
-                  <Icon className="w-6 h-6" />
+            <div key={stat.title} className="stat-card">
+              <div>
+                <div className={`stat-icon ${stat.color}`}>
+                  <Icon />
                 </div>
-                <div
-                  className={`flex items-center gap-1 text-sm font-medium ${stat.trend === "up" ? "text-emerald-600" : "text-red-500"}`}
-                >
-                  {stat.trend === "up" ? (
-                    <TrendingUp className="w-4 h-4" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4" />
-                  )}
-                  {stat.change}
+                <div className="stat-content">
+                  <p className="stat-value">{stat.value}</p>
+                  <p className="stat-label">{stat.title}</p>
                 </div>
               </div>
-              <div className="mt-4">
-                <p className="text-2xl font-bold text-zinc-900">{stat.value}</p>
-                <p className="text-sm text-zinc-500 mt-1">{stat.title}</p>
+              <div className={`stat-change ${stat.trend}`}>
+                {stat.trend === "up" ? <Icons.TrendingUp /> : <Icons.TrendingDown />}
+                {stat.change}
               </div>
             </div>
           )
@@ -154,55 +178,38 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
         {/* Recent Orders */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-          <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
-            <h2 className="font-semibold text-zinc-900 flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-amber-500" />
+        <div className="card">
+          <div className="card-header">
+            <h2>
+              <span className="card-header-icon"><Icons.ShoppingCart /></span>
               Pedidos Recentes
             </h2>
-            <button className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 transition-colors">
-              Ver todos <ArrowUpRight className="w-4 h-4" />
+            <button className="btn btn-ghost btn-sm">
+              Ver todos <Icons.ArrowUpRight />
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="table-container">
+            <table className="data-table">
               <thead>
-                <tr className="border-b border-zinc-100">
-                  <th className="text-left py-3 px-5 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                    Pedido
-                  </th>
-                  <th className="text-left py-3 px-5 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                    Cliente
-                  </th>
-                  <th className="text-left py-3 px-5 text-xs font-semibold text-zinc-500 uppercase tracking-wider hidden md:table-cell">
-                    Produto
-                  </th>
-                  <th className="text-left py-3 px-5 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th className="text-left py-3 px-5 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                    Status
-                  </th>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Cliente</th>
+                  <th>Produto</th>
+                  <th>Total</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors">
-                    <td className="py-3.5 px-5 text-sm font-medium text-zinc-900">{order.id}</td>
-                    <td className="py-3.5 px-5 text-sm text-zinc-600">{order.customer}</td>
-                    <td className="py-3.5 px-5 text-sm text-zinc-600 hidden md:table-cell">{order.product}</td>
-                    <td className="py-3.5 px-5 text-sm font-semibold text-zinc-900">{order.total}</td>
-                    <td className="py-3.5 px-5">
-                      <span
-                        className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium
-                          ${order.statusColor === "emerald" ? "bg-emerald-100 text-emerald-700" : ""}
-                          ${order.statusColor === "amber" ? "bg-amber-100 text-amber-700" : ""}
-                          ${order.statusColor === "blue" ? "bg-blue-100 text-blue-700" : ""}
-                          ${order.statusColor === "zinc" ? "bg-zinc-100 text-zinc-600" : ""}
-                        `}
-                      >
+                  <tr key={order.id}>
+                    <td style={{ fontWeight: 500 }}>{order.id}</td>
+                    <td>{order.customer}</td>
+                    <td>{order.product}</td>
+                    <td style={{ fontWeight: 600 }}>{order.total}</td>
+                    <td>
+                      <span className={`badge badge-${order.statusColor}`}>
                         {order.status}
                       </span>
                     </td>
@@ -214,48 +221,65 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top Products */}
-        <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-          <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
-            <h2 className="font-semibold text-zinc-900 flex items-center gap-2">
-              <Package className="w-5 h-5 text-amber-500" />
+        <div className="card">
+          <div className="card-header">
+            <h2>
+              <span className="card-header-icon"><Icons.Package /></span>
               Produtos Mais Vendidos
             </h2>
           </div>
-          <div className="p-5 space-y-4">
-            {topProducts.map((product, index) => (
-              <div key={product.name} className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-amber-700 font-bold text-sm flex-shrink-0">
-                  {index + 1}
+          <div className="card-body">
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {topProducts.map((product, index) => (
+                <div key={product.name} style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, rgba(199, 163, 51, 0.2), rgba(199, 163, 51, 0.1))",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#C7A333",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    flexShrink: 0
+                  }}>
+                    {index + 1}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 500, fontSize: "0.9rem", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--text-primary)" }}>
+                      {product.name}
+                    </p>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", margin: 0 }}>
+                      {product.sales} vendas
+                    </p>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <p style={{ fontWeight: 600, fontSize: "0.9rem", margin: 0, color: "var(--text-primary)" }}>
+                      {product.revenue}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-zinc-900 truncate text-sm">{product.name}</p>
-                  <p className="text-xs text-zinc-500">{product.sales} vendas</p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-semibold text-zinc-900 text-sm">{product.revenue}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="quick-actions-grid">
         {[
-          { icon: Package, label: "Novo Produto", color: "bg-amber-100" },
-          { icon: ShoppingCart, label: "Ver Pedidos", color: "bg-blue-100" },
-          { icon: Users, label: "Clientes", color: "bg-emerald-100" },
-          { icon: DollarSign, label: "Relatorios", color: "bg-violet-100" },
+          { icon: Icons.Package, label: "Novo Produto" },
+          { icon: Icons.ShoppingCart, label: "Ver Pedidos" },
+          { icon: Icons.Users, label: "Clientes" },
+          { icon: Icons.DollarSign, label: "Relatorios" },
         ].map((action) => (
-          <button
-            key={action.label}
-            className="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-zinc-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 group"
-          >
-            <div className={`w-14 h-14 rounded-xl ${action.color} flex items-center justify-center group-hover:bg-amber-500 transition-colors`}>
-              <action.icon className="w-7 h-7 text-zinc-700 group-hover:text-white transition-colors" />
+          <button key={action.label} className="quick-action-btn">
+            <div className="quick-action-icon">
+              <action.icon />
             </div>
-            <span className="font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors text-sm">{action.label}</span>
+            <span className="quick-action-label">{action.label}</span>
           </button>
         ))}
       </div>
