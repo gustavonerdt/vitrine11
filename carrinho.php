@@ -148,6 +148,96 @@ try {
 include __DIR__ . '/includes/public-header.php';
 ?>
 
+<!-- Menu Fixo do Carrinho -->
+<style>
+.cart-sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-bottom: 2px solid #C7A333;
+}
+
+.cart-nav-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+}
+
+.cart-nav-back:hover {
+    background: rgba(199, 163, 51, 0.2);
+    color: #C7A333;
+}
+
+.cart-nav-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cart-nav-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #C7A333;
+    color: #000;
+    padding: 0.5rem 1rem;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.cart-nav-count i {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 480px) {
+    .cart-sticky-nav {
+        padding: 0.75rem 1rem;
+    }
+    
+    .cart-nav-title {
+        font-size: 1rem;
+    }
+    
+    .cart-nav-back span {
+        display: none;
+    }
+}
+</style>
+
+<div class="cart-sticky-nav">
+    <a href="<?php echo APP_URL; ?>/" class="cart-nav-back">
+        <i class="fas fa-arrow-left"></i>
+        <span>Continuar Comprando</span>
+    </a>
+    
+    <div class="cart-nav-title">
+        <i class="fas fa-shopping-bag" style="color: #C7A333;"></i>
+        Minha Sacola
+    </div>
+    
+    <div class="cart-nav-count">
+        <i class="fas fa-shopping-cart"></i>
+        <?php echo $total_items; ?> <?php echo $total_items == 1 ? 'item' : 'itens'; ?>
+    </div>
+</div>
+
 <style>
     /* ESTILOS GERAIS */
     .cart-page-container { background: #fef9e0; padding: 2rem 0; min-height: 80vh; overflow-x: hidden; }

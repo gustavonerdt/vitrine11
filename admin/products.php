@@ -532,13 +532,22 @@ $page_subtitle = 'Adicione e edite produtos do marketplace';
             font-style: normal;
         }
         .ql-toolbar .ql-stroke {
-            stroke: var(--admin-text);
+            stroke: #fff !important;
         }
         .ql-toolbar .ql-fill {
-            fill: var(--admin-text);
+            fill: #fff !important;
         }
         .ql-toolbar .ql-picker {
-            color: var(--admin-text);
+            color: #fff !important;
+        }
+        .ql-toolbar .ql-picker-label {
+            color: #fff !important;
+        }
+        .ql-toolbar svg {
+            fill: #fff !important;
+        }
+        .ql-toolbar svg path {
+            stroke: #fff !important;
         }
         .ql-toolbar button:hover .ql-stroke,
         .ql-toolbar button.ql-active .ql-stroke {

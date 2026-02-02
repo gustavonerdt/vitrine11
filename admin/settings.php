@@ -141,8 +141,8 @@ $csrf = generateCsrfToken();
         <main class="main-content">
             <?php include __DIR__ . '/includes/header.php'; ?>
 
-            <div class="admin-container">
-                <div class="page-header-admin">
+            <div class="admin-container" style="padding-left: 1rem; padding-right: 1rem; max-width: 100%;">
+                <div class="page-header-admin" style="margin-bottom: 2rem;">
                     <div>
                         <h1><i class="fas fa-cog"></i> Configurações</h1>
                         <p>Ajustes básicos do sistema</p>

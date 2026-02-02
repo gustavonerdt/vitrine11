@@ -959,7 +959,7 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                         <div class="product-price-wrapper" style="display: flex; flex-direction: column; gap: 2px;">
                                             <div style="display: flex; align-items: center; gap: 8px;">
                                                 <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
-                                                <span style="text-decoration: line-through; color: #888; font-size: 0.85rem;"><?php echo formatPrice($sp['original_price']); ?></span>
+                                                <span style="text-decoration: line-through; color: #888; font-size: 0.8rem;"><small style="text-decoration: none; font-weight: 500;">de </small><?php echo formatPrice($sp['original_price']); ?></span>
                                             </div>
                                             <div class="product-price-modern" style="color: #22c55e;"><?php echo formatPrice($sp['price']); ?></div>
                                         </div>
@@ -1141,7 +1141,7 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                     <div class="product-price-wrapper" style="display: flex; flex-direction: column; gap: 2px;">
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
-                                            <span style="text-decoration: line-through; color: #888; font-size: 0.85rem;"><?php echo formatPrice($p['original_price']); ?></span>
+                                            <span style="text-decoration: line-through; color: #888; font-size: 0.8rem;"><small style="text-decoration: none; font-weight: 500;">de </small><?php echo formatPrice($p['original_price']); ?></span>
                                         </div>
                                         <div class="product-price-modern" style="color: #22c55e;"><?php echo formatPrice($p['price']); ?></div>
                                     </div>

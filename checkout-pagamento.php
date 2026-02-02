@@ -322,9 +322,10 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section">
                         <h2 class="section-title">OBSERVACOES (OPCIONAL)</h2>
                         <div class="form-group">
-                            <label for="seller_name">Alguma observacao para o seu pedido?</label>
+                            <label for="seller_name" style="color: #555;">Alguma observacao para o seu pedido?</label>
                             <textarea id="seller_name" name="seller_name" rows="2" 
-                                      placeholder="Ex: Entregar no portao, presente para amigo, etc."></textarea>
+                                      placeholder="Ex: Entregar no portao, presente para amigo, etc."
+                                      style="background: #f8f8f8; color: #333; border: 2px solid #e5e5e5; border-radius: 16px; padding: 1rem;"></textarea>
                         </div>
                     </div>
                     
@@ -505,7 +506,7 @@ include __DIR__ . '/includes/public-header.php';
                     <!-- Termos -->
                     <div class="form-section">
                         <p class="terms-text" style="color: #333 !important; font-size: 0.9rem;">
-                            Ao continuar, voce concorda com nossos <a href="#" style="color: #333 !important; text-decoration: underline;">Termos de Uso</a> e <a href="#" style="color: #333 !important; text-decoration: underline;">Politica de Privacidade</a>
+                            Ao continuar, voce concorda com nossos <a href="<?php echo APP_URL; ?>/termos.php?checkout=1" target="_blank" style="color: #C7A333 !important; text-decoration: underline; font-weight: 600;">Termos de Uso</a> e <a href="<?php echo APP_URL; ?>/privacidade.php?checkout=1" target="_blank" style="color: #C7A333 !important; text-decoration: underline; font-weight: 600;">Politica de Privacidade</a>
                         </p>
                     </div>
                     

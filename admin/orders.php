@@ -121,9 +121,22 @@ if ($viewing_order_id > 0) {
             
             <main class="admin-main" style="margin-left: 0;">
     <div class="admin-content">
-        <div class="page-header">
-            <h1><?php echo $page_title; ?></h1>
-            <p class="page-subtitle"><?php echo $page_subtitle; ?></p>
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1><?php echo $page_title; ?></h1>
+                <p class="page-subtitle"><?php echo $page_subtitle; ?></p>
+            </div>
+            <div class="export-buttons" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button onclick="exportData('csv')" class="btn-export" style="background: #22c55e; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                    <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button onclick="exportData('excel')" class="btn-export" style="background: #217346; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                    <i class="fas fa-file-excel"></i> Excel
+                </button>
+                <button onclick="exportData('txt')" class="btn-export" style="background: #6b7280; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                    <i class="fas fa-file-alt"></i> TXT
+                </button>
+            </div>
         </div>
 
         <?php if ($viewing_order): ?>
@@ -349,5 +362,67 @@ if ($viewing_order_id > 0) {
             <?php include __DIR__ . '/includes/footer.php'; ?>
         </div>
     </div>
+<script>
+// Dados dos pedidos para exportacao
+const ordersData = <?php echo json_encode(array_map(function($o) {
+    return [
+        'id' => $o['id'],
+        'status' => $o['status'],
+        'total' => $o['total_amount'],
+        'frete' => $o['shipping_cost'],
+        'metodo_pagamento' => $o['payment_method'] ?? '',
+        'cliente' => $o['address']['recipient_name'] ?? '',
+        'email' => $o['customer_email'] ?? '',
+        'telefone' => $o['address']['phone'] ?? '',
+        'cidade' => ($o['address']['city'] ?? '') . ' - ' . ($o['address']['state'] ?? ''),
+        'data' => date('d/m/Y H:i', strtotime($o['created_at']))
+    ];
+}, $orders)); ?>;
+
+function exportData(format) {
+    if (ordersData.length === 0) {
+        alert('Nenhum pedido para exportar');
+        return;
+    }
+    
+    const headers = ['ID', 'Status', 'Total', 'Frete', 'Pagamento', 'Cliente', 'Email', 'Telefone', 'Cidade', 'Data'];
+    const keys = ['id', 'status', 'total', 'frete', 'metodo_pagamento', 'cliente', 'email', 'telefone', 'cidade', 'data'];
+    
+    let content = '';
+    let filename = 'pedidos_' + new Date().toISOString().slice(0,10);
+    let mimeType = '';
+    
+    if (format === 'csv') {
+        content = headers.join(';') + '\n';
+        ordersData.forEach(row => {
+            content += keys.map(k => '"' + (row[k] || '').toString().replace(/"/g, '""') + '"').join(';') + '\n';
+        });
+        filename += '.csv';
+        mimeType = 'text/csv;charset=utf-8;';
+    } else if (format === 'excel') {
+        content = '<html><head><meta charset="UTF-8"></head><body><table border="1">';
+        content += '<tr>' + headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+        ordersData.forEach(row => {
+            content += '<tr>' + keys.map(k => '<td>' + (row[k] || '') + '</td>').join('') + '</tr>';
+        });
+        content += '</table></body></html>';
+        filename += '.xls';
+        mimeType = 'application/vnd.ms-excel;charset=utf-8;';
+    } else if (format === 'txt') {
+        content = headers.join('\t') + '\n';
+        ordersData.forEach(row => {
+            content += keys.map(k => row[k] || '').join('\t') + '\n';
+        });
+        filename += '.txt';
+        mimeType = 'text/plain;charset=utf-8;';
+    }
+    
+    const blob = new Blob(['\ufeff' + content], { type: mimeType });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+}
+</script>
 </body>
 </html>

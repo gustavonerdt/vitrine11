@@ -300,8 +300,8 @@ try {
                                                     <div style="display: flex; gap: 4px;">
                                                         <?php if (!empty($lead['phone'])): ?>
                                                         <a href="https://wa.me/55<?php echo preg_replace('/\D/', '', $lead['phone']); ?>?text=Oi%20<?php echo urlencode($lead['name'] ?? ''); ?>%2C%20vi%20que%20voce%20deixou%20alguns%20itens%20no%20carrinho..." 
-                                                           target="_blank" class="btn-icon-sm" style="background: #25d366; color: #fff;" title="WhatsApp">
-                                                            <i class="fab fa-whatsapp"></i>
+target="_blank" class="btn-icon-sm" style="background: #25d366; color: #000;" title="WhatsApp">
+                                                    <i class="fab fa-whatsapp" style="color: #000;"></i>
                                                         </a>
                                                         <?php endif; ?>
                                                         <form method="POST" style="display: inline;" onsubmit="return confirm('Excluir este lead?');">

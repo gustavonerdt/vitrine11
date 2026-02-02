@@ -85,7 +85,7 @@ include __DIR__ . '/includes/public-header.php';
                         <h2 class="section-title">DADOS DE CONTATO</h2>
                         <div class="form-group">
                             <label for="email">E-mail *</label>
-                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>" required>
+                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>" placeholder="Digite seu melhor e-mail" required>
                         </div>
                     </div>
                    
@@ -102,15 +102,15 @@ include __DIR__ . '/includes/public-header.php';
                         <div id="addressForm" style="display: none;">
                             <div class="form-group">
                                 <label for="street">Rua/Logradouro *</label>
-                                <input type="text" id="street" name="street" value="<?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>" required>
+                                <input type="text" id="street" name="street" value="<?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>" placeholder="Ex: Rua das Flores" required>
                             </div>
                             <div class="form-row">
-                                <div class="form-group"><label for="number">Número *</label><input type="tel" inputmode="numeric" id="number" name="number" value="<?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?>" required></div>
-                                <div class="form-group"><label for="neighborhood">Bairro *</label><input type="text" id="neighborhood" name="neighborhood" value="<?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?>" required></div>
+                                <div class="form-group"><label for="number">Numero *</label><input type="tel" inputmode="numeric" id="number" name="number" value="<?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?>" placeholder="Ex: 123" required></div>
+                                <div class="form-group"><label for="neighborhood">Bairro *</label><input type="text" id="neighborhood" name="neighborhood" value="<?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?>" placeholder="Ex: Centro" required></div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group"><label for="city">Cidade *</label><input type="text" id="city" name="city" value="<?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?>" required></div>
-                                <div class="form-group"><label for="state">Estado *</label><input type="text" id="state" name="state" value="<?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?>" required></div>
+                                <div class="form-group"><label for="city">Cidade *</label><input type="text" id="city" name="city" value="<?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?>" placeholder="Ex: Sao Paulo" required></div>
+                                <div class="form-group"><label for="state">Estado *</label><input type="text" id="state" name="state" value="<?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?>" placeholder="Ex: SP" required></div>
                             </div>
                         </div>
                     </div>
@@ -118,8 +118,8 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section" id="deliveryDataSection" style="display: none;">
                         <h2 class="section-title">DADOS PARA ENTREGA</h2>
                         <div class="form-row">
-                            <div class="form-group"><label for="recipient_name">Nome *</label><input type="text" id="recipient_name" name="recipient_name" value="<?php echo htmlspecialchars($checkout_data['recipient_name'] ?? ''); ?>" required></div>
-                            <div class="form-group"><label for="phone">Telefone *</label><input type="tel" inputmode="numeric" pattern="[0-9\(\)\-\s]*" id="phone" name="phone" value="<?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>" required></div>
+                            <div class="form-group"><label for="recipient_name">Nome *</label><input type="text" id="recipient_name" name="recipient_name" value="<?php echo htmlspecialchars($checkout_data['recipient_name'] ?? ''); ?>" placeholder="Seu nome completo" required></div>
+                            <div class="form-group"><label for="phone">Telefone *</label><input type="tel" inputmode="numeric" pattern="[0-9\(\)\-\s]*" id="phone" name="phone" value="<?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>" placeholder="(11) 99999-9999" required></div>
                         </div>
                     </div>
 
@@ -127,7 +127,7 @@ include __DIR__ . '/includes/public-header.php';
                         <h2 class="section-title">DADOS PARA NOTA FISCAL</h2>
                         <div class="form-group">
                             <label for="cpf_cnpj">CPF ou CNPJ *</label>
-                            <input type="tel" inputmode="numeric" pattern="[0-9\.\-\/]*" id="cpf_cnpj" name="cpf_cnpj" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" required>
+                            <input type="tel" inputmode="numeric" pattern="[0-9\.\-\/]*" id="cpf_cnpj" name="cpf_cnpj" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" placeholder="000.000.000-00" required>
                         </div>
                     </div>
                    
