@@ -7,8 +7,8 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// Verificar autenticacao
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+// Verificar autenticacao usando as funcoes padrao do sistema
+if (!isLoggedIn() || !isAdmin()) {
     header('Location: login.php');
     exit;
 }

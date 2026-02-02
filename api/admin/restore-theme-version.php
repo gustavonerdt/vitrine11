@@ -8,8 +8,8 @@ require_once __DIR__ . '/../../includes/functions.php';
 
 header('Content-Type: application/json');
 
-// Verificar autenticacao
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+// Verificar autenticacao usando as funcoes padrao do sistema
+if (!isLoggedIn() || !isAdmin()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Nao autorizado']);
     exit;
