@@ -82,10 +82,10 @@ if (isset($pdo) && function_exists('db_table_exists') && db_table_exists($pdo, '
 }
 
 // Definir quais paginas pertencem a cada submenu
-$catalogPages = ['products.php', 'brands.php', 'dynamic-showcases.php'];
+$catalogPages = ['products.php', 'brands.php', 'dynamic-showcases.php', 'showcases-manager.php'];
 $salesPages = ['orders.php', 'leads.php', 'cupons.php'];
 $marketingPages = ['banners.php', 'banners-upsell.php', 'logos-carousel.php'];
-$settingsPages = ['settings.php', 'theme-editor.php', 'faq.php'];
+$settingsPages = ['settings.php', 'theme-editor.php', 'pages-editor.php', 'faq.php'];
 $mediaPages = ['music.php', 'music-upsell.php'];
 ?>
 <aside class="sidebar" id="adminSidebar">
@@ -138,9 +138,10 @@ $mediaPages = ['music.php', 'music-upsell.php'];
                             </a>
                         </li>
                         <li>
-                            <a href="dynamic-showcases.php" class="<?php echo $current_page == 'dynamic-showcases.php' ? 'active' : ''; ?>">
-                                <i class="fas fa-magic"></i>
-                                <span>Vitrines Dinamicas</span>
+                            <a href="showcases-manager.php" class="<?php echo $current_page == 'showcases-manager.php' ? 'active' : ''; ?>">
+                                <i class="fas fa-store"></i>
+                                <span>Gerenciar Vitrines</span>
+                                <span class="badge" style="background: linear-gradient(135deg, #22c55e, #16a34a); margin-left: auto;">NOVO</span>
                             </a>
                         </li>
                     </ul>
@@ -268,6 +269,13 @@ $mediaPages = ['music.php', 'music-upsell.php'];
                                 <i class="fas fa-palette"></i>
                                 <span>Editor Visual</span>
                                 <span class="badge" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); margin-left: auto;">PRO</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="pages-editor.php" class="<?php echo $current_page == 'pages-editor.php' ? 'active' : ''; ?>">
+                                <i class="fas fa-file-code"></i>
+                                <span>Editor de Paginas</span>
+                                <span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); margin-left: auto;">HTML</span>
                             </a>
                         </li>
                         <li>

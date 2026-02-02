@@ -21,6 +21,7 @@ try {
         $banner_url = trim($input['banner_url'] ?? '');
         $banner_link = trim($input['banner_link'] ?? '');
         $keywords = trim($input['keywords'] ?? '');
+        $display_type = trim($input['display_type'] ?? 'carousel');
         $max_products = !empty($input['max_products']) ? (int)$input['max_products'] : null;
         $display_order = (int)($input['display_order'] ?? 0);
         $is_active = isset($input['is_active']) && $input['is_active'] ? 1 : 0;
@@ -29,31 +30,60 @@ try {
             throw new Exception('Nome e título são obrigatórios');
         }
 
+        // Check if display_type column exists
+        $hasDisplayType = db_has_column($pdo, 'dynamic_showcases', 'display_type');
+
         if ($id) {
             // Update
-            $stmt = $pdo->prepare("
-                UPDATE dynamic_showcases SET 
-                    name = ?, title = ?, description = ?, banner_url = ?, banner_link = ?,
-                    keywords = ?, max_products = ?, display_order = ?, is_active = ?,
-                    updated_at = NOW()
-                WHERE id = ?
-            ");
-            $stmt->execute([
-                $name, $title, $description, $banner_url, $banner_link,
-                $keywords, $max_products, $display_order, $is_active, $id
-            ]);
+            if ($hasDisplayType) {
+                $stmt = $pdo->prepare("
+                    UPDATE dynamic_showcases SET 
+                        name = ?, title = ?, description = ?, banner_url = ?, banner_link = ?,
+                        keywords = ?, display_type = ?, max_products = ?, display_order = ?, is_active = ?,
+                        updated_at = NOW()
+                    WHERE id = ?
+                ");
+                $stmt->execute([
+                    $name, $title, $description, $banner_url, $banner_link,
+                    $keywords, $display_type, $max_products, $display_order, $is_active, $id
+                ]);
+            } else {
+                $stmt = $pdo->prepare("
+                    UPDATE dynamic_showcases SET 
+                        name = ?, title = ?, description = ?, banner_url = ?, banner_link = ?,
+                        keywords = ?, max_products = ?, display_order = ?, is_active = ?,
+                        updated_at = NOW()
+                    WHERE id = ?
+                ");
+                $stmt->execute([
+                    $name, $title, $description, $banner_url, $banner_link,
+                    $keywords, $max_products, $display_order, $is_active, $id
+                ]);
+            }
             $message = 'Vitrine atualizada com sucesso!';
         } else {
             // Create
-            $stmt = $pdo->prepare("
-                INSERT INTO dynamic_showcases (name, title, description, banner_url, banner_link,
-                    keywords, max_products, display_order, is_active, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-            ");
-            $stmt->execute([
-                $name, $title, $description, $banner_url, $banner_link,
-                $keywords, $max_products, $display_order, $is_active
-            ]);
+            if ($hasDisplayType) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO dynamic_showcases (name, title, description, banner_url, banner_link,
+                        keywords, display_type, max_products, display_order, is_active, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                ");
+                $stmt->execute([
+                    $name, $title, $description, $banner_url, $banner_link,
+                    $keywords, $display_type, $max_products, $display_order, $is_active
+                ]);
+            } else {
+                $stmt = $pdo->prepare("
+                    INSERT INTO dynamic_showcases (name, title, description, banner_url, banner_link,
+                        keywords, max_products, display_order, is_active, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                ");
+                $stmt->execute([
+                    $name, $title, $description, $banner_url, $banner_link,
+                    $keywords, $max_products, $display_order, $is_active
+                ]);
+            }
             $id = $pdo->lastInsertId();
             $message = 'Vitrine criada com sucesso!';
         }
