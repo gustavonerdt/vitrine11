@@ -1259,6 +1259,364 @@ $googleFonts = [
                     </div>
                 </div>
                 
+                <!-- Tab: Checkout -->
+                <div class="editor-panel" id="panel-checkout">
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-palette"></i> Cores do Checkout
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Fundo do Checkout</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'checkout_bg', '#f5f5f5'); ?>">
+                                        <input type="color" name="checkout_bg" value="<?php echo getSetting($pdo, 'checkout_bg', '#f5f5f5'); ?>" data-target="checkout_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'checkout_bg', '#f5f5f5'); ?>" data-color="checkout_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Fundo dos Cards</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'checkout_card_bg', '#ffffff'); ?>">
+                                        <input type="color" name="checkout_card_bg" value="<?php echo getSetting($pdo, 'checkout_card_bg', '#ffffff'); ?>" data-target="checkout_card_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'checkout_card_bg', '#ffffff'); ?>" data-color="checkout_card_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Botao de Pagamento</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'checkout_button_bg', '#C7A333'); ?>">
+                                        <input type="color" name="checkout_button_bg" value="<?php echo getSetting($pdo, 'checkout_button_bg', '#C7A333'); ?>" data-target="checkout_button_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'checkout_button_bg', '#C7A333'); ?>" data-color="checkout_button_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Progresso Ativo</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'checkout_progress_active', '#C7A333'); ?>">
+                                        <input type="color" name="checkout_progress_active" value="<?php echo getSetting($pdo, 'checkout_progress_active', '#C7A333'); ?>" data-target="checkout_progress_active">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'checkout_progress_active', '#C7A333'); ?>" data-color="checkout_progress_active">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-keyboard"></i> Placeholders do Checkout
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Placeholder do E-mail</label>
+                                <input type="text" class="option-input" name="checkout_email_placeholder" value="<?php echo htmlspecialchars(getSetting($pdo, 'checkout_email_placeholder', 'seuemail@exemplo.com')); ?>" data-target="checkout_email_placeholder">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Placeholder do CEP</label>
+                                <input type="text" class="option-input" name="checkout_cep_placeholder" value="<?php echo htmlspecialchars(getSetting($pdo, 'checkout_cep_placeholder', 'Digite seu CEP')); ?>" data-target="checkout_cep_placeholder">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Placeholder do Telefone</label>
+                                <input type="text" class="option-input" name="checkout_phone_placeholder" value="<?php echo htmlspecialchars(getSetting($pdo, 'checkout_phone_placeholder', '(00) 00000-0000')); ?>" data-target="checkout_phone_placeholder">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Texto do Botao</label>
+                                <input type="text" class="option-input" name="checkout_button_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'checkout_button_text', 'FINALIZAR COMPRA')); ?>" data-target="checkout_button_text" style="text-transform: uppercase;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab: Carrinho -->
+                <div class="editor-panel" id="panel-cart">
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-palette"></i> Cores do Carrinho
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Fundo do Carrinho</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'cart_bg', '#fef9e0'); ?>">
+                                        <input type="color" name="cart_bg" value="<?php echo getSetting($pdo, 'cart_bg', '#fef9e0'); ?>" data-target="cart_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'cart_bg', '#fef9e0'); ?>" data-color="cart_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Fundo dos Itens</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'cart_item_bg', '#ffffff'); ?>">
+                                        <input type="color" name="cart_item_bg" value="<?php echo getSetting($pdo, 'cart_item_bg', '#ffffff'); ?>" data-target="cart_item_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'cart_item_bg', '#ffffff'); ?>" data-color="cart_item_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Menu Fixo do Carrinho</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'cart_sticky_bg', '#1a1a1a'); ?>">
+                                        <input type="color" name="cart_sticky_bg" value="<?php echo getSetting($pdo, 'cart_sticky_bg', '#1a1a1a'); ?>" data-target="cart_sticky_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'cart_sticky_bg', '#1a1a1a'); ?>" data-color="cart_sticky_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Botao do Carrinho</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'cart_button_bg', '#C7A333'); ?>">
+                                        <input type="color" name="cart_button_bg" value="<?php echo getSetting($pdo, 'cart_button_bg', '#C7A333'); ?>" data-target="cart_button_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'cart_button_bg', '#C7A333'); ?>" data-color="cart_button_bg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-file-alt"></i> Textos do Carrinho
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Titulo do Carrinho</label>
+                                <input type="text" class="option-input" name="cart_title" value="<?php echo htmlspecialchars(getSetting($pdo, 'cart_title', 'MINHA SACOLA')); ?>" data-target="cart_title" style="text-transform: uppercase;">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Mensagem Carrinho Vazio</label>
+                                <input type="text" class="option-input" name="cart_empty_message" value="<?php echo htmlspecialchars(getSetting($pdo, 'cart_empty_message', 'Sua sacola esta vazia')); ?>" data-target="cart_empty_message">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Texto Continuar Comprando</label>
+                                <input type="text" class="option-input" name="cart_continue_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'cart_continue_text', 'Continuar Comprando')); ?>" data-target="cart_continue_text">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Texto Botao Checkout</label>
+                                <input type="text" class="option-input" name="cart_checkout_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'cart_checkout_text', 'FINALIZAR PEDIDO')); ?>" data-target="cart_checkout_text" style="text-transform: uppercase;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab: Produtos -->
+                <div class="editor-panel" id="panel-products">
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-palette"></i> Cores dos Produtos
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Fundo do Card</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'product_card_bg', '#ffffff'); ?>">
+                                        <input type="color" name="product_card_bg" value="<?php echo getSetting($pdo, 'product_card_bg', '#ffffff'); ?>" data-target="product_card_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'product_card_bg', '#ffffff'); ?>" data-color="product_card_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Cor do Preco</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'product_price_color', '#1a1a1a'); ?>">
+                                        <input type="color" name="product_price_color" value="<?php echo getSetting($pdo, 'product_price_color', '#1a1a1a'); ?>" data-target="product_price_color">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'product_price_color', '#1a1a1a'); ?>" data-color="product_price_color">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Cor Preco Riscado</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'product_original_price_color', '#999999'); ?>">
+                                        <input type="color" name="product_original_price_color" value="<?php echo getSetting($pdo, 'product_original_price_color', '#999999'); ?>" data-target="product_original_price_color">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'product_original_price_color', '#999999'); ?>" data-color="product_original_price_color">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Badge de Desconto</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'product_discount_bg', '#22c55e'); ?>">
+                                        <input type="color" name="product_discount_bg" value="<?php echo getSetting($pdo, 'product_discount_bg', '#22c55e'); ?>" data-target="product_discount_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'product_discount_bg', '#22c55e'); ?>" data-color="product_discount_bg">
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Badge VIP</label>
+                                <div class="color-picker-wrapper">
+                                    <div class="color-preview" style="background: <?php echo getSetting($pdo, 'product_badge_vip_bg', '#C7A333'); ?>">
+                                        <input type="color" name="product_badge_vip_bg" value="<?php echo getSetting($pdo, 'product_badge_vip_bg', '#C7A333'); ?>" data-target="product_badge_vip_bg">
+                                    </div>
+                                    <input type="text" class="color-hex" value="<?php echo getSetting($pdo, 'product_badge_vip_bg', '#C7A333'); ?>" data-color="product_badge_vip_bg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-tags"></i> Textos e Labels
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Label VIP</label>
+                                <input type="text" class="option-input" name="product_vip_label" value="<?php echo htmlspecialchars(getSetting($pdo, 'product_vip_label', 'VIP')); ?>" data-target="product_vip_label" style="text-transform: uppercase;">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Label Promocao</label>
+                                <input type="text" class="option-input" name="product_sale_label" value="<?php echo htmlspecialchars(getSetting($pdo, 'product_sale_label', 'OFERTA')); ?>" data-target="product_sale_label" style="text-transform: uppercase;">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Texto Adicionar ao Carrinho</label>
+                                <input type="text" class="option-input" name="product_add_to_cart_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'product_add_to_cart_text', 'ADICIONAR')); ?>" data-target="product_add_to_cart_text" style="text-transform: uppercase;">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Texto Esgotado</label>
+                                <input type="text" class="option-input" name="product_out_of_stock_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'product_out_of_stock_text', 'ESGOTADO')); ?>" data-target="product_out_of_stock_text" style="text-transform: uppercase;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-toggle-on"></i> Exibicao
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Mostrar Descricao</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="show_product_description" value="1" <?php echo getSetting($pdo, 'show_product_description', '1') === '1' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Sim
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="show_product_description" value="0" <?php echo getSetting($pdo, 'show_product_description', '1') === '0' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Nao
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Mostrar Marca</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="show_product_brand" value="1" <?php echo getSetting($pdo, 'show_product_brand', '1') === '1' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Sim
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="show_product_brand" value="0" <?php echo getSetting($pdo, 'show_product_brand', '1') === '0' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Nao
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab: Mobile -->
+                <div class="editor-panel" id="panel-mobile">
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-mobile-alt"></i> Layout Mobile
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Produtos por Linha (Mobile)</label>
+                                <div class="range-wrapper">
+                                    <input type="range" class="range-slider" name="mobile_products_per_row" min="1" max="3" value="<?php echo getSetting($pdo, 'mobile_products_per_row', '2'); ?>" data-target="mobile_products_per_row">
+                                    <span class="range-value"><?php echo getSetting($pdo, 'mobile_products_per_row', '2'); ?></span>
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Reducao do Tamanho da Fonte (%)</label>
+                                <div class="range-wrapper">
+                                    <input type="range" class="range-slider" name="mobile_font_size_reduction" min="0" max="30" value="<?php echo getSetting($pdo, 'mobile_font_size_reduction', '10'); ?>" data-target="mobile_font_size_reduction">
+                                    <span class="range-value"><?php echo getSetting($pdo, 'mobile_font_size_reduction', '10'); ?>%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fas fa-toggle-on"></i> Recursos Mobile
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Header Fixo (Sticky)</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="enable_sticky_header" value="1" <?php echo getSetting($pdo, 'enable_sticky_header', '1') === '1' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Sim
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="enable_sticky_header" value="0" <?php echo getSetting($pdo, 'enable_sticky_header', '1') === '0' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Nao
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Botao Voltar ao Topo</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="enable_back_to_top" value="1" <?php echo getSetting($pdo, 'enable_back_to_top', '1') === '1' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Sim
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="enable_back_to_top" value="0" <?php echo getSetting($pdo, 'enable_back_to_top', '1') === '0' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Nao
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Zoom em Imagens de Produto</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="enable_product_zoom" value="1" <?php echo getSetting($pdo, 'enable_product_zoom', '1') === '1' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Sim
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fff;">
+                                        <input type="radio" name="enable_product_zoom" value="0" <?php echo getSetting($pdo, 'enable_product_zoom', '1') === '0' ? 'checked' : ''; ?> style="accent-color: #d4af37;"> Nao
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-group-header">
+                            <span class="option-group-title">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </span>
+                            <i class="fas fa-chevron-down option-group-toggle"></i>
+                        </div>
+                        <div class="option-group-content">
+                            <div class="option-item">
+                                <label class="option-label">Texto do Botao WhatsApp</label>
+                                <input type="text" class="option-input" name="whatsapp_button_text" value="<?php echo htmlspecialchars(getSetting($pdo, 'whatsapp_button_text', 'Falar com Especialista')); ?>" data-target="whatsapp_button_text">
+                            </div>
+                            <div class="option-item">
+                                <label class="option-label">Mensagem Padrao WhatsApp</label>
+                                <textarea class="option-input" name="whatsapp_message_template" data-target="whatsapp_message_template" rows="3" style="resize: vertical;"><?php echo htmlspecialchars(getSetting($pdo, 'whatsapp_message_template', 'Ola! Vim pelo site e gostaria de mais informacoes.')); ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Tab: Historico -->
                 <div class="editor-panel" id="panel-history">
                     <div class="option-group">
