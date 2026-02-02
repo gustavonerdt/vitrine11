@@ -23,7 +23,11 @@ try {
 
 if (!$page) {
     http_response_code(404);
-    include __DIR__ . '/404.php';
+    if (file_exists(__DIR__ . '/404.php')) {
+        include __DIR__ . '/404.php';
+    } else {
+        echo '<!DOCTYPE html><html><head><title>Pagina nao encontrada</title></head><body style="font-family:sans-serif;text-align:center;padding:50px;"><h1>404</h1><p>Pagina nao encontrada</p><a href="' . APP_URL . '">Voltar para inicio</a></body></html>';
+    }
     exit;
 }
 

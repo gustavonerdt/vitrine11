@@ -9,6 +9,48 @@ if (!isLoggedIn() || !isAdmin()) {
     die(json_encode(['success' => false, 'error' => 'Acesso negado']));
 }
 
+// Ensure tables exist
+try {
+    // Create dynamic_showcases table if not exists
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS dynamic_showcases (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
+            banner_url VARCHAR(500),
+            banner_link VARCHAR(500),
+            keywords TEXT,
+            display_type ENUM('carousel', 'grid', 'list') DEFAULT 'carousel',
+            max_products INT DEFAULT NULL,
+            display_order INT DEFAULT 0,
+            is_active TINYINT(1) DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+    ");
+    
+    // Create dynamic_showcase_products table if not exists
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS dynamic_showcase_products (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            showcase_id INT NOT NULL,
+            product_id INT NOT NULL,
+            display_order INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_showcase_product (showcase_id, product_id),
+            FOREIGN KEY (showcase_id) REFERENCES dynamic_showcases(id) ON DELETE CASCADE
+        )
+    ");
+    
+    // Add display_type column if missing
+    if (!db_has_column($pdo, 'dynamic_showcases', 'display_type')) {
+        $pdo->exec("ALTER TABLE dynamic_showcases ADD COLUMN display_type ENUM('carousel', 'grid', 'list') DEFAULT 'carousel' AFTER keywords");
+    }
+} catch (Exception $e) {
+    // Tables might already exist or foreign key issue
+}
+
 try {
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
     $action = $input['action'] ?? $_GET['action'] ?? '';

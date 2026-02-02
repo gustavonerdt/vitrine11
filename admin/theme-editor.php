@@ -4,8 +4,8 @@
  * Features: Element editing, Image upload, Sections, Pages, Width/Height controls
  */
 
-// Enable error display for debugging
-ini_set('display_errors', 1);
+// Enable error display for debugging (disable in production)
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../config.php';

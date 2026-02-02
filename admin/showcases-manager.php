@@ -1181,7 +1181,9 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
         // Edit
         async function editShowcase(id) {
             try {
-                const res = await fetch(`${APP}/api/admin/dynamic-showcases.php?action=get&id=${id}`);
+                const res = await fetch(`${APP}/api/admin/dynamic-showcases.php?action=get&id=${id}`, {
+                    credentials: 'same-origin'
+                });
                 const data = await res.json();
                 
                 if (!data.success) throw new Error(data.error);
@@ -1233,16 +1235,25 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
                 const res = await fetch(`${APP}/api/admin/dynamic-showcases.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
                     body: JSON.stringify(data)
                 });
+                
+                if (!res.ok) {
+                    const errText = await res.text();
+                    console.log('[v0] API Error:', errText);
+                    throw new Error('Erro na API: ' + res.status);
+                }
+                
                 const result = await res.json();
                 
-                if (!result.success) throw new Error(result.error);
+                if (!result.success) throw new Error(result.error || 'Erro desconhecido');
                 
                 toast('success', result.message);
                 closeModal('showcaseModal');
                 setTimeout(() => location.reload(), 1000);
             } catch (e) {
+                console.log('[v0] Save error:', e);
                 toast('error', e.message);
             }
         }
@@ -1255,11 +1266,12 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
                 const res = await fetch(`${APP}/api/admin/dynamic-showcases.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
                     body: JSON.stringify({ action: 'delete', id })
                 });
                 const data = await res.json();
                 
-                if (!data.success) throw new Error(data.error);
+                if (!data.success) throw new Error(data.error || 'Erro ao excluir');
                 
                 toast('success', data.message);
                 document.querySelector(`.showcase-card[data-id="${id}"]`)?.remove();
@@ -1281,7 +1293,9 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
             
             // Load current products
             try {
-                const res = await fetch(`${APP}/api/admin/dynamic-showcases.php?action=get_products&showcase_id=${showcaseId}`);
+                const res = await fetch(`${APP}/api/admin/dynamic-showcases.php?action=get_products&showcase_id=${showcaseId}`, {
+                    credentials: 'same-origin'
+                });
                 const data = await res.json();
                 
                 if (data.success && data.products) {
@@ -1347,7 +1361,9 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
             
             try {
                 // First, get current products to determine adds/removes
-                const currentRes = await fetch(`${APP}/api/admin/dynamic-showcases.php?action=get_products&showcase_id=${showcaseId}`);
+                const currentRes = await fetch(`${APP}/api/admin/dynamic-showcases.php?action=get_products&showcase_id=${showcaseId}`, {
+                    credentials: 'same-origin'
+                });
                 const currentData = await currentRes.json();
                 const currentIds = currentData.success ? currentData.products.map(p => p.id) : [];
                 
@@ -1362,6 +1378,7 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
                     await fetch(`${APP}/api/admin/dynamic-showcases.php`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
                         body: JSON.stringify({ action: 'add_product', showcase_id: showcaseId, product_id: productId })
                     });
                 }
@@ -1371,6 +1388,7 @@ $page_subtitle = 'Crie e gerencie secoes de produtos na pagina inicial';
                     await fetch(`${APP}/api/admin/dynamic-showcases.php`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
                         body: JSON.stringify({ action: 'remove_product', showcase_id: showcaseId, product_id: productId })
                     });
                 }

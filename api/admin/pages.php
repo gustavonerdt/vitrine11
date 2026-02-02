@@ -2,15 +2,31 @@
 /**
  * API para gerenciar paginas customizadas
  */
+
+// Enable error display for debugging
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
 header('Content-Type: application/json');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
+// Debug session for troubleshooting
+$debugInfo = [
+    'session_active' => session_status() === PHP_SESSION_ACTIVE,
+    'user_id' => $_SESSION['user_id'] ?? null,
+    'user_role' => $_SESSION['user_role'] ?? null
+];
+
 if (!isLoggedIn() || !isAdmin()) {
     http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Nao autorizado']);
+    echo json_encode([
+        'success' => false, 
+        'error' => 'Nao autorizado. Verifique se esta logado como admin.',
+        'debug' => $debugInfo
+    ]);
     exit;
 }
 
@@ -28,9 +44,12 @@ try {
             is_active TINYINT(1) DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    // Log error but continue
+    error_log("Pages API table creation error: " . $e->getMessage());
+}
 
 $input = json_decode(file_get_contents('php://input'), true);
 $action = $input['action'] ?? $_GET['action'] ?? '';

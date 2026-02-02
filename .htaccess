@@ -1,0 +1,31 @@
+# Apache Rewrite Rules
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Custom pages route: /pagina/slug -> /pagina.php?slug=slug
+    RewriteRule ^pagina/([a-z0-9\-]+)/?$ pagina.php?slug=$1 [L,QSA]
+    
+    # Product route: /produto/slug -> /product.php?slug=slug
+    RewriteRule ^produto/([a-z0-9\-]+)/?$ product.php?slug=$1 [L,QSA]
+    
+    # Don't rewrite existing files or directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^(config\.php|\.env|\.git|composer\.json|composer\.lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
