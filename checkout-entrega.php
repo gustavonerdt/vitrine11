@@ -86,7 +86,7 @@ include __DIR__ . '/includes/public-header.php';
                         <h2 class="section-title">DADOS DE CONTATO</h2>
                         <div class="form-group">
                             <label for="email">E-mail *</label>
-                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>" placeholder="Digite seu melhor e-mail" required>
+                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($checkout_data['email'] ?? ''); ?>" placeholder="seuemail@exemplo.com" required>
                         </div>
                     </div>
                    
@@ -94,24 +94,28 @@ include __DIR__ . '/includes/public-header.php';
                         <h2 class="section-title">ENTREGA</h2>
                         <div class="form-group">
                             <label for="cep">CEP *</label>
-                            <input type="tel" inputmode="numeric" pattern="[0-9\-]*" id="cep" name="cep" value="<?php echo htmlspecialchars($checkout_data['cep'] ?? ''); ?>" placeholder="00000-000" maxlength="9" required>
+                            <input type="tel" inputmode="numeric" pattern="[0-9\-]*" id="cep" name="cep" value="<?php echo htmlspecialchars($checkout_data['cep'] ?? ''); ?>" placeholder="Digite seu CEP (ex: 01310-100)" maxlength="9" required>
                             <div id="cepLoading" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Buscando...</div>
                         </div>
                        
-                        <!-- Opções de frete serão selecionadas na tela de pagamento -->
+                        <!-- Opcoes de frete serao selecionadas na tela de pagamento -->
                        
                         <div id="addressForm" style="display: none;">
                             <div class="form-group">
                                 <label for="street">Rua/Logradouro *</label>
-                                <input type="text" id="street" name="street" value="<?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>" placeholder="Ex: Rua das Flores" required>
+                                <input type="text" id="street" name="street" value="<?php echo htmlspecialchars($checkout_data['street'] ?? ''); ?>" placeholder="Digite o nome da sua rua" required>
                             </div>
                             <div class="form-row">
-                                <div class="form-group"><label for="number">Numero *</label><input type="tel" inputmode="numeric" id="number" name="number" value="<?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?>" placeholder="Ex: 123" required></div>
-                                <div class="form-group"><label for="neighborhood">Bairro *</label><input type="text" id="neighborhood" name="neighborhood" value="<?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?>" placeholder="Ex: Centro" required></div>
+                                <div class="form-group"><label for="number">Numero *</label><input type="tel" inputmode="numeric" id="number" name="number" value="<?php echo htmlspecialchars($checkout_data['number'] ?? ''); ?>" placeholder="Numero da casa/apto" required></div>
+                                <div class="form-group"><label for="neighborhood">Bairro *</label><input type="text" id="neighborhood" name="neighborhood" value="<?php echo htmlspecialchars($checkout_data['neighborhood'] ?? ''); ?>" placeholder="Nome do bairro" required></div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group"><label for="city">Cidade *</label><input type="text" id="city" name="city" value="<?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?>" placeholder="Ex: Sao Paulo" required></div>
-                                <div class="form-group"><label for="state">Estado *</label><input type="text" id="state" name="state" value="<?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?>" placeholder="Ex: SP" required></div>
+                                <div class="form-group"><label for="city">Cidade *</label><input type="text" id="city" name="city" value="<?php echo htmlspecialchars($checkout_data['city'] ?? ''); ?>" placeholder="Nome da cidade" required></div>
+                                <div class="form-group"><label for="state">Estado *</label><input type="text" id="state" name="state" value="<?php echo htmlspecialchars($checkout_data['state'] ?? ''); ?>" placeholder="Sigla (ex: SP)" required></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="complement">Complemento (opcional)</label>
+                                <input type="text" id="complement" name="complement" value="<?php echo htmlspecialchars($checkout_data['complement'] ?? ''); ?>" placeholder="Apto, bloco, referencia...">
                             </div>
                         </div>
                     </div>
@@ -119,8 +123,8 @@ include __DIR__ . '/includes/public-header.php';
                     <div class="form-section" id="deliveryDataSection" style="display: none;">
                         <h2 class="section-title">DADOS PARA ENTREGA</h2>
                         <div class="form-row">
-                            <div class="form-group"><label for="recipient_name">Nome *</label><input type="text" id="recipient_name" name="recipient_name" value="<?php echo htmlspecialchars($checkout_data['recipient_name'] ?? ''); ?>" placeholder="Seu nome completo" required></div>
-                            <div class="form-group"><label for="phone">Telefone *</label><input type="tel" inputmode="numeric" pattern="[0-9\(\)\-\s]*" id="phone" name="phone" value="<?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>" placeholder="(11) 99999-9999" required></div>
+                            <div class="form-group"><label for="recipient_name">Nome Completo *</label><input type="text" id="recipient_name" name="recipient_name" value="<?php echo htmlspecialchars($checkout_data['recipient_name'] ?? ''); ?>" placeholder="Digite seu nome completo" required></div>
+                            <div class="form-group"><label for="phone">Telefone/WhatsApp *</label><input type="tel" inputmode="numeric" pattern="[0-9\(\)\-\s]*" id="phone" name="phone" value="<?php echo htmlspecialchars($checkout_data['phone'] ?? ''); ?>" placeholder="(00) 00000-0000" required></div>
                         </div>
                     </div>
 
@@ -128,7 +132,7 @@ include __DIR__ . '/includes/public-header.php';
                         <h2 class="section-title">DADOS PARA NOTA FISCAL</h2>
                         <div class="form-group">
                             <label for="cpf_cnpj">CPF ou CNPJ *</label>
-                            <input type="tel" inputmode="numeric" pattern="[0-9\.\-\/]*" id="cpf_cnpj" name="cpf_cnpj" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" placeholder="000.000.000-00" required>
+                            <input type="tel" inputmode="numeric" pattern="[0-9\.\-\/]*" id="cpf_cnpj" name="cpf_cnpj" value="<?php echo htmlspecialchars($checkout_data['cpf_cnpj'] ?? ''); ?>" placeholder="Digite seu CPF ou CNPJ" required>
                         </div>
                     </div>
                    
@@ -144,9 +148,14 @@ include __DIR__ . '/includes/public-header.php';
             <div class="checkout-summary">
                 <h3 class="summary-title">RESUMO DO PEDIDO</h3>
                 <div class="summary-products">
-                    <?php foreach ($cart_items as $item): 
+                    <?php 
+                    $totalOriginal = 0;
+                    $totalFinal = 0;
+                    foreach ($cart_items as $item): 
                         $hasDiscount = !empty($item['original_price']) && $item['original_price'] > $item['price'];
                         $discountPercent = $hasDiscount ? round((($item['original_price'] - $item['price']) / $item['original_price']) * 100) : 0;
+                        $totalOriginal += ($hasDiscount ? $item['original_price'] : $item['price']) * $item['quantity'];
+                        $totalFinal += $item['price'] * $item['quantity'];
                     ?>
                         <div class="summary-product-item">
                             <div class="summary-product-image">
@@ -157,25 +166,56 @@ include __DIR__ . '/includes/public-header.php';
                                 <?php endif; ?>
                             </div>
                             <div class="summary-product-info">
-                                <div style="color: #1a1a1a; font-weight: 600;"><?php echo htmlspecialchars($item['name']); ?></div>
-                                <?php if ($hasDiscount): ?>
-                                <small style="color: #333;">
-                                    <?php echo $item['quantity']; ?>x 
-                                    <span style="text-decoration: line-through; color: #888;">R$ <?php echo number_format($item['original_price'], 2, ',', '.'); ?></span>
-                                    <span style="color: #22c55e; font-weight: 600;">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></span>
-                                    <span style="background: #ef4444; color: #fff; padding: 1px 4px; border-radius: 3px; font-size: 0.65rem; margin-left: 4px;">-<?php echo $discountPercent; ?>%</span>
-                                </small>
-                                <?php else: ?>
-                                <small style="color: #333;"><?php echo $item['quantity']; ?>x R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></small>
-                                <?php endif; ?>
+                                <div style="color: #1a1a1a; font-weight: 600; font-size: 0.9rem;"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <div style="margin-top: 4px;">
+                                    <?php if ($hasDiscount): ?>
+                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                        <span style="text-decoration: line-through; color: #999; font-size: 0.75rem;">R$ <?php echo number_format($item['original_price'], 2, ',', '.'); ?></span>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="color: #1a1a1a; font-weight: 700; font-size: 0.95rem;">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></span>
+                                            <span style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
+                                        </div>
+                                        <span style="color: #666; font-size: 0.75rem;">Qtd: <?php echo $item['quantity']; ?></span>
+                                    </div>
+                                    <?php else: ?>
+                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                        <span style="color: #1a1a1a; font-weight: 700; font-size: 0.95rem;">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></span>
+                                        <span style="color: #666; font-size: 0.75rem;">Qtd: <?php echo $item['quantity']; ?></span>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
                 <div class="summary-totals">
-                    <div class="summary-row"><span>Subtotal</span><span>R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
-                    <div class="summary-row"><span>Frete</span><span>Calculado no pagamento</span></div>
-                    <div class="summary-row summary-total"><span>Total</span><span id="totalAmount">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
+                    <?php 
+                    $hasAnyDiscount = $totalOriginal > $totalFinal;
+                    $totalSavings = $totalOriginal - $totalFinal;
+                    ?>
+                    <?php if ($hasAnyDiscount): ?>
+                    <div class="summary-row" style="color: #999;">
+                        <span>Subtotal Original</span>
+                        <span style="text-decoration: line-through; font-size: 0.85rem;">R$ <?php echo number_format($totalOriginal, 2, ',', '.'); ?></span>
+                    </div>
+                    <div class="summary-row" style="color: #22c55e; font-weight: 600;">
+                        <span>Voce economiza</span>
+                        <span>- R$ <?php echo number_format($totalSavings, 2, ',', '.'); ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <div class="summary-row"><span>Subtotal</span><span style="font-weight: 600;">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span></div>
+                    <div class="summary-row"><span>Frete</span><span style="color: #666;">Calculado no pagamento</span></div>
+                    <div class="summary-row summary-total" style="border-top: 2px solid #C7A333; padding-top: 12px; margin-top: 8px;">
+                        <?php if ($hasAnyDiscount): ?>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 0.75rem; color: #999; text-decoration: line-through;">R$ <?php echo number_format($totalOriginal, 2, ',', '.'); ?></span>
+                            <span style="font-weight: 800; color: #1a1a1a;">Total</span>
+                        </div>
+                        <?php else: ?>
+                        <span style="font-weight: 800; color: #1a1a1a;">Total</span>
+                        <?php endif; ?>
+                        <span id="totalAmount" style="font-weight: 800; font-size: 1.25rem; color: #1a1a1a;">R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></span>
+                    </div>
                 </div>
             </div>
         </div>

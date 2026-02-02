@@ -788,14 +788,26 @@ $googleFonts = [
             </div>
             
             <!-- Tabs -->
-            <div class="editor-tabs">
+            <div class="editor-tabs" style="flex-wrap: wrap; gap: 2px;">
                 <button class="editor-tab active" data-tab="colors">
                     <i class="fas fa-palette"></i>
                     Cores
                 </button>
                 <button class="editor-tab" data-tab="content">
                     <i class="fas fa-edit"></i>
-                    Conteudo
+                    Textos
+                </button>
+                <button class="editor-tab" data-tab="checkout">
+                    <i class="fas fa-credit-card"></i>
+                    Checkout
+                </button>
+                <button class="editor-tab" data-tab="cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    Carrinho
+                </button>
+                <button class="editor-tab" data-tab="products">
+                    <i class="fas fa-box"></i>
+                    Produtos
                 </button>
                 <button class="editor-tab" data-tab="typography">
                     <i class="fas fa-font"></i>
@@ -804,6 +816,10 @@ $googleFonts = [
                 <button class="editor-tab" data-tab="layout">
                     <i class="fas fa-th-large"></i>
                     Layout
+                </button>
+                <button class="editor-tab" data-tab="mobile">
+                    <i class="fas fa-mobile-alt"></i>
+                    Mobile
                 </button>
                 <button class="editor-tab" data-tab="history">
                     <i class="fas fa-history"></i>

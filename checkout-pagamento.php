@@ -630,10 +630,12 @@ include __DIR__ . '/includes/public-header.php';
 <div class="summary-product-info" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
 <div class="summary-product-name" style="color: #fff; font-weight: 600; font-size: 0.95rem; line-height: 1.3;"><?php echo htmlspecialchars($item['name']); ?></div>
 <?php if ($hasDiscount): ?>
-<div class="summary-product-price" style="font-size: 0.875rem;">
-    <span style="text-decoration: line-through; color: rgba(255,255,255,0.4);"><?php echo formatPrice($item['original_price']); ?></span>
-    <span style="color: #22c55e; font-weight: 600; margin-left: 4px;"><?php echo formatPrice($item['price']); ?></span>
-    <span style="color: rgba(255,255,255,0.6);"> x <?php echo $item['quantity']; ?></span>
+<div class="summary-product-price" style="display: flex; flex-direction: column; gap: 2px;">
+    <span style="text-decoration: line-through; color: rgba(255,255,255,0.35); font-size: 0.7rem; font-weight: 400;"><?php echo formatPrice($item['original_price']); ?></span>
+    <span style="display: flex; align-items: center; gap: 4px;">
+        <span style="color: #22c55e; font-weight: 700; font-size: 0.95rem;"><?php echo formatPrice($item['price']); ?></span>
+        <span style="color: rgba(255,255,255,0.6); font-size: 0.8rem;"> x <?php echo $item['quantity']; ?></span>
+    </span>
 </div>
 <?php else: ?>
 <div class="summary-product-price" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;"><?php echo formatPrice($item['price']); ?> x <?php echo $item['quantity']; ?></div>

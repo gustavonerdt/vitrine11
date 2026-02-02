@@ -32,25 +32,84 @@ if (!isset($input['theme']) || !is_array($input['theme'])) {
 $themeData = $input['theme'];
 $createVersion = isset($input['create_version']) && $input['create_version'] === true;
 
-// Lista de configuracoes permitidas
+// Lista de configuracoes permitidas - COMPLETA
 $allowedSettings = [
-    // Cores
+    // Cores Principais
     'color_primary', 'color_secondary', 'color_accent', 'color_background',
     'color_text', 'color_text_muted', 'header_bg', 'header_text', 'nav_bg',
     'card_bg', 'card_border', 'card_hover_bg', 'button_primary_bg',
     'button_primary_text', 'button_secondary_bg', 'button_secondary_text',
     'footer_bg', 'footer_text',
+    
+    // Cores do Carrinho
+    'cart_bg', 'cart_item_bg', 'cart_border', 'cart_button_bg', 'cart_button_text',
+    'cart_badge_bg', 'cart_badge_text', 'cart_sticky_bg',
+    
+    // Cores do Checkout
+    'checkout_bg', 'checkout_card_bg', 'checkout_border', 'checkout_input_bg',
+    'checkout_input_border', 'checkout_button_bg', 'checkout_button_text',
+    'checkout_progress_active', 'checkout_progress_inactive',
+    
+    // Cores dos Produtos
+    'product_card_bg', 'product_card_border', 'product_card_hover',
+    'product_price_color', 'product_original_price_color', 'product_discount_bg',
+    'product_badge_vip_bg', 'product_badge_vip_text',
+    
+    // Cores do Menu/Navegacao
+    'menu_bg', 'menu_text', 'menu_hover_bg', 'menu_active_bg',
+    'search_bar_bg', 'search_bar_border', 'search_bar_text',
+    'filter_btn_bg', 'filter_btn_text', 'filter_btn_active_bg',
+    
+    // Cores de Feedback
+    'success_color', 'error_color', 'warning_color', 'info_color',
+    'discount_badge_bg', 'discount_badge_text',
+    
     // Tipografia
     'font_heading', 'font_body', 'font_size_base',
+    'heading_weight', 'body_weight', 'line_height',
+    
     // Layout
     'border_radius', 'spacing_unit', 'container_max_width', 'products_per_row',
+    'card_shadow', 'button_radius', 'input_radius',
+    
     // Faixa Rotativa
     'faixa_enabled', 'faixa_bg_color', 'faixa_text_color', 'faixa_font_size',
     'faixa_frases', 'faixa_links', 'faixa_interval',
+    
     // Textos do site
     'search_placeholder', 'filter_button_text', 'buy_button_text', 'empty_cart_text',
+    'cart_title', 'checkout_title', 'product_add_button_text',
+    'footer_text_content', 'copyright_text',
+    
     // Redirecionamentos
-    'logo_redirect_url', 'after_add_cart_redirect', 'after_purchase_url'
+    'logo_redirect_url', 'after_add_cart_redirect', 'after_purchase_url',
+    
+    // Configuracoes de Checkout
+    'checkout_email_placeholder', 'checkout_cep_placeholder', 'checkout_phone_placeholder',
+    'checkout_name_placeholder', 'checkout_cpf_placeholder',
+    'checkout_button_text', 'checkout_success_message',
+    
+    // Configuracoes do Carrinho
+    'cart_empty_message', 'cart_continue_text', 'cart_checkout_text',
+    'cart_summary_title', 'cart_subtotal_text', 'cart_shipping_text',
+    
+    // Configuracoes de Produtos
+    'product_vip_label', 'product_sale_label', 'product_new_label',
+    'product_out_of_stock_text', 'product_add_to_cart_text',
+    
+    // Configuracoes de WhatsApp
+    'whatsapp_button_text', 'whatsapp_message_template',
+    
+    // Configuracoes de Footer
+    'footer_column1_title', 'footer_column2_title', 'footer_column3_title',
+    'footer_social_facebook', 'footer_social_instagram', 'footer_social_whatsapp',
+    
+    // Configuracoes Gerais
+    'show_product_description', 'show_product_brand', 'show_product_badge',
+    'enable_product_zoom', 'enable_sticky_header', 'enable_back_to_top',
+    
+    // Configuracoes de Mobile
+    'mobile_menu_style', 'mobile_products_per_row', 'mobile_font_size_reduction'
 ];
 
 try {

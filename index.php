@@ -409,12 +409,10 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
 </style>
 <form method="GET" action="" class="vitrine-search-form">
     <div class="search-input-wrapper">
-   
-      
         <input type="text"
                name="search"
                class="search-input"
-               placeholder="Oi, o que você procura hoje? ;) "
+               placeholder="Oi, o que voce procura hoje? ;)"
                value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>"
                id="searchInput">
         <?php if (!empty($_GET['search'])): ?>
@@ -425,10 +423,66 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
         <button type="submit" class="search-submit-btn">
             <i class="fas fa-search"></i>
         </button>
+        <!-- Botao Escolher Marca DENTRO da barra de pesquisa (Mobile) -->
+        <button type="button" class="brand-filter-btn-inline" onclick="toggleFilters()" title="Escolher Marca">
+            <i class="fas fa-tags"></i>
+            <?php if (!empty($_GET['brand'])): ?>
+                <span class="brand-filter-badge">1</span>
+            <?php endif; ?>
+        </button>
     </div>
 </form>
-                    <!-- Filter Toggle (Mobile) -->
-                    <button class="filter-toggle-btn" onclick="toggleFilters()" id="filterToggleBtn">
+<style>
+/* Botao de marca inline na barra de pesquisa */
+.brand-filter-btn-inline {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: linear-gradient(135deg, #C7A333, #d4af37);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.brand-filter-btn-inline:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(199, 163, 51, 0.4);
+}
+.brand-filter-btn-inline i {
+    font-size: 16px;
+}
+.brand-filter-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@media (max-width: 768px) {
+    .brand-filter-btn-inline {
+        display: flex !important;
+    }
+    .filter-toggle-btn {
+        display: none !important;
+    }
+}
+</style>
+                    <!-- Filter Toggle (Mobile) - Escondido, substituido pelo botao inline -->
+                    <button class="filter-toggle-btn" onclick="toggleFilters()" id="filterToggleBtn" style="display: none;">
                         <i class="fas fa-filter"></i>
                         <span>Escolher Marca</span>
                         <?php if (!empty($_GET['brand'])): ?>
