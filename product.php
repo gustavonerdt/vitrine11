@@ -284,23 +284,36 @@ if (!$is_ajax) {
                 <div class="product-price-section">
                     <div class="price-main">
                         <?php if ($hasDiscount): ?>
-                        <div class="price-discount-wrapper">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                                <span style="background: #ef4444; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">-<?php echo $discountPercent; ?>% OFF</span>
-                                <span style="text-decoration: line-through; color: #888; font-size: 1rem;">R$ <?php echo number_format($product['original_price'], 2, ',', '.'); ?></span>
+                        <div class="price-discount-card">
+                            <div class="price-discount-header">
+                                <span class="discount-badge-large">-<?php echo $discountPercent; ?>% OFF</span>
+                                <span class="discount-label">Oferta Especial</span>
                             </div>
-                            <div class="price-range">
-                                <span class="price-label" style="color: #22c55e;">Por apenas</span>
-                                <span class="price-value" style="color: #22c55e; font-size: 2rem;">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                            <div class="price-de-por">
+                                <div class="price-de">
+                                    <span class="price-de-label">de</span>
+                                    <span class="price-de-value">R$ <?php echo number_format($product['original_price'], 2, ',', '.'); ?></span>
+                                </div>
+                                <div class="price-por">
+                                    <span class="price-por-label">por</span>
+                                    <span class="price-por-value">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                                </div>
                             </div>
-                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 1px solid #22c55e; border-radius: 8px; padding: 8px 12px; margin-top: 8px; display: inline-block;">
-                                <span style="color: #22c55e; font-weight: 600; font-size: 0.9rem;">Voce economiza R$ <?php echo number_format($economy, 2, ',', '.'); ?></span>
+                            <div class="economy-badge">
+                                <i class="fas fa-piggy-bank"></i>
+                                <span>Economia de <strong>R$ <?php echo number_format($economy, 2, ',', '.'); ?></strong></span>
+                            </div>
+                            <div class="price-installments-box">
+                                <span class="installments-text">ou 10x de <strong>R$ <?php echo number_format($product['price'] / 10, 2, ',', '.'); ?></strong> no cartao</span>
                             </div>
                         </div>
                         <?php else: ?>
-                        <div class="price-range">
-                            <span class="price-label">Preco</span>
-                            <span class="price-value">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                        <div class="price-normal-card">
+                            <span class="price-label-simple">Preco</span>
+                            <span class="price-value-large">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                            <div class="price-installments-box">
+                                <span class="installments-text">ou 10x de <strong>R$ <?php echo number_format($product['price'] / 10, 2, ',', '.'); ?></strong> no cartao</span>
+                            </div>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -1164,6 +1177,190 @@ html {
     font-family: 'Inter', sans-serif;
     border: 1px solid rgba(199, 163, 51, 0.3);
     box-shadow: 0 2px 8px rgba(199, 163, 51, 0.15);
+}
+
+/* ============================================
+   PRICE CARD STYLES - De/Por Premium
+   ============================================ */
+.price-discount-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fef9e0 100%);
+    border: 2px solid #C7A333;
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.price-discount-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(199, 163, 51, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.price-discount-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.discount-badge-large {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    animation: pulseBadge 2s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.discount-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ef4444;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.price-de-por {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.price-de {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-de-label {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 500;
+    text-transform: lowercase;
+}
+
+.price-de-value {
+    font-size: 1.25rem;
+    color: #888;
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.price-por {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.price-por-label {
+    font-size: 1rem;
+    color: #22c55e;
+    font-weight: 600;
+    text-transform: lowercase;
+}
+
+.price-por-value {
+    font-size: 2.75rem;
+    color: #22c55e;
+    font-weight: 800;
+    font-family: 'Sora', sans-serif;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+
+.economy-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
+    border: 1.5px solid #22c55e;
+    border-radius: 10px;
+    color: #22c55e;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.economy-badge i {
+    font-size: 1rem;
+}
+
+.economy-badge strong {
+    font-weight: 800;
+}
+
+.price-installments-box {
+    padding: 0.75rem 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+    border-left: 3px solid #C7A333;
+}
+
+.installments-text {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.installments-text strong {
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+/* Normal Price Card (sem desconto) */
+.price-normal-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.price-label-simple {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.price-value-large {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #C7A333;
+    font-family: 'Sora', sans-serif;
+    line-height: 1;
+}
+
+/* Responsive Price Card */
+@media (max-width: 768px) {
+    .price-por-value {
+        font-size: 2.25rem;
+    }
+    
+    .price-value-large {
+        font-size: 2.5rem;
+    }
+    
+    .price-discount-card {
+        padding: 1.25rem;
+    }
 }
 
 /* Variants Section */

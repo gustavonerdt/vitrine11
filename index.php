@@ -719,6 +719,215 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
     margin-bottom: 0;
 }
 
+/* ============================================
+   SHOWCASE CAROUSEL STYLES - Destaques & Lançamentos
+   ============================================ */
+.showcase-carousel-section {
+    padding: 2.5rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.showcase-carousel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.showcase-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.showcase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    background: linear-gradient(135deg, #C7A333 0%, #B8962E 100%);
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 20px;
+    width: fit-content;
+    box-shadow: 0 2px 8px rgba(199, 163, 51, 0.3);
+}
+
+.showcase-carousel-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.showcase-carousel-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    max-width: 500px;
+}
+
+.showcase-nav-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.showcase-nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.showcase-nav-btn:hover {
+    background: #C7A333;
+    color: #000;
+    transform: scale(1.05);
+}
+
+.showcase-nav-btn:active {
+    transform: scale(0.95);
+}
+
+.showcase-nav-btn i {
+    font-size: 1rem;
+}
+
+/* Swiper Container */
+.showcase-products-carousel {
+    padding-bottom: 2.5rem !important;
+    overflow: visible !important;
+}
+
+.showcase-products-carousel .swiper-wrapper {
+    align-items: stretch;
+}
+
+.showcase-products-carousel .swiper-slide {
+    height: auto;
+    display: flex;
+}
+
+.showcase-products-carousel .product-card-modern.showcase-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.showcase-products-carousel .product-card-modern.showcase-card:hover {
+    border-color: #C7A333;
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(199, 163, 51, 0.25);
+}
+
+/* Price styling for showcases */
+.showcase-price {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+}
+
+.price-prefix {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #888;
+    text-decoration: none;
+    display: inline;
+}
+
+/* Swiper Pagination */
+.showcase-products-carousel .swiper-pagination {
+    bottom: 0 !important;
+}
+
+.showcase-products-carousel .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: #ccc;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.showcase-products-carousel .swiper-pagination-bullet-active {
+    background: #C7A333;
+    width: 24px;
+    border-radius: 5px;
+}
+
+/* Responsive Showcase */
+@media (max-width: 768px) {
+    .showcase-carousel-section {
+        padding: 2rem 0;
+    }
+    
+    .showcase-carousel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .showcase-carousel-title {
+        font-size: 1.5rem;
+    }
+    
+    .showcase-nav-controls {
+        align-self: flex-end;
+        margin-top: -3rem;
+    }
+    
+    .showcase-nav-btn {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .showcase-products-carousel {
+        margin: 0 -0.5rem;
+        padding: 0 0.5rem;
+        padding-bottom: 2rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .showcase-carousel-title {
+        font-size: 1.25rem;
+    }
+    
+    .showcase-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.625rem;
+    }
+    
+    .showcase-nav-controls {
+        margin-top: -2.5rem;
+    }
+    
+    .showcase-nav-btn {
+        width: 34px;
+        height: 34px;
+    }
+    
+    .showcase-nav-btn i {
+        font-size: 0.875rem;
+    }
+}
+
 .carousel-banner-wrapper .carousel-slide img,
 .carousel-banner-wrapper .render-carousel img {
     min-height: 280px;
@@ -835,11 +1044,13 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
             </div>
         </div>
     </div>
-    <!-- Dynamic Showcases -->
+    <!-- Dynamic Showcases - CAROUSEL VERSION -->
     <?php if (!empty($showcases)): ?>
+        <?php $showcaseIndex = 0; ?>
         <?php foreach ($showcases as $showcase): ?>
             <?php if (!empty($showcase['products'])): ?>
-            <section class="showcase-section">
+            <?php $showcaseIndex++; ?>
+            <section class="showcase-carousel-section" style="background: linear-gradient(180deg, #fef9e0 0%, #fefcee 100%);">
                 <div class="container">
                     <?php if (!empty($showcase['banner_url'])): ?>
                     <div class="showcase-banner">
@@ -855,14 +1066,26 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                     </div>
                     <?php endif; ?>
                   
-                    <div class="showcase-header">
-                        <h2 class="showcase-title"><?php echo htmlspecialchars($showcase['title']); ?></h2>
-                        <?php if (!empty($showcase['description'])): ?>
-                        <p class="showcase-description"><?php echo htmlspecialchars($showcase['description']); ?></p>
-                        <?php endif; ?>
+                    <div class="showcase-carousel-header">
+                        <div class="showcase-header-left">
+                            <span class="showcase-badge"><?php echo $showcaseIndex === 1 ? '🔥 Em Alta' : '✨ Novidade'; ?></span>
+                            <h2 class="showcase-carousel-title"><?php echo htmlspecialchars($showcase['title']); ?></h2>
+                            <?php if (!empty($showcase['description'])): ?>
+                            <p class="showcase-carousel-description"><?php echo htmlspecialchars($showcase['description']); ?></p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="showcase-nav-controls">
+                            <button class="showcase-nav-btn showcase-prev-<?php echo $showcaseIndex; ?>">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="showcase-nav-btn showcase-next-<?php echo $showcaseIndex; ?>">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                   
-                    <div class="products-grid-showcase">
+                    <div class="swiper showcaseSwiper-<?php echo $showcaseIndex; ?> showcase-products-carousel">
+                        <div class="swiper-wrapper">
                         <?php foreach ($showcase['products'] as $sp): ?>
                             <?php
                                 $whatsapp_link = generateWhatsAppLink($pdo, $sp['name']);
@@ -905,7 +1128,8 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                 // Count total images for badge
                                 $image_count = count($product_images);
                             ?>
-                            <article class="product-card-modern">
+                            <div class="swiper-slide">
+                            <article class="product-card-modern showcase-card">
                                 <a href="<?php echo $product_url; ?>" class="product-card-link">
                                     <div class="product-image-modern">
                                         <?php if ($image_url): ?>
@@ -961,10 +1185,10 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                                 <span style="background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">-<?php echo $discountPercent; ?>%</span>
                                                 <span style="text-decoration: line-through; color: #888; font-size: 0.8rem;"><small style="text-decoration: none; font-weight: 500;">de </small><?php echo formatPrice($sp['original_price']); ?></span>
                                             </div>
-                                            <div class="product-price-modern" style="color: #22c55e;"><?php echo formatPrice($sp['price']); ?></div>
+                                            <div class="product-price-modern showcase-price" style="color: #22c55e;"><small class="price-prefix">por </small><?php echo formatPrice($sp['price']); ?></div>
                                         </div>
                                         <?php else: ?>
-                                        <div class="product-price-modern"><?php echo formatPrice($sp['price']); ?></div>
+                                        <div class="product-price-modern showcase-price"><?php echo formatPrice($sp['price']); ?></div>
                                         <?php endif; ?>
                                         <?php 
                                         // Calcular parcela com taxa Mercado Pago (aprox 2.99% ao mes)
@@ -989,7 +1213,11 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                     </a>
                                 </div>
                             </article>
+                            </div>
                         <?php endforeach; ?>
+                        </div>
+                        <!-- Swiper Pagination -->
+                        <div class="swiper-pagination showcase-pagination-<?php echo $showcaseIndex; ?>"></div>
                     </div>
                 </div>
             </section>
@@ -3353,6 +3581,53 @@ new Swiper(".marcasSwiper", {
         }
     }
 });
+
+// Inicializar carrosséis de Destaques e Lançamentos com Autoplay
+<?php if (!empty($showcases)): ?>
+<?php $jsIndex = 0; ?>
+<?php foreach ($showcases as $showcase): ?>
+<?php if (!empty($showcase['products'])): ?>
+<?php $jsIndex++; ?>
+new Swiper(".showcaseSwiper-<?php echo $jsIndex; ?>", {
+    slidesPerView: 2,
+    spaceBetween: 12,
+    loop: true,
+    autoplay: {
+        delay: 3500,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+    },
+    pagination: {
+        el: ".showcase-pagination-<?php echo $jsIndex; ?>",
+        clickable: true,
+        dynamicBullets: true,
+    },
+    navigation: {
+        nextEl: ".showcase-next-<?php echo $jsIndex; ?>",
+        prevEl: ".showcase-prev-<?php echo $jsIndex; ?>",
+    },
+    breakpoints: {
+        480: {
+            slidesPerView: 2,
+            spaceBetween: 12
+        },
+        768: {
+            slidesPerView: 3,
+            spaceBetween: 16
+        },
+        1024: {
+            slidesPerView: 4,
+            spaceBetween: 20
+        },
+        1400: {
+            slidesPerView: 5,
+            spaceBetween: 24
+        }
+    }
+});
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endif; ?>
 </script>
 <!-- CSS do Botão Adicionar ao Carrinho -->
 <style>
