@@ -66,6 +66,7 @@ $checkout_data = $_SESSION['checkout_data'] ?? [];
 include __DIR__ . '/includes/public-header.php';
 ?>
 <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/checkout.css">
+<link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/responsive.css">
 <div class="checkout-page-container">
     <div class="container">
         <div class="checkout-progress">

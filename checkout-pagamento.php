@@ -77,6 +77,7 @@ include __DIR__ . '/includes/public-header.php';
 ?>
 
 <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/checkout.css">
+<link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/responsive.css">
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
 <div class="checkout-page-container">
