@@ -3,7 +3,11 @@
  * EDITOR VISUAL PRO - Sistema Completo de Edicao Visual
  * Features: Element editing, Image upload, Sections, Pages, Width/Height controls
  */
-session_start();
+
+// Enable error display for debugging
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/functions.php';
 
@@ -13,26 +17,31 @@ if (!isLoggedIn() || !isAdmin()) {
     exit;
 }
 
-function getSetting($pdo, $key, $default = '') {
-    try {
-        $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-        $stmt->execute([$key]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['setting_value'] : $default;
-    } catch (Exception $e) {
-        return $default;
+// Helper function for settings (may already exist)
+if (!function_exists('getSettingValue')) {
+    function getSettingValue($pdo, $key, $default = '') {
+        try {
+            $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+            $stmt->execute([$key]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['setting_value'] : $default;
+        } catch (Exception $e) {
+            return $default;
+        }
     }
 }
 
-$appUrl = APP_URL;
+$appUrl = defined('APP_URL') ? APP_URL : '';
 
 // Fetch showcases for section manager
 $showcases = [];
-if (db_table_exists($pdo, 'dynamic_showcases')) {
-    try {
+try {
+    if (function_exists('db_table_exists') && db_table_exists($pdo, 'dynamic_showcases')) {
         $stmt = $pdo->query("SELECT * FROM dynamic_showcases ORDER BY display_order ASC");
-        $showcases = $stmt->fetchAll();
-    } catch (Exception $e) {}
+        $showcases = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (Exception $e) {
+    // Silently fail
 }
 ?>
 <!DOCTYPE html>
