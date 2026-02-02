@@ -1148,10 +1148,10 @@ include __DIR__ . '/includes/public-header.php';
 
 .pix-cpf-display .cpf-locked {
     width: 100%;
-    padding: 0.9rem 1rem;
-    background: #f8f8f8;
-    border: 1px solid #e5e5e5;
-    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+    border: 2px solid #e5e5e5;
+    border-radius: 16px;
     font-size: 1rem;
     font-weight: 600;
     color: #1a1a1a;
@@ -1214,7 +1214,7 @@ include __DIR__ . '/includes/public-header.php';
 
 .card-preview-inner {
     background: linear-gradient(135deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 1.5rem;
     color: #fff;
     position: relative;
@@ -1272,19 +1272,22 @@ include __DIR__ . '/includes/public-header.php';
 .card-form-fields input,
 .card-form-fields select {
     width: 100%;
-    padding: 0.9rem 1rem;
+    padding: 1rem 1.25rem;
     border: 2px solid #e5e5e5;
-    border-radius: 10px;
+    border-radius: 16px;
     font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #fff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .card-form-fields input:focus,
 .card-form-fields select:focus {
     outline: none;
     border-color: #C7A333;
-    box-shadow: 0 0 0 3px rgba(199, 163, 51, 0.15);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(199, 163, 51, 0.15), 0 4px 16px rgba(199, 163, 51, 0.1);
+    transform: translateY(-1px);
 }
 
 .input-with-icon {

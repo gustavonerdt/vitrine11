@@ -267,17 +267,18 @@ $googleFonts = [
         .option-input {
             background: #141414;
             border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            padding: 10px 12px;
+            border-radius: 16px;
+            padding: 12px 16px;
             color: #fff;
             font-size: 0.9rem;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .option-input:focus {
             outline: none;
             border-color: #d4af37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+            transform: translateY(-1px);
         }
         
         .option-input::placeholder {
@@ -292,14 +293,15 @@ $googleFonts = [
         }
         
         .color-preview {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             border: 2px solid #2a2a2a;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
         .color-preview:hover {
@@ -321,33 +323,42 @@ $googleFonts = [
             flex: 1;
             background: #141414;
             border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            padding: 10px 12px;
+            border-radius: 14px;
+            padding: 12px 16px;
             color: #fff;
             font-family: 'SF Mono', 'Fira Code', monospace;
             font-size: 0.85rem;
             text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        .color-hex:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
         }
         
         /* Select/Dropdown */
         .option-select {
             background: #141414;
             border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            padding: 10px 12px;
+            border-radius: 14px;
+            padding: 12px 16px;
             color: #fff;
             font-size: 0.9rem;
             cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 36px;
+            background-position: right 14px center;
+            padding-right: 40px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .option-select:focus {
             outline: none;
             border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
         }
         
         /* Range Slider */
@@ -499,12 +510,12 @@ $googleFonts = [
         
         .btn-editor {
             flex: 1;
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 14px 24px;
+            border-radius: 16px;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -544,12 +555,12 @@ $googleFonts = [
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 16px;
+            padding: 16px 18px;
             background: #141414;
             border: 1px solid #2a2a2a;
-            border-radius: 10px;
+            border-radius: 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .version-item:hover {
@@ -631,10 +642,10 @@ $googleFonts = [
         .preset-card {
             background: #141414;
             border: 2px solid #2a2a2a;
-            border-radius: 12px;
+            border-radius: 18px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .preset-card:hover {
@@ -669,16 +680,16 @@ $googleFonts = [
             right: 24px;
             background: #22c55e;
             color: #fff;
-            padding: 14px 24px;
-            border-radius: 10px;
+            padding: 16px 28px;
+            border-radius: 16px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+            gap: 12px;
+            box-shadow: 0 12px 40px rgba(34, 197, 94, 0.4);
             transform: translateY(100px);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 9999;
         }
         

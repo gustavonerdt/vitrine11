@@ -57,11 +57,12 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* Border Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
+  /* Border Radius - Modernos e Arredondados */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
   --radius-full: 9999px;
 
   /* Shadows */
@@ -1660,7 +1661,6 @@ select {
     font-size: 0.7rem;
     gap: 6px;
   }
-}
 }
 
 .toast.success {
