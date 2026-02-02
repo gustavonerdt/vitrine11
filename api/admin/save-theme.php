@@ -6,12 +6,37 @@
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
+// CORS headers for same-origin requests
 header('Content-Type: application/json');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Access-Control-Allow-Credentials: true');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Accept');
+    http_response_code(200);
+    exit;
+}
+
+// Debug session info
+$sessionActive = session_status() === PHP_SESSION_ACTIVE;
+$hasUserId = isset($_SESSION['user_id']);
+$hasUserRole = isset($_SESSION['user_role']);
 
 // Verificar autenticacao usando as funcoes padrao do sistema
 if (!isLoggedIn() || !isAdmin()) {
     http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Nao autorizado']);
+    echo json_encode([
+        'success' => false, 
+        'error' => 'Nao autorizado. Verifique se esta logado como admin.',
+        'debug' => [
+            'session_active' => $sessionActive,
+            'has_user_id' => $hasUserId,
+            'has_user_role' => $hasUserRole,
+            'session_id' => session_id()
+        ]
+    ]);
     exit;
 }
 

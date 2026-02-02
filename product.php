@@ -281,43 +281,43 @@ if (!$is_ajax) {
                 $discountPercent = $hasDiscount ? round(((floatval($product['original_price']) - floatval($product['price'])) / floatval($product['original_price'])) * 100) : 0;
                 $economy = $hasDiscount ? floatval($product['original_price']) - floatval($product['price']) : 0;
                 ?>
-                <div class="product-price-section">
-                    <div class="price-main">
-                        <?php if ($hasDiscount): ?>
-                        <div class="price-discount-card">
-                            <div class="price-discount-header">
-                                <span class="discount-badge-large">-<?php echo $discountPercent; ?>% OFF</span>
-                                <span class="discount-label">Oferta Especial</span>
-                            </div>
-                            <div class="price-de-por">
-                                <div class="price-de">
-                                    <span class="price-de-label">de</span>
-                                    <span class="price-de-value">R$ <?php echo number_format($product['original_price'], 2, ',', '.'); ?></span>
-                                </div>
-                                <div class="price-por">
-                                    <span class="price-por-label">por</span>
-                                    <span class="price-por-value">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
-                                </div>
-                            </div>
-                            <div class="economy-badge">
-                                <i class="fas fa-piggy-bank"></i>
-                                <span>Economia de <strong>R$ <?php echo number_format($economy, 2, ',', '.'); ?></strong></span>
-                            </div>
-                            <div class="price-installments-box">
-                                <span class="installments-text">ou 10x de <strong>R$ <?php echo number_format($product['price'] / 10, 2, ',', '.'); ?></strong> no cartao</span>
-                            </div>
+                <?php if ($hasDiscount): ?>
+                <div class="product-price-card product-price-card--discount">
+                    <div class="price-card-header">
+                        <span class="price-discount-tag">-<?php echo $discountPercent; ?>%</span>
+                        <span class="price-offer-label">Oferta por tempo limitado</span>
+                    </div>
+                    <div class="price-card-body">
+                        <div class="price-original">
+                            <span class="price-from">de</span>
+                            <span class="price-old">R$ <?php echo number_format($product['original_price'], 2, ',', '.'); ?></span>
                         </div>
-                        <?php else: ?>
-                        <div class="price-normal-card">
-                            <span class="price-label-simple">Preco</span>
-                            <span class="price-value-large">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
-                            <div class="price-installments-box">
-                                <span class="installments-text">ou 10x de <strong>R$ <?php echo number_format($product['price'] / 10, 2, ',', '.'); ?></strong> no cartao</span>
-                            </div>
+                        <div class="price-current">
+                            <span class="price-to">por</span>
+                            <span class="price-value">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
                         </div>
-                        <?php endif; ?>
+                        <div class="price-savings">
+                            <i class="fas fa-tag"></i>
+                            <span>Voce economiza <strong>R$ <?php echo number_format($economy, 2, ',', '.'); ?></strong></span>
+                        </div>
+                    </div>
+                    <div class="price-card-footer">
+                        <span class="price-installments">ou <strong>10x</strong> de <strong>R$ <?php echo number_format($product['price'] / 10, 2, ',', '.'); ?></strong> sem juros</span>
                     </div>
                 </div>
+                <?php else: ?>
+                <div class="product-price-card">
+                    <div class="price-card-body">
+                        <div class="price-current price-current--single">
+                            <span class="price-label">Preco</span>
+                            <span class="price-value">R$ <?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                        </div>
+                    </div>
+                    <div class="price-card-footer">
+                        <span class="price-installments">ou <strong>10x</strong> de <strong>R$ <?php echo number_format($product['price'] / 10, 2, ',', '.'); ?></strong> sem juros</span>
+                    </div>
+                </div>
+                <?php endif; ?>
 
                 <!-- Variants Section -->
                 <?php if (!empty($productVariants)): ?>
@@ -1180,172 +1180,144 @@ html {
 }
 
 /* ============================================
-   PRICE CARD STYLES - De/Por Premium
+   PRICE CARD STYLES - Clean & Modern
    ============================================ */
-.price-discount-card {
-    background: linear-gradient(135deg, #ffffff 0%, #fef9e0 100%);
-    border: 2px solid #C7A333;
-    border-radius: 16px;
-    padding: 1.5rem;
-    position: relative;
+.product-price-card {
+    background: #ffffff;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.price-discount-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, rgba(199, 163, 51, 0.15) 0%, transparent 70%);
-    pointer-events: none;
+.product-price-card--discount {
+    border: 1px solid rgba(34, 197, 94, 0.25);
 }
 
-.price-discount-header {
+/* Header */
+.price-card-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
 }
 
-.discount-badge-large {
+.price-discount-tag {
     display: inline-flex;
     align-items: center;
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: #fff;
-    font-size: 1rem;
+    justify-content: center;
+    padding: 4px 10px;
+    background: #ffffff;
+    color: #22c55e;
+    font-size: 0.9rem;
     font-weight: 800;
-    border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    animation: pulseBadge 2s ease-in-out infinite;
+    border-radius: 6px;
 }
 
-@keyframes pulseBadge {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-}
-
-.discount-label {
+.price-offer-label {
+    color: #ffffff;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #ef4444;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
-.price-de-por {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+/* Body */
+.price-card-body {
+    padding: 20px 16px;
 }
 
-.price-de {
+.price-original {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 6px;
+    margin-bottom: 4px;
 }
 
-.price-de-label {
-    font-size: 0.9rem;
+.price-from {
+    font-size: 0.85rem;
     color: #888;
     font-weight: 500;
-    text-transform: lowercase;
 }
 
-.price-de-value {
-    font-size: 1.25rem;
+.price-old {
+    font-size: 1.1rem;
     color: #888;
     text-decoration: line-through;
     font-weight: 500;
 }
 
-.price-por {
+.price-current {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
-.price-por-label {
-    font-size: 1rem;
-    color: #22c55e;
-    font-weight: 600;
-    text-transform: lowercase;
-}
-
-.price-por-value {
-    font-size: 2.75rem;
-    color: #22c55e;
-    font-weight: 800;
-    font-family: 'Sora', sans-serif;
-    line-height: 1;
-    text-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
-}
-
-.economy-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1rem;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
-    border: 1.5px solid #22c55e;
-    border-radius: 10px;
-    color: #22c55e;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.economy-badge i {
-    font-size: 1rem;
-}
-
-.economy-badge strong {
-    font-weight: 800;
-}
-
-.price-installments-box {
-    padding: 0.75rem 1rem;
-    background: #f5f5f5;
-    border-radius: 8px;
-    border-left: 3px solid #C7A333;
-}
-
-.installments-text {
-    font-size: 0.9rem;
-    color: #555;
-}
-
-.installments-text strong {
-    color: #1a1a1a;
-    font-weight: 700;
-}
-
-/* Normal Price Card (sem desconto) */
-.price-normal-card {
-    display: flex;
+.price-current--single {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 4px;
 }
 
-.price-label-simple {
-    font-size: 0.9rem;
+.price-current--single .price-label {
+    font-size: 0.85rem;
     color: #888;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-.price-value-large {
-    font-size: 3rem;
+.price-to {
+    font-size: 0.95rem;
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.price-value {
+    font-size: 2.5rem;
+    color: #22c55e;
     font-weight: 800;
-    color: #C7A333;
-    font-family: 'Sora', sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1;
+}
+
+.product-price-card:not(.product-price-card--discount) .price-value {
+    color: #C7A333;
+}
+
+.price-savings {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 8px;
+    color: #16a34a;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.price-savings i {
+    font-size: 0.85rem;
+}
+
+.price-savings strong {
+    font-weight: 700;
+}
+
+/* Footer */
+.price-card-footer {
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-top: 1px solid #f0f0f0;
+}
+
+.price-installments {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.price-installments strong {
+    color: #1a1a1a;
+    font-weight: 700;
 }
 
 /* ============================================
@@ -1370,16 +1342,12 @@ html {
 
 /* Small Tablets / Large Phones (max-width: 768px) */
 @media (max-width: 768px) {
-    .price-por-value {
-        font-size: 2.25rem;
+    .price-value {
+        font-size: 2rem;
     }
     
-    .price-value-large {
-        font-size: 2.5rem;
-    }
-    
-    .price-discount-card {
-        padding: 1.25rem;
+    .price-card-body {
+        padding: 16px 14px;
     }
     
     .product-detail-wrapper {
@@ -1426,12 +1394,8 @@ html {
 
 /* Medium Phones (max-width: 639px) */
 @media (max-width: 639px) {
-    .price-por-value {
-        font-size: 2rem;
-    }
-    
-    .price-value-large {
-        font-size: 2.25rem;
+    .price-value {
+        font-size: 1.85rem;
     }
     
     .product-title-name {
@@ -1457,16 +1421,16 @@ html {
 
 /* Small Phones (max-width: 479px) */
 @media (max-width: 479px) {
-    .price-por-value {
-        font-size: 1.75rem;
+    .price-value {
+        font-size: 1.65rem;
     }
     
-    .price-value-large {
-        font-size: 2rem;
+    .price-card-body {
+        padding: 14px 12px;
     }
     
-    .price-discount-card {
-        padding: 1rem;
+    .price-card-header {
+        padding: 10px 12px;
     }
     
     .product-detail-wrapper {
@@ -1524,12 +1488,8 @@ html {
 
 /* Extra Small Phones (max-width: 359px) */
 @media (max-width: 359px) {
-    .price-por-value {
+    .price-value {
         font-size: 1.5rem;
-    }
-    
-    .price-value-large {
-        font-size: 1.75rem;
     }
     
     .product-title-name {
