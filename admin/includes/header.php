@@ -1,6 +1,10 @@
 <?php
-// Admin Header Component
-$currentUser = getCurrentUser($pdo);
+/**
+ * Admin Header Component
+ * Links corrigidos para navegacao
+ */
+$currentUser = function_exists('getCurrentUser') && isset($pdo) ? getCurrentUser($pdo) : ['name' => 'Admin'];
+$app_url = defined('APP_URL') ? APP_URL : '';
 ?>
 <header class="admin-header">
     <div class="admin-header-left">
@@ -10,7 +14,7 @@ $currentUser = getCurrentUser($pdo);
         
         <!-- Breadcrumb -->
         <nav class="breadcrumb-nav" id="breadcrumbNav">
-            <a href="<?php echo APP_URL; ?>/admin/dashboard.php">
+            <a href="<?php echo $app_url; ?>/admin/dashboard.php">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
@@ -63,16 +67,16 @@ $currentUser = getCurrentUser($pdo);
                 <i class="fas fa-chevron-down" style="font-size: 0.65rem; color: var(--muted-foreground); margin-left: 4px;"></i>
             </div>
             <div class="dropdown-menu" id="userDropdownMenu">
-                <a href="<?php echo APP_URL; ?>/admin/settings.php" class="dropdown-item">
+                <a href="<?php echo $app_url; ?>/admin/settings.php" class="dropdown-item">
                     <i class="fas fa-cog"></i>
                     Configuracoes
                 </a>
-                <a href="<?php echo APP_URL; ?>" target="_blank" class="dropdown-item">
+                <a href="<?php echo $app_url; ?>" target="_blank" class="dropdown-item">
                     <i class="fas fa-external-link-alt"></i>
                     Ver Vitrine
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="<?php echo APP_URL; ?>/api/logout.php" class="dropdown-item" style="color: var(--error);">
+                <a href="<?php echo $app_url; ?>/api/logout.php" class="dropdown-item" style="color: var(--admin-error);">
                     <i class="fas fa-sign-out-alt"></i>
                     Sair
                 </a>

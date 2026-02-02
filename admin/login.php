@@ -15,8 +15,12 @@ $csrf = generateCsrfToken();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | <?php echo APP_NAME; ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Admin Login | <?php echo defined('APP_NAME') ? APP_NAME : 'Admin'; ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo defined('APP_URL') ? APP_URL : ''; ?>/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="auth-page">
@@ -46,7 +50,7 @@ $csrf = generateCsrfToken();
             </form>
 
             <p class="auth-footer">
-                <a href="<?php echo APP_URL; ?>">← Voltar ao site</a>
+                <a href="<?php echo defined('APP_URL') ? APP_URL : '/'; ?>">Voltar ao site</a>
             </p>
         </div>
     </div>

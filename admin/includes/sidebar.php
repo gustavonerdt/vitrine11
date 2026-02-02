@@ -1,6 +1,10 @@
 <?php
-// Admin Sidebar Component - Modern Rounded Design with Submenus
+/**
+ * Admin Sidebar Component - Design Moderno com Submenus
+ * Links corrigidos para navegacao interna do admin
+ */
 $current_page = basename($_SERVER['PHP_SELF']);
+$admin_base = defined('APP_URL') ? APP_URL . '/admin/' : '/admin/';
 
 // Verificar status dos banners
 $bannersStatus = 'inactive';
@@ -8,7 +12,7 @@ $bannersStatusIcon = 'fa-times-circle';
 $bannersStatusColor = '#ef4444';
 
 if (defined('FEATURE_BANNERS_ENABLED') && FEATURE_BANNERS_ENABLED == 1) {
-    if (isset($pdo) && db_table_exists($pdo, 'banners')) {
+    if (isset($pdo) && function_exists('db_table_exists') && db_table_exists($pdo, 'banners')) {
         try {
             $stmt = $pdo->prepare("SELECT is_active, carousel_images FROM banners WHERE carousel_type = 'carousel' LIMIT 1");
             $stmt->execute();
@@ -40,8 +44,8 @@ $musicStatusColor = '#ef4444';
 
 if ($musicEnabled == 1 && isset($pdo)) {
     try {
-        $musicIsActive = getSetting($pdo, 'music_is_active', 0);
-        $musicFilePath = getSetting($pdo, 'music_file_path', '');
+        $musicIsActive = function_exists('getSetting') ? getSetting($pdo, 'music_is_active', 0) : 0;
+        $musicFilePath = function_exists('getSetting') ? getSetting($pdo, 'music_file_path', '') : '';
         
         if ((int)$musicIsActive == 1 && !empty($musicFilePath)) {
             $musicStatus = 'active';
@@ -55,7 +59,7 @@ if ($musicEnabled == 1 && isset($pdo)) {
 
 // Contar pedidos nao vistos
 $unseenOrdersCount = 0;
-if (isset($pdo) && db_table_exists($pdo, 'orders')) {
+if (isset($pdo) && function_exists('db_table_exists') && db_table_exists($pdo, 'orders')) {
     try {
         $stmt = $pdo->query("SELECT COUNT(*) as count FROM orders WHERE viewed_at IS NULL");
         $result = $stmt->fetch();
@@ -67,7 +71,7 @@ if (isset($pdo) && db_table_exists($pdo, 'orders')) {
 
 // Contar leads nao lidos
 $unreadLeadsCount = 0;
-if (isset($pdo) && db_table_exists($pdo, 'leads')) {
+if (isset($pdo) && function_exists('db_table_exists') && db_table_exists($pdo, 'leads')) {
     try {
         $stmt = $pdo->query("SELECT COUNT(*) as count FROM leads WHERE is_read = 0 OR is_read IS NULL");
         $result = $stmt->fetch();
@@ -86,9 +90,9 @@ $mediaPages = ['music.php', 'music-upsell.php'];
 ?>
 <aside class="sidebar" id="adminSidebar">
     <div class="sidebar-header">
-        <a href="<?php echo APP_URL; ?>" class="sidebar-logo" target="_blank">
+        <a href="<?php echo defined('APP_URL') ? APP_URL : '/'; ?>" class="sidebar-logo" target="_blank">
             <img src="<?php echo defined('LOGO_URL') ? LOGO_URL : ''; ?>" alt="Logo" class="sidebar-logo-img">
-            <span class="sidebar-app-name"><?php echo htmlspecialchars(APP_NAME); ?></span>
+            <span class="sidebar-app-name"><?php echo defined('APP_NAME') ? htmlspecialchars(APP_NAME) : 'Admin'; ?></span>
         </a>
     </div>
     
@@ -282,13 +286,13 @@ $mediaPages = ['music.php', 'music-upsell.php'];
         <!-- LINKS RAPIDOS -->
         <ul class="sidebar-menu">
             <li>
-                <a href="<?php echo APP_URL; ?>" target="_blank" data-title="Ver Vitrine">
+                <a href="<?php echo defined('APP_URL') ? APP_URL : '/'; ?>" target="_blank" data-title="Ver Vitrine">
                     <i class="fas fa-external-link-alt"></i>
                     <span>Ver Vitrine</span>
                 </a>
             </li>
             <li>
-                <a href="<?php echo APP_URL; ?>/api/logout.php" class="logout-link" data-title="Sair">
+                <a href="<?php echo defined('APP_URL') ? APP_URL : ''; ?>/api/logout.php" class="logout-link" data-title="Sair">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Sair</span>
                 </a>

@@ -1,34 +1,45 @@
 <?php
-// includes/public-header.php - Header público (sem login)
+/**
+ * Public Header - Frontend publico da vitrine
+ * Links e CSS corrigidos
+ */
 if (!defined('APP_NAME')) {
     require_once __DIR__ . '/../config.php';
 }
-$appName = getSetting($pdo, 'app_name', APP_NAME);
+$appName = function_exists('getSetting') && isset($pdo) ? getSetting($pdo, 'app_name', APP_NAME) : (defined('APP_NAME') ? APP_NAME : 'Vitrine');
+$app_url = defined('APP_URL') ? APP_URL : '';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?><?php echo htmlspecialchars($appName); ?></title>
-    <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/style.css">
+    <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) . ' - ' : ''; ?><?php echo htmlspecialchars($appName); ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo $app_url; ?>/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <?php 
-    $faviconUrl = getSetting($pdo, 'favicon_url', LOGO_URL);
+    $faviconUrl = function_exists('getSetting') && isset($pdo) ? getSetting($pdo, 'favicon_url', (defined('LOGO_URL') ? LOGO_URL : '')) : (defined('LOGO_URL') ? LOGO_URL : '');
     if (!empty($faviconUrl)) {
         if (!preg_match('/^https?:\/\//i', $faviconUrl)) {
-            $faviconUrl = rtrim(APP_URL, '/') . '/' . ltrim($faviconUrl, '/');
+            $faviconUrl = rtrim($app_url, '/') . '/' . ltrim($faviconUrl, '/');
         }
     } else {
-        $faviconUrl = LOGO_URL;
+        $faviconUrl = defined('LOGO_URL') ? LOGO_URL : '';
     }
     ?>
+    <?php if (!empty($faviconUrl)): ?>
     <link rel="icon" href="<?php echo htmlspecialchars($faviconUrl); ?>" type="image/png">
+    <?php endif; ?>
+    <?php if (file_exists(__DIR__ . '/dynamic-colors.php')): ?>
     <?php include __DIR__ . '/dynamic-colors.php'; ?>
-    <script src="<?php echo APP_URL; ?>/assets/js/tracking.js"></script>
+    <?php endif; ?>
+    <script src="<?php echo $app_url; ?>/assets/js/tracking.js"></script>
 </head>
-<body class="<?php echo isset($bodyClass) ? $bodyClass : ''; ?>">
-    <script>window.APP_URL = '<?php echo APP_URL; ?>';</script>
+<body class="<?php echo isset($bodyClass) ? htmlspecialchars($bodyClass) : ''; ?>">
+    <script>window.APP_URL = '<?php echo $app_url; ?>';</script>
     
     <?php 
     // Incluir popup de recuperacao de carrinho abandonado
@@ -55,36 +66,4 @@ $appName = getSetting($pdo, 'app_name', APP_NAME);
 	    <?php endif; ?>
 	    
 	    <main class="public-main">
-
-<style>
-.public-header {
-    background: #1F1F1F;
-    border-bottom: 1px solid #2A2A2A;
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo-link {
-    display: flex;
-    align-items: center;
-}
-
-.header-logo {
-    max-width: 200px;
-    max-height: 60px;
-    object-fit: contain;
-}
-
-.public-main {
-    min-height: calc(100vh - 80px);
-}
-</style>
 
