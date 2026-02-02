@@ -1579,7 +1579,7 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                   <a href="<?php echo APP_URL; ?>/carrinho.php?add=<?php echo $p['id']; ?>"
 	   class="cta-wpp-38126317318"
 	   data-prod-ref="31376312798-<?= $p['id'] ?>">
-	    <i class="icon-wpp-03813791873 fab fa-whatsapp"></i>
+	    <i class="icon-wpp-03813791873 fas fa-shopping-cart"></i>
 	    <span class="label-wpp-38126317318">ADICIONAR <br>AO CARRINHO</span>
 	</a>
 <style>/* ================= CONTAINER ================= */
