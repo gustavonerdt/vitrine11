@@ -608,81 +608,117 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
     }
     .empty-state {
         text-align: center;
-        padding: 3rem 2rem;
-        background: rgba(199, 163, 51, 0.05);
-        border: 2px dashed #C7A333;
-        border-radius: 20px;
-        max-width: 500px;
+        padding: 2.5rem 2rem;
+        background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%);
+        border: 1px solid rgba(199, 163, 51, 0.25);
+        border-radius: 24px;
+        max-width: 480px;
         margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 
+            0 4px 24px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(199, 163, 51, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .empty-state::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(199, 163, 51, 0.4), transparent);
+    }
+    .empty-state::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 20%, rgba(199, 163, 51, 0.06) 0%, transparent 50%);
+        pointer-events: none;
     }
     .empty-state-icon {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #C7A333, #d4af37);
-        border-radius: 50%;
+        width: 72px;
+        height: 72px;
+        background: linear-gradient(145deg, #C7A333, #a8892a);
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
-        box-shadow: 0 10px 30px rgba(199, 163, 51, 0.3);
+        box-shadow: 
+            0 8px 24px rgba(199, 163, 51, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        position: relative;
+        z-index: 1;
     }
     .empty-state-icon i {
-        font-size: 2rem;
-        color: #fff;
+        font-size: 1.75rem;
+        color: #000;
     }
     .empty-state h3 {
         font-family: 'Sora', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #C7A333;
-        margin-bottom: 0.75rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
     }
     .empty-state p {
-        color: #C7A333;
-        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
         line-height: 1.6;
-        margin-bottom: 1.5rem;
-        opacity: 0.85;
+        margin-bottom: 1.75rem;
+        position: relative;
+        z-index: 1;
     }
     .empty-state-actions {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
         align-items: center;
+        position: relative;
+        z-index: 1;
     }
     .btn-clear-filters-empty,
     .btn-expert-empty {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.85rem 1.5rem;
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 0.9rem;
+        padding: 0.85rem 1.75rem;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 0.875rem;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         min-width: 200px;
         justify-content: center;
     }
     .btn-clear-filters-empty {
-        background: #C7A333;
+        background: linear-gradient(145deg, #C7A333, #a8892a);
         color: #000;
-        border: 2px solid #C7A333;
+        border: none;
+        box-shadow: 0 4px 16px rgba(199, 163, 51, 0.3);
     }
     .btn-clear-filters-empty:hover {
-        background: #000;
-        color: #C7A333;
-        border-color: #000;
+        background: linear-gradient(145deg, #d4af37, #C7A333);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(199, 163, 51, 0.4);
     }
     .btn-expert-empty {
-        background: transparent;
+        background: rgba(255, 255, 255, 0.04);
         color: #C7A333;
-        border: 2px solid #C7A333;
+        border: 1px solid rgba(199, 163, 51, 0.3);
+        backdrop-filter: blur(4px);
     }
     .btn-expert-empty:hover {
-        background: #000;
-        color: #C7A333;
-        border-color: #000;
+        background: rgba(199, 163, 51, 0.1);
+        border-color: rgba(199, 163, 51, 0.5);
+        transform: translateY(-2px);
     }
 </style>
 <style>
