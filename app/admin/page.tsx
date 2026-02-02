@@ -5,10 +5,8 @@ import {
   DollarSign,
   TrendingUp,
   TrendingDown,
-  Eye,
   ArrowUpRight,
 } from "lucide-react"
-import Link from "next/link"
 
 const stats = [
   {
@@ -33,7 +31,7 @@ const stats = [
     change: "+3.1%",
     trend: "up",
     icon: Package,
-    color: "green",
+    color: "emerald",
   },
   {
     title: "Clientes",
@@ -41,7 +39,7 @@ const stats = [
     change: "-2.4%",
     trend: "down",
     icon: Users,
-    color: "purple",
+    color: "violet",
   },
 ]
 
@@ -52,7 +50,7 @@ const recentOrders = [
     product: "Perfume Channel N5",
     total: "R$ 450,00",
     status: "Entregue",
-    statusColor: "green",
+    statusColor: "emerald",
   },
   {
     id: "#12346",
@@ -84,7 +82,7 @@ const recentOrders = [
     product: "Perfume Gucci Bloom",
     total: "R$ 520,00",
     status: "Entregue",
-    statusColor: "green",
+    statusColor: "emerald",
   },
 ]
 
@@ -101,11 +99,11 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 text-balance">Dashboard</h1>
           <p className="text-zinc-500 text-sm mt-1">Visao geral do seu e-commerce</p>
         </div>
         <div className="flex items-center gap-3">
-          <select className="px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500">
+          <select className="px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 cursor-pointer">
             <option>Ultimos 7 dias</option>
             <option>Ultimos 30 dias</option>
             <option>Ultimos 90 dias</option>
@@ -118,25 +116,25 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon
-          const colorClasses = {
+          const colorClasses: Record<string, string> = {
             amber: "bg-amber-100 text-amber-600",
             blue: "bg-blue-100 text-blue-600",
-            green: "bg-green-100 text-green-600",
-            purple: "bg-purple-100 text-purple-600",
+            emerald: "bg-emerald-100 text-emerald-600",
+            violet: "bg-violet-100 text-violet-600",
           }
           return (
             <div
               key={stat.title}
-              className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:border-zinc-300 transition-all duration-200"
+              className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:border-zinc-300 transition-all duration-200 card-hover"
             >
               <div className="flex items-start justify-between">
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[stat.color as keyof typeof colorClasses]}`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[stat.color]}`}
                 >
                   <Icon className="w-6 h-6" />
                 </div>
                 <div
-                  className={`flex items-center gap-1 text-sm font-medium ${stat.trend === "up" ? "text-green-600" : "text-red-600"}`}
+                  className={`flex items-center gap-1 text-sm font-medium ${stat.trend === "up" ? "text-emerald-600" : "text-red-500"}`}
                 >
                   {stat.trend === "up" ? (
                     <TrendingUp className="w-4 h-4" />
@@ -159,17 +157,14 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-          <div className="px-5 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+          <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
             <h2 className="font-semibold text-zinc-900 flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-amber-600" />
+              <ShoppingCart className="w-5 h-5 text-amber-500" />
               Pedidos Recentes
             </h2>
-            <Link
-              href="/admin/orders"
-              className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1"
-            >
+            <button className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 transition-colors">
               Ver todos <ArrowUpRight className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -194,18 +189,18 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
-                    <td className="py-3 px-5 text-sm font-medium text-zinc-900">{order.id}</td>
-                    <td className="py-3 px-5 text-sm text-zinc-600">{order.customer}</td>
-                    <td className="py-3 px-5 text-sm text-zinc-600 hidden md:table-cell">{order.product}</td>
-                    <td className="py-3 px-5 text-sm font-semibold text-zinc-900">{order.total}</td>
-                    <td className="py-3 px-5">
+                  <tr key={order.id} className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors">
+                    <td className="py-3.5 px-5 text-sm font-medium text-zinc-900">{order.id}</td>
+                    <td className="py-3.5 px-5 text-sm text-zinc-600">{order.customer}</td>
+                    <td className="py-3.5 px-5 text-sm text-zinc-600 hidden md:table-cell">{order.product}</td>
+                    <td className="py-3.5 px-5 text-sm font-semibold text-zinc-900">{order.total}</td>
+                    <td className="py-3.5 px-5">
                       <span
                         className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium
-                          ${order.statusColor === "green" ? "bg-green-100 text-green-700" : ""}
+                          ${order.statusColor === "emerald" ? "bg-emerald-100 text-emerald-700" : ""}
                           ${order.statusColor === "amber" ? "bg-amber-100 text-amber-700" : ""}
                           ${order.statusColor === "blue" ? "bg-blue-100 text-blue-700" : ""}
-                          ${order.statusColor === "zinc" ? "bg-zinc-100 text-zinc-700" : ""}
+                          ${order.statusColor === "zinc" ? "bg-zinc-100 text-zinc-600" : ""}
                         `}
                       >
                         {order.status}
@@ -220,24 +215,24 @@ export default function AdminDashboard() {
 
         {/* Top Products */}
         <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-          <div className="px-5 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+          <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
             <h2 className="font-semibold text-zinc-900 flex items-center gap-2">
-              <Package className="w-5 h-5 text-amber-600" />
+              <Package className="w-5 h-5 text-amber-500" />
               Produtos Mais Vendidos
             </h2>
           </div>
           <div className="p-5 space-y-4">
             {topProducts.map((product, index) => (
               <div key={product.name} className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-amber-700 font-bold text-sm">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-amber-700 font-bold text-sm flex-shrink-0">
                   {index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-zinc-900 truncate">{product.name}</p>
-                  <p className="text-sm text-zinc-500">{product.sales} vendas</p>
+                  <p className="font-medium text-zinc-900 truncate text-sm">{product.name}</p>
+                  <p className="text-xs text-zinc-500">{product.sales} vendas</p>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-zinc-900">{product.revenue}</p>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-semibold text-zinc-900 text-sm">{product.revenue}</p>
                 </div>
               </div>
             ))}
@@ -247,42 +242,22 @@ export default function AdminDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Link
-          href="/admin/products"
-          className="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-zinc-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 group"
-        >
-          <div className="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors">
-            <Package className="w-7 h-7 text-amber-600 group-hover:text-black transition-colors" />
-          </div>
-          <span className="font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">Novo Produto</span>
-        </Link>
-        <Link
-          href="/admin/orders"
-          className="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-zinc-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 group"
-        >
-          <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors">
-            <ShoppingCart className="w-7 h-7 text-blue-600 group-hover:text-black transition-colors" />
-          </div>
-          <span className="font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">Ver Pedidos</span>
-        </Link>
-        <Link
-          href="/admin/users"
-          className="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-zinc-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 group"
-        >
-          <div className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors">
-            <Users className="w-7 h-7 text-green-600 group-hover:text-black transition-colors" />
-          </div>
-          <span className="font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">Clientes</span>
-        </Link>
-        <Link
-          href="/admin/stats"
-          className="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-zinc-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 group"
-        >
-          <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors">
-            <Eye className="w-7 h-7 text-purple-600 group-hover:text-black transition-colors" />
-          </div>
-          <span className="font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">Relatorios</span>
-        </Link>
+        {[
+          { icon: Package, label: "Novo Produto", color: "bg-amber-100" },
+          { icon: ShoppingCart, label: "Ver Pedidos", color: "bg-blue-100" },
+          { icon: Users, label: "Clientes", color: "bg-emerald-100" },
+          { icon: DollarSign, label: "Relatorios", color: "bg-violet-100" },
+        ].map((action) => (
+          <button
+            key={action.label}
+            className="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-zinc-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 group"
+          >
+            <div className={`w-14 h-14 rounded-xl ${action.color} flex items-center justify-center group-hover:bg-amber-500 transition-colors`}>
+              <action.icon className="w-7 h-7 text-zinc-700 group-hover:text-white transition-colors" />
+            </div>
+            <span className="font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors text-sm">{action.label}</span>
+          </button>
+        ))}
       </div>
     </div>
   )
