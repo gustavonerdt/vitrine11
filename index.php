@@ -966,19 +966,26 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
                                         <?php else: ?>
                                         <div class="product-price-modern"><?php echo formatPrice($sp['price']); ?></div>
                                         <?php endif; ?>
-                                        <div class="price-installments" style="font-size: 0.75rem; color: #888; margin-top: 2px; font-weight: 500;">10x de R$ <?php echo number_format($sp['price'] / 10, 2, ',', '.'); ?> <span style="font-size: 0.65rem; opacity: 0.8;">+ taxas</span></div>
+                                        <?php 
+                                        // Calcular parcela com taxa Mercado Pago (aprox 2.99% ao mes)
+                                        $taxaMensal = 0.0299;
+                                        $numParcelas = 10;
+                                        $precoBase = floatval($sp['price']);
+                                        $valorParcela = ($precoBase * (1 + ($taxaMensal * $numParcelas))) / $numParcelas;
+                                        ?>
+                                        <div class="price-installments" style="font-size: 0.75rem; color: #888; margin-top: 2px; font-weight: 500;">ou 10x de R$ <?php echo number_format($valorParcela, 2, ',', '.'); ?></div>
                                     </div>
                                 </a>
                               
                                 <div class="product-actions-modern">
-                                    <a href="<?php echo $product_url; ?>" class="btn-view-details">
-                                        <i class="fas fa-eye"></i>
-                                        <span>Ver</span>
+                                    <a href="<?php echo $product_url; ?>" class="btn-view-details" style="color: #000 !important;">
+                                        <i class="fas fa-eye" style="color: #000 !important;"></i>
+                                        <span style="color: #000 !important;">Ver</span>
                                     </a>
-                                    <!-- Botão Adicionar ao Carrinho -->
-                                      <a href="<?php echo APP_URL; ?>/carrinho.php?add=<?php echo $productId; ?>" class="btn-whatsapp-modern btn-add-cart" data-product-id="<?php echo htmlspecialchars($productId); ?>">
+                                    <!-- Botao Adicionar ao Carrinho -->
+                                    <a href="<?php echo APP_URL; ?>/carrinho.php?add=<?php echo $sp['id']; ?>" class="btn-whatsapp-modern btn-add-cart" data-product-id="<?php echo htmlspecialchars($sp['id']); ?>">
                                         <i class="fas fa-shopping-cart"></i>
-                                        <span>ADICIONAR <br>AO CARRINHO</span>
+                                        <span>Adicionar</span>
                                     </a>
                                 </div>
                             </article>

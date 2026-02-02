@@ -169,7 +169,7 @@ include __DIR__ . '/includes/public-header.php';
     .qty-display { width: 30px; text-align: center; font-weight: 900; color: #000; font-size: 1.1rem; }
 
     .cart-summary { background: #fff; border-radius: 24px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.03); height: fit-content; position: sticky; top: 100px; border: 1px solid #f0f0f0; }
-    .btn-checkout { display: block; width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; text-align: center; border-radius: 16px; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2); transition: 0.3s; text-decoration: none; }
+    .btn-checkout { display: block; width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #C7A333, #B8962E); color: #fff !important; text-align: center; border-radius: 24px; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; box-shadow: 0 10px 20px rgba(199, 163, 51, 0.3); transition: 0.3s; text-decoration: none; }
     .btn-checkout:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3); }
 
     /* ORDER BUMPS - CARROSSEL */
@@ -374,7 +374,7 @@ include __DIR__ . '/includes/public-header.php';
                                     <div class="bump-price"><?php echo formatPrice($bump['price']); ?></div>
                                     <?php endif; ?>
                                 </div>
-                                <button class="btn-add-bump-direct" onclick="addToCart(<?php echo $bump['id']; ?>, 1)">ADICIONAR</button>
+                                <button class="btn-add-bump-direct" onclick="addToCartAndScroll(<?php echo $bump['id']; ?>, 1)">ADICIONAR</button>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -475,6 +475,68 @@ function scrollBumps(direction) {
     const track = document.getElementById('bumpsTrack');
     const scrollAmount = 260 * 2; 
     track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+
+// Autoplay do carrossel de achadinhos - a cada 8 segundos
+let bumpsAutoplay;
+function startBumpsAutoplay() {
+    bumpsAutoplay = setInterval(function() {
+        const track = document.getElementById('bumpsTrack');
+        if (track) {
+            // Verifica se chegou ao final
+            if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 10) {
+                // Volta ao inicio
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                scrollBumps(1);
+            }
+        }
+    }, 8000);
+}
+
+// Pausar autoplay ao interagir com o carrossel
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('bumpsTrack');
+    if (track) {
+        startBumpsAutoplay();
+        
+        track.addEventListener('mouseenter', function() {
+            clearInterval(bumpsAutoplay);
+        });
+        
+        track.addEventListener('mouseleave', function() {
+            startBumpsAutoplay();
+        });
+        
+        track.addEventListener('touchstart', function() {
+            clearInterval(bumpsAutoplay);
+        });
+        
+        track.addEventListener('touchend', function() {
+            setTimeout(startBumpsAutoplay, 3000);
+        });
+    }
+});
+
+// Scroll para o topo ao adicionar produto do carrossel
+function addToCartAndScroll(id, qty) {
+    const fd = new FormData();
+    fd.append('product_id', id);
+    fd.append('quantity', qty);
+    
+    // Scroll suave para o topo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    fetch('<?php echo APP_URL; ?>/api/add-to-cart.php', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(d => { 
+        if(d.success) {
+            location.reload(); 
+        } else {
+            alert('Erro ao adicionar: ' + (d.error || 'Erro desconhecido'));
+        }
+    })
+    .catch(err => console.error('Erro de rede:', err));
 }
 </script>
 

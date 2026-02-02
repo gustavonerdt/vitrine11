@@ -832,21 +832,31 @@ html {
     align-items: stretch;
 }
 
-.shipping-calculator-form input[type="text"] {
+.shipping-calculator-form input[type="text"],
+.shipping-calculator-form input[type="tel"] {
     flex: 1;
-    padding: 0.875rem 1rem;
-    border: 2px solid var(--color-beige-dark);
-    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 16px;
     font-size: 1rem;
     font-family: 'Inter', sans-serif;
-    transition: all 0.3s;
-    background: #fff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-.shipping-calculator-form input[type="text"]:focus {
+.shipping-calculator-form input[type="text"]:focus,
+.shipping-calculator-form input[type="tel"]:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(199, 163, 51, 0.15);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(199, 163, 51, 0.15), 0 4px 16px rgba(199, 163, 51, 0.1), inset 0 0 0 1px rgba(199, 163, 51, 0.3);
+    transform: translateY(-1px);
+}
+
+.shipping-calculator-form input::placeholder {
+    color: #999;
+    font-weight: 500;
 }
 
 .shipping-calculator-form button {
@@ -2341,7 +2351,7 @@ document.getElementById('shipping-cep')?.addEventListener('keypress', function(e
     }
 });
 
-// Carousel Navigation
+// Carousel Navigation com Autoplay
 document.addEventListener('DOMContentLoaded', function() {
     const carousel = document.getElementById('recommendedCarousel');
     const prevBtn = document.getElementById('carouselPrev');
@@ -2350,19 +2360,52 @@ document.addEventListener('DOMContentLoaded', function() {
     if (carousel && prevBtn && nextBtn) {
         const itemWidth = carousel.querySelector('.carousel-item')?.offsetWidth || 0;
         const gap = 24;
+        let autoplayInterval;
+        
+        function scrollCarouselNext() {
+            const isAtEnd = carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth - 10);
+            if (isAtEnd) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: itemWidth + gap, behavior: 'smooth' });
+            }
+        }
+        
+        function startAutoplay() {
+            autoplayInterval = setInterval(scrollCarouselNext, 8000);
+        }
+        
+        function stopAutoplay() {
+            clearInterval(autoplayInterval);
+        }
+        
+        // Iniciar autoplay
+        startAutoplay();
+        
+        // Pausar ao interagir
+        carousel.addEventListener('mouseenter', stopAutoplay);
+        carousel.addEventListener('mouseleave', startAutoplay);
+        carousel.addEventListener('touchstart', stopAutoplay);
+        carousel.addEventListener('touchend', function() {
+            setTimeout(startAutoplay, 3000);
+        });
         
         prevBtn.addEventListener('click', function() {
+            stopAutoplay();
             carousel.scrollBy({
                 left: -(itemWidth + gap),
                 behavior: 'smooth'
             });
+            setTimeout(startAutoplay, 5000);
         });
         
         nextBtn.addEventListener('click', function() {
+            stopAutoplay();
             carousel.scrollBy({
                 left: itemWidth + gap,
                 behavior: 'smooth'
             });
+            setTimeout(startAutoplay, 5000);
         });
         
         function updateButtonStates() {
