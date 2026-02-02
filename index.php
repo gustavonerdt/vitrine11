@@ -871,15 +871,15 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
     border-radius: 5px;
 }
 
-/* Responsive Showcase */
-@media (max-width: 768px) {
+/* Responsive Showcase - Tablets */
+@media (max-width: 1023px) {
     .showcase-carousel-section {
         padding: 2rem 0;
     }
     
     .showcase-carousel-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
         gap: 1rem;
     }
     
@@ -887,44 +887,180 @@ $faixaInterval = getSetting($pdo, 'faixa_interval', '4000');
         font-size: 1.5rem;
     }
     
-    .showcase-nav-controls {
-        align-self: flex-end;
-        margin-top: -3rem;
-    }
-    
-    .showcase-nav-btn {
-        width: 38px;
-        height: 38px;
-    }
-    
-    .showcase-products-carousel {
-        margin: 0 -0.5rem;
-        padding: 0 0.5rem;
-        padding-bottom: 2rem !important;
+    .showcase-products-carousel .product-card-modern.showcase-card {
+        min-height: auto;
     }
 }
 
-@media (max-width: 480px) {
-    .showcase-carousel-title {
-        font-size: 1.25rem;
+/* Responsive Showcase - Phones Landscape */
+@media (max-width: 767px) {
+    .showcase-carousel-section {
+        padding: 1.5rem 0;
     }
     
-    .showcase-badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.625rem;
+    .showcase-carousel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .showcase-carousel-title {
+        font-size: 1.375rem;
+    }
+    
+    .showcase-carousel-description {
+        font-size: 0.85rem;
+        display: none;
     }
     
     .showcase-nav-controls {
-        margin-top: -2.5rem;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    
+    .showcase-header-left {
+        position: relative;
+        width: 100%;
+        padding-right: 100px;
     }
     
     .showcase-nav-btn {
-        width: 34px;
-        height: 34px;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .showcase-products-carousel {
+        margin: 0 -12px;
+        padding: 0 12px;
+        padding-bottom: 2rem !important;
+    }
+    
+    /* Product card inside carousel */
+    .showcase-products-carousel .product-info-modern {
+        padding: 10px;
+    }
+    
+    .showcase-products-carousel .product-name-modern {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 2;
+    }
+    
+    .showcase-products-carousel .product-brand-modern {
+        font-size: 0.65rem;
+    }
+    
+    .showcase-products-carousel .showcase-price {
+        font-size: 1rem !important;
+    }
+    
+    .showcase-products-carousel .price-prefix {
+        font-size: 0.6rem;
+    }
+    
+    .showcase-products-carousel .price-installments {
+        font-size: 0.6rem !important;
+    }
+    
+    .showcase-products-carousel .product-actions-modern {
+        padding: 6px 10px 10px;
+    }
+    
+    .showcase-products-carousel .product-actions-modern a {
+        padding: 8px 10px;
+        font-size: 0.7rem;
+    }
+    
+    .showcase-products-carousel .product-actions-modern span {
+        display: none;
+    }
+}
+
+/* Responsive Showcase - Small Phones */
+@media (max-width: 479px) {
+    .showcase-carousel-section {
+        padding: 1.25rem 0;
+    }
+    
+    .showcase-carousel-title {
+        font-size: 1.125rem;
+    }
+    
+    .showcase-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .showcase-header-left {
+        padding-right: 80px;
+    }
+    
+    .showcase-nav-btn {
+        width: 32px;
+        height: 32px;
     }
     
     .showcase-nav-btn i {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
+    }
+    
+    .showcase-products-carousel {
+        margin: 0 -10px;
+        padding: 0 10px;
+    }
+    
+    /* Ultra compact product cards */
+    .showcase-products-carousel .product-card-modern.showcase-card {
+        border-radius: 10px;
+    }
+    
+    .showcase-products-carousel .product-info-modern {
+        padding: 8px;
+    }
+    
+    .showcase-products-carousel .product-name-modern {
+        font-size: 0.75rem;
+        min-height: auto;
+    }
+    
+    .showcase-products-carousel .product-brand-modern {
+        font-size: 0.6rem;
+        margin-bottom: 2px;
+    }
+    
+    .showcase-products-carousel .showcase-price {
+        font-size: 0.9rem !important;
+    }
+    
+    .showcase-products-carousel .price-installments {
+        font-size: 0.55rem !important;
+        margin-top: 1px !important;
+    }
+    
+    .showcase-products-carousel .product-actions-modern {
+        padding: 4px 8px 8px;
+        gap: 4px;
+    }
+    
+    .showcase-products-carousel .product-actions-modern a {
+        padding: 6px 8px;
+        font-size: 0.65rem;
+        border-radius: 6px;
+    }
+    
+    .showcase-products-carousel .btn-view-details {
+        min-width: 32px;
+        padding: 6px !important;
+    }
+    
+    /* Swiper pagination smaller */
+    .showcase-products-carousel .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .showcase-products-carousel .swiper-pagination-bullet-active {
+        width: 18px;
     }
 }
 
@@ -1833,6 +1969,143 @@ a.cta-wpp-38126317318[data-prod-ref] .label-wpp-38126317318 {
 .search-submit-btn i {
     font-size: 1rem;
 }
+
+/* ============================================
+   SEARCH BAR RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .search-input {
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        padding-right: 55px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+        border-radius: 10px;
+    }
+    
+    .search-icon {
+        left: 1rem;
+        font-size: 1rem;
+    }
+    
+    .search-submit-btn {
+        padding: 0.625rem;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+    }
+    
+    .search-submit-btn span {
+        display: none;
+    }
+    
+    .search-submit-btn i {
+        margin: 0;
+    }
+    
+    .clear-search {
+        right: 55px;
+    }
+    
+    .search-active-icon {
+        display: none;
+    }
+}
+
+@media (max-width: 479px) {
+    .search-input {
+        padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+        padding-right: 50px;
+        font-size: 16px;
+    }
+    
+    .search-icon {
+        left: 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .search-submit-btn {
+        padding: 0.5rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .clear-search {
+        right: 50px;
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 359px) {
+    .search-input {
+        padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+        padding-right: 45px;
+        border-radius: 8px;
+    }
+    
+    .search-submit-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0.375rem;
+    }
+    
+    .clear-search {
+        right: 45px;
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* Top Bar Responsive */
+@media (max-width: 768px) {
+    .vitrine-top-bar {
+        padding: 0.5rem 0;
+    }
+    
+    .vitrine-top-bar-wrapper {
+        gap: 0.75rem;
+        min-height: 50px;
+        flex-wrap: wrap;
+    }
+    
+    .logo-link-vitrine {
+        max-width: 40%;
+        min-width: 80px;
+    }
+    
+    .search-filters-container {
+        flex: 1 1 100%;
+        order: 3;
+    }
+}
+
+@media (max-width: 479px) {
+    .vitrine-top-bar {
+        padding: 0.375rem 0;
+    }
+    
+    .vitrine-top-bar-wrapper {
+        gap: 0.5rem;
+        min-height: 45px;
+    }
+    
+    .logo-link-vitrine {
+        max-width: 35%;
+        min-width: 70px;
+    }
+}
+
+@media (max-width: 359px) {
+    .vitrine-top-bar-wrapper {
+        gap: 0.375rem;
+        min-height: 40px;
+    }
+    
+    .logo-link-vitrine {
+        max-width: 30%;
+        min-width: 60px;
+    }
+}
+
 .filter-toggle-btn {
     display: none;
     align-items: center;
@@ -2285,6 +2558,29 @@ a.cta-wpp-38126317318[data-prod-ref] .label-wpp-38126317318 {
     gap: 1.5rem;
     flex-wrap: wrap;
 }
+
+/* Section Title Responsive */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.5rem;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 479px) {
+    .section-title {
+        font-size: 1.25rem;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 359px) {
+    .section-title {
+        font-size: 1.1rem;
+        gap: 0.4rem;
+    }
+}
+
 .products-count-badge {
     background: rgba(199, 163, 51, 0.1);
     color: #999999;
@@ -2296,22 +2592,167 @@ a.cta-wpp-38126317318[data-prod-ref] .label-wpp-38126317318 {
     white-space: nowrap;
     margin-left: 0;
 }
+
+/* Products Count Badge Responsive */
+@media (max-width: 479px) {
+    .products-count-badge {
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* Products Section Responsive */
+@media (max-width: 768px) {
+    .products-section {
+        padding: 1.5rem 0;
+    }
+    
+    .products-header {
+        margin-bottom: 1.25rem;
+    }
+}
+
+@media (max-width: 479px) {
+    .products-section {
+        padding: 1rem 0;
+    }
+    
+    .products-header {
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+    }
+}
+/* ============================================
+   PRODUCTS GRID RESPONSIVE
+   Mobile First Approach
+   ============================================ */
 .products-grid-main {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 10px;
 }
-/* Desktop Grid Optimization - 4 produtos por linha a partir de 769px */
-@media (min-width: 769px) {
+
+/* Extra Small Phones (max-width: 359px) */
+@media (max-width: 359px) {
     .products-grid-main {
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 2rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .product-card-modern {
+        border-radius: 10px;
+    }
+    
+    .product-info-modern {
+        padding: 8px;
+    }
+    
+    .product-name-modern {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .product-brand-modern {
+        font-size: 0.55rem;
+    }
+    
+    .product-price-modern {
+        font-size: 0.85rem;
     }
 }
+
+/* Small Phones (360px - 479px) */
+@media (min-width: 360px) and (max-width: 479px) {
+    .products-grid-main {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .product-card-modern {
+        border-radius: 12px;
+    }
+    
+    .product-info-modern {
+        padding: 10px;
+    }
+    
+    .product-name-modern {
+        font-size: 0.75rem;
+    }
+    
+    .product-brand-modern {
+        font-size: 0.6rem;
+    }
+    
+    .product-price-modern {
+        font-size: 0.9rem;
+    }
+}
+
+/* Medium Phones (480px - 639px) */
+@media (min-width: 480px) and (max-width: 639px) {
+    .products-grid-main {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .product-info-modern {
+        padding: 12px;
+    }
+    
+    .product-name-modern {
+        font-size: 0.8rem;
+    }
+    
+    .product-price-modern {
+        font-size: 0.95rem;
+    }
+}
+
+/* Large Phones / Small Tablets (640px - 768px) */
+@media (min-width: 640px) and (max-width: 768px) {
+    .products-grid-main {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+    
+    .product-info-modern {
+        padding: 14px;
+    }
+    
+    .product-name-modern {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablets (769px - 1023px) */
+@media (min-width: 769px) and (max-width: 1023px) {
+    .products-grid-main {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    
+    .product-card-modern {
+        min-height: 400px;
+    }
+}
+
+/* Desktop Grid Optimization - 4 produtos por linha a partir de 1024px */
+@media (min-width: 1024px) {
+    .products-grid-main {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    
+    .product-card-modern {
+        min-height: 440px;
+    }
+}
+
 @media (min-width: 1200px) {
     .products-grid-main {
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 2rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
     }
   
     .product-card-modern {
@@ -2329,16 +2770,22 @@ a.cta-wpp-38126317318[data-prod-ref] .label-wpp-38126317318 {
         font-size: 0.9375rem;
     }
 }
+
 @media (min-width: 1400px) {
     .products-grid-main {
         grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
+        gap: 28px;
+    }
+    
+    .product-card-modern {
+        min-height: 500px;
     }
 }
+
 @media (min-width: 1600px) {
     .products-grid-main {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2.25rem;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 32px;
     }
 }
 /* Modern Product Card */

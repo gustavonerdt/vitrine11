@@ -1348,7 +1348,27 @@ html {
     line-height: 1;
 }
 
-/* Responsive Price Card */
+/* ============================================
+   PRODUCT PAGE RESPONSIVE
+   ============================================ */
+
+/* Tablets (max-width: 1023px) */
+@media (max-width: 1023px) {
+    .product-detail-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .product-content-left {
+        order: 1;
+    }
+    
+    .product-content-right {
+        order: 2;
+    }
+}
+
+/* Small Tablets / Large Phones (max-width: 768px) */
 @media (max-width: 768px) {
     .price-por-value {
         font-size: 2.25rem;
@@ -1360,6 +1380,174 @@ html {
     
     .price-discount-card {
         padding: 1.25rem;
+    }
+    
+    .product-detail-wrapper {
+        padding: 16px 0;
+    }
+    
+    .product-title-name {
+        font-size: 1.5rem;
+    }
+    
+    .product-variants-section {
+        padding: 1.25rem;
+    }
+    
+    .shipping-calculator-section {
+        padding: 1rem;
+    }
+    
+    .shipping-calculator-form {
+        flex-direction: column;
+    }
+    
+    .shipping-calculator-form input[type="text"],
+    .shipping-calculator-form input[type="tel"] {
+        width: 100%;
+    }
+    
+    .shipping-calculator-form button {
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    /* CTA Buttons */
+    .product-cta-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .product-cta-buttons a,
+    .product-cta-buttons button {
+        width: 100%;
+    }
+}
+
+/* Medium Phones (max-width: 639px) */
+@media (max-width: 639px) {
+    .price-por-value {
+        font-size: 2rem;
+    }
+    
+    .price-value-large {
+        font-size: 2.25rem;
+    }
+    
+    .product-title-name {
+        font-size: 1.375rem;
+    }
+    
+    .product-brand-name {
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .variants-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .variant-label {
+        padding: 1rem 0.75rem;
+    }
+}
+
+/* Small Phones (max-width: 479px) */
+@media (max-width: 479px) {
+    .price-por-value {
+        font-size: 1.75rem;
+    }
+    
+    .price-value-large {
+        font-size: 2rem;
+    }
+    
+    .price-discount-card {
+        padding: 1rem;
+    }
+    
+    .product-detail-wrapper {
+        padding: 12px 0;
+    }
+    
+    .product-title-name {
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+    
+    .product-brand-name {
+        font-size: 0.8rem;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .product-variants-section {
+        padding: 1rem;
+    }
+    
+    .variants-grid {
+        gap: 0.75rem;
+    }
+    
+    .variant-label {
+        padding: 0.875rem 0.625rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Image Gallery Compact */
+    .product-thumbnails-lateral .thumbnail-item {
+        width: 50px;
+    }
+    
+    /* CTA Buttons Compact */
+    .product-cta-buttons a,
+    .product-cta-buttons button {
+        padding: 14px 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Description Section */
+    .product-description-section {
+        padding: 1rem;
+    }
+    
+    .product-description-section h2 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Extra Small Phones (max-width: 359px) */
+@media (max-width: 359px) {
+    .price-por-value {
+        font-size: 1.5rem;
+    }
+    
+    .price-value-large {
+        font-size: 1.75rem;
+    }
+    
+    .product-title-name {
+        font-size: 1.125rem;
+    }
+    
+    .section-title {
+        font-size: 0.95rem;
+    }
+    
+    .variants-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    
+    .variant-label {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
     }
 }
 

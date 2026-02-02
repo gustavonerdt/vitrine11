@@ -346,6 +346,60 @@ include __DIR__ . '/includes/public-header.php';
         .cart-summary { border-radius: 16px; padding: 1.5rem; margin-top: 1rem; }
         .btn-checkout { padding: 1rem; font-size: 0.95rem; border-radius: 12px; }
     }
+    
+    /* Small Phones (max-width: 479px) */
+    @media (max-width: 479px) {
+        .cart-page-container { padding: 0.75rem 0; }
+        .cart-title { font-size: 1.1rem; margin-bottom: 0.75rem; }
+        
+        .cart-items-section { padding: 0.75rem; border-radius: 12px; }
+        .cart-item { gap: 0.5rem; padding: 0.75rem 0; }
+        .cart-item-image { width: 60px; height: 60px; border-radius: 10px; }
+        .cart-item-name { font-size: 0.85rem; }
+        .cart-item-price { font-size: 0.9rem; }
+        .cart-item-brand { font-size: 0.65rem; }
+        
+        .quantity-selector button { width: 28px; height: 28px; font-size: 1rem; }
+        .qty-display { font-size: 0.9rem; width: 25px; }
+        
+        /* Order Bumps Ultra Compact */
+        .order-bumps-title { font-size: 1.1rem; }
+        .order-bump-card { 
+            min-width: calc(50% - 6px); 
+            max-width: calc(50% - 6px); 
+            padding: 6px;
+            border-radius: 12px;
+        }
+        .bump-img-wrapper { border-radius: 8px; margin-bottom: 6px; }
+        .bump-brand { font-size: 0.55rem; }
+        .bump-title { font-size: 0.7rem; height: 2.2em; margin-bottom: 3px; }
+        .bump-price { font-size: 0.85rem; margin-bottom: 6px; }
+        .btn-add-bump-direct { padding: 6px; font-size: 0.7rem; border-radius: 8px; }
+        
+        .cart-summary { padding: 1rem; border-radius: 12px; }
+        .btn-checkout { padding: 0.875rem; font-size: 0.875rem; border-radius: 10px; }
+    }
+    
+    /* Extra Small Phones (max-width: 359px) */
+    @media (max-width: 359px) {
+        .cart-page-container { padding: 0.5rem 0; }
+        .cart-title { font-size: 1rem; }
+        
+        .cart-items-section { padding: 0.625rem; }
+        .cart-item-image { width: 55px; height: 55px; }
+        .cart-item-name { font-size: 0.8rem; }
+        .cart-item-price { font-size: 0.85rem; }
+        
+        .order-bump-card {
+            min-width: calc(50% - 4px);
+            max-width: calc(50% - 4px);
+            padding: 5px;
+        }
+        .bump-title { font-size: 0.65rem; }
+        .bump-price { font-size: 0.8rem; }
+        
+        .cart-summary { padding: 0.875rem; }
+    }
 
     /* MODAL DE RETENÇÃO - DOURADO */
     .retention-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
